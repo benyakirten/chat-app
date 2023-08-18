@@ -1,12 +1,7 @@
-<script setup lang="ts">
-import { useLayoutStore } from "@/stores/layout";
-const layoutStore = useLayoutStore()
-</script>
-
 <template>
   <div class="container">
-
-    <button @click="layoutStore.toggleOpen">FAB</button>
+    <NavTheNav />
+    <NavTheHamburgerMenu />
     <main>
       <slot></slot>
     </main>
