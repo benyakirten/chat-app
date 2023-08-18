@@ -25,6 +25,13 @@ p {
   margin: 0;
 }
 
+button {
+  outline: none;
+  &:hover {
+    background-color: inherit;
+  }
+}
+
 /* Serif */
 @font-face {
   font-family: "RobotoSlab";

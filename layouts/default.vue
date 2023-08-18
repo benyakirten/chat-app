@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <NavTheNav />
+    <NavTheSidebar />
     <NavTheHamburgerMenu />
     <main>
       <slot></slot>
