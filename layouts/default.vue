@@ -1,14 +1,24 @@
 <script setup lang="ts">
-  // 
+import { useLayoutStore } from "@/stores/layout";
+const layoutStore = useLayoutStore()
 </script>
 
 <template>
-  <h2>THIS IS {{ $route.fullPath }}</h2>
-  <NuxtLink to="/">HOME</NuxtLink>
-  <NuxtLink to="/about">ABOUT</NuxtLink>
-  <NuxtLink to="/messages">MESSAGES</NuxtLink>
+  <div class="container">
 
-  <main>
-    <slot></slot>
-  </main>
+    <button @click="layoutStore.toggleOpen">FAB</button>
+    <main>
+      <slot></slot>
+    </main>
+  </div>
 </template>
+
+<style scoped>
+.container {
+  position: relative;
+
+  main {
+    width: 100%;
+  }
+}
+</style>

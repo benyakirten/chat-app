@@ -4,10 +4,16 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
   },
+  css: ['~/assets/css/main.css'],
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
   modules: [
     '@pinia/nuxt',
-  ]
+  ],
+  postcss: {
+    plugins: {
+      'postcss-nested': {}
+    }
+  }
 })
