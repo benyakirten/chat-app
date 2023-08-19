@@ -20,5 +20,8 @@ export const useLayoutStore = defineStore('layout', {
     setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
       this.sidebarTabOpened = tab
     }
+  },
+  getters: {
+    isOpen: (state) => (tab: LayoutState["sidebarTabOpened"]) => state.sidebarTabOpened === tab
   }
 })
