@@ -2,6 +2,28 @@ html {
   font-size: 16px;
   --font-serif: "RobotoSlab", serif;
   --font-sans-serif: "Roboto", sans-serif;
+  --time-400: 400ms;
+  --time-350: 350ms;
+  --time-300: 300ms;
+  --time-250: 250ms;
+  --time-200: 200ms;
+  --time-150: 150ms;
+  --time-100: 100ms;
+  --time-50: 50ms;
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-delay: -1ms !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      background-attachment: initial !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+    }
+  }
 }
 
 body {

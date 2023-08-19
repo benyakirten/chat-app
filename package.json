@@ -24,6 +24,7 @@
     "@storybook/vue3": "^7.2.3",
     "@storybook/vue3-vite": "^7.2.3",
     "@types/node": "^18.17.3",
+    "@types/uuid": "^9.0.2",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/test-utils": "^2.4.1",
     "jsdom": "^22.1.0",
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
-    "pinia": "^2.1.6"
+    "pinia": "^2.1.6",
+    "uuid": "^9.0.0"
   }
 }
