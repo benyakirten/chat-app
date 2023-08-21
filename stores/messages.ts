@@ -25,7 +25,7 @@ export interface ConversationMessage {
   time: Date
 }
 
-export const messagesStore = defineStore("messages", {
+export const useMessageStore = defineStore("messages", {
   state(): MessageStoreState {
     return {
       me: {

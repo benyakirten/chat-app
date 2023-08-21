@@ -1,25 +1,31 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/stores/layout";
+import { useThemeStore } from "@/stores/theme";
+
 const layoutStore = useLayoutStore()
+const themeStore = useThemeStore()
 </script>
 
 <template>
   <Transition name="fade-in">
-    <div v-if="layoutStore.sidebarOpen" class="backdrop"></div>
+    <div v-if="layoutStore.sidebarOpen" class="backdrop" @click="layoutStore.setSidebarState(false)"></div>
   </Transition>
   <Transition name="slide-in">
     <nav v-if="layoutStore.sidebarOpen">
-      <NavSection height="4rem" width="12rem" group="chat" :z-index="5" background-color="green">
+      <NavSection height="4rem" width="90%" group="chat" :z-index="5"
+        :background-color="themeStore.activeTheme.bgColorAlt3">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="11rem" group="other" :z-index="4" background-color="lightgreen">
+      <NavSection height="4rem" width="85%" group="other" :z-index="4"
+        :background-color="themeStore.activeTheme.bgColorAlt4">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="10rem" group="account" :z-index="3" background-color="lightblue">
+      <NavSection height="4rem" width="80%" group="account" :z-index="3"
+        :background-color="themeStore.activeTheme.bgColorAlt5">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
@@ -33,11 +39,16 @@ const layoutStore = useLayoutStore()
   position: absolute;
   top: 0;
   left: 0;
+
   z-index: 1;
+  opacity: 1;
+
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(to bottom right, #00000040 25%, #00000020 80%, #00000010);
-  opacity: 1;
+
+  overflow: hidden;
+  /* TODO: Determine if this should be removed - broken after theming */
+  /* background: linear-gradient(to bottom right, var(--primary-text)40 25%, var(--primary-text)20 80%, var(--primary-text)10); */
 }
 
 .fade-in-enter-active,
@@ -60,11 +71,12 @@ nav {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 70%;
 }
 
 .slide-in-enter-active,
 .slide-in-leave-active {
-  transition: translate var(--time-250) ease-in-out;
+  transition: translate var(--time-400) ease-in-out;
 }
 
 .slide-in-enter-from,

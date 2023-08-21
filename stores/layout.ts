@@ -8,7 +8,7 @@ export interface LayoutState {
 export const useLayoutStore = defineStore('layout', {
   state: (): LayoutState => ({
     sidebarOpen: false,
-    sidebarTabOpened: null
+    sidebarTabOpened: null,
   }),
   actions: {
     toggleOpen() {
@@ -19,7 +19,10 @@ export const useLayoutStore = defineStore('layout', {
     },
     setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
       this.sidebarTabOpened = tab
-    }
+    },
+    toggleTabOpened(tab: LayoutState["sidebarTabOpened"]) {
+      this.sidebarTabOpened = this.sidebarTabOpened === tab ? null : tab
+    },
   },
   getters: {
     isOpen: (state) => (tab: LayoutState["sidebarTabOpened"]) => state.sidebarTabOpened === tab

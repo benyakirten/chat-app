@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LayoutState, useLayoutStore } from "@/stores/layout";
-const layoutStore = useLayoutStore()
 
+const layoutStore = useLayoutStore()
 const { group, height, zIndex, backgroundColor, width } = defineProps<{
   group: LayoutState["sidebarTabOpened"]
   height: string
@@ -12,13 +12,15 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
 </script>
 
 <template>
-  <div class="section" @mouseenter="layoutStore.setTabOpened(group)" @mouseleave="layoutStore.setTabOpened(null)">
-    <div class="section-contents">
-      <div class="setion-header">
-        <NuxtLink :to="`/${group}`">{{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)}` }}</NuxtLink>
-      </div>
+  <div class="section">
+    <div class="section-contents" :style="{ paddingBottom: layoutStore.isOpen(group) ? '1rem' : '0' }">
+      <button class="section-header" @click="layoutStore.toggleTabOpened(group)">
+        <h4>
+          {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)} ` }}
+        </h4>
+      </button>
       <Transition name="section-expand">
-        <div v-if="layoutStore.isOpen(group)">
+        <div class="section-body" v-if="layoutStore.isOpen(group)">
           <slot></slot>
         </div>
       </Transition>
@@ -29,11 +31,30 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
 <style scoped>
 .section {
   width: v-bind(width);
-  padding: 1rem;
   background-color: v-bind(backgroundColor);
   box-shadow: -7px 8px 6px -3px rgba(0, 0, 0, 0.25);
   transition: transform var(--time-250) ease-in;
   z-index: v-bind(zIndex);
+
+  &-header {
+    cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    outline: none;
+    border: none;
+    color: var(--primary-text);
+    background-color: v-bind(backgroundColor);
+    padding: 1rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  &-body {
+    padding-left: 1rem;
+  }
 
   &-contents {
     transition: transform var(--time-250) ease-in;

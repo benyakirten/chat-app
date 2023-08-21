@@ -1,5 +1,11 @@
+<script lang="ts" setup>
+import { useThemeStore } from '@/stores/theme';
+
+const themeStore = useThemeStore()
+</script>
+
 <template>
-  <div>
+  <div :style="themeStore.activeThemeVariables" id="main-container">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -17,5 +23,12 @@
 .page-leave-to {
   opacity: 0;
   filter: blur(1rem);
+}
+
+#main-container {
+  min-height: 100vh;
+  min-width: 100vw;
+  color: var(--primary-text, '#f4f4f4');
+  background-color: var(--bg-color-primary);
 }
 </style>
