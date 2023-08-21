@@ -12,9 +12,11 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
 </script>
 
 <template>
+  <!-- TODO: Add accessibility for expandable sections -->
   <div class="section">
-    <div class="section-contents" :style="{ paddingBottom: layoutStore.isOpen(group) ? '1rem' : '0' }">
+    <div class="section-contents" :class="{ 'section-contents--open': layoutStore.isOpen(group) }">
       <button class="section-header" @click="layoutStore.toggleTabOpened(group)">
+        <NavOpenIndicator :open="layoutStore.isOpen(group)" />
         <h4>
           {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)} ` }}
         </h4>
@@ -34,14 +36,15 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
   background-color: v-bind(backgroundColor);
   --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
   box-shadow: -7px 8px 6px -3px var(--box-shadow);
-  transition: transform var(--time-250) ease-in;
+  transition: width var(--time-250) ease-in;
   z-index: v-bind(zIndex);
 
   &-header {
     cursor: pointer;
 
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 1rem;
     align-items: center;
 
     outline: none;
@@ -59,14 +62,16 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
 
   &-contents {
     transition: transform var(--time-250) ease-in;
+
+    &--open {
+      transition: padding-bottom var(--time-50) ease var(--time-200);
+      padding-bottom: 1rem;
+    }
   }
 
   &:hover {
-    transform: scaleX(1.05);
-  }
-
-  &:hover>&-contents {
-    transform: scaleX(calc(1 / 1.05));
+    /* TODO: Figure out how to do this with scaleX and not width */
+    width: calc(v-bind(width) * 1.05);
   }
 }
 

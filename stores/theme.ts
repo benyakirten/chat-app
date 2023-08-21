@@ -55,6 +55,7 @@ export interface ThemeStore {
 
 const themes: ThemeStore['themes'] = {
   day: {
+    // Bg alts suck
     bgColorPrimary: '#f4f4f4',
     bgColorAlt1: '#e0e0e0',
     bgColorAlt2: '#d2d2d2',
@@ -69,12 +70,13 @@ const themes: ThemeStore['themes'] = {
     neutral: '#dcdcdc',
   },
   night: {
+    // Alt 4-5 aren't good
     bgColorPrimary: '#0a192f',
-    bgColorAlt1: '#080e1e',
-    bgColorAlt2: '#071828',
-    bgColorAlt3: '#05263c',
-    bgColorAlt4: '#032a46',
-    bgColorAlt5: '#013655',
+    bgColorAlt1: '#05263c',
+    bgColorAlt2: '#032a46',
+    bgColorAlt3: '#013655',
+    bgColorAlt4: '#015788',
+    bgColorAlt5: '#071828',
     accent: '#00b894',
     primaryText: '#f4f4f4',
     secondaryText: '#777777',

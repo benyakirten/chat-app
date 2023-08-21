@@ -12,24 +12,33 @@ const themeStore = useThemeStore()
   </Transition>
   <Transition name="slide-in">
     <nav v-if="layoutStore.sidebarOpen">
-      <NavSection height="4rem" width="90%" group="chat" :z-index="5"
+      <NavSection height="4rem" width="100%" group="chat" :z-index="5"
+        :background-color="themeStore.activeTheme.bgColorAlt1">
+        <p>SAMPLE TEXT</p>
+        <p>SAMPLE TEXT</p>
+        <p>SAMPLE TEXT</p>
+      </NavSection>
+      <NavSection height="4rem" width="95%" group="other" :z-index="4"
+        :background-color="themeStore.activeTheme.bgColorAlt2">
+        <p>SAMPLE TEXT</p>
+        <p>SAMPLE TEXT</p>
+        <p>SAMPLE TEXT</p>
+      </NavSection>
+      <NavSection height="4rem" width="90%" group="account" :z-index="3"
         :background-color="themeStore.activeTheme.bgColorAlt3">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="85%" group="other" :z-index="4"
-        :background-color="themeStore.activeTheme.bgColorAlt4">
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-      </NavSection>
-      <NavSection height="4rem" width="80%" group="account" :z-index="3"
-        :background-color="themeStore.activeTheme.bgColorAlt5">
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-      </NavSection>
+      <div class="recent">
+        <!-- TODO: Get font sizes correct -->
+        <h4>Recently Viewed</h4>
+        <ul>
+          <li>Viewed Page</li>
+          <li>Viewed Page</li>
+          <li>Viewed Page</li>
+        </ul>
+      </div>
     </nav>
   </Transition>
 </template>
@@ -78,6 +87,13 @@ nav {
   flex-direction: column;
   min-height: 100vh;
   width: 70%;
+
+  .recent {
+    flex-grow: 1;
+    padding: 1rem;
+    width: 80%;
+    background-color: v-bind('themeStore.activeTheme.bgColorAlt4')
+  }
 }
 
 .slide-in-enter-active,
