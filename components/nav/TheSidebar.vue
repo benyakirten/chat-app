@@ -91,7 +91,7 @@ nav {
   .recent {
     flex-grow: 1;
     padding: 1rem;
-    width: 80%;
+    width: 30%;
     background-color: v-bind('themeStore.activeTheme.bgColorAlt4')
   }
 }

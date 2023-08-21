@@ -9,20 +9,22 @@ const { group, height, zIndex, backgroundColor, width } = defineProps<{
   backgroundColor: string
   width: string
 }>()
+const isOpen = computed(() => layoutStore.isOpen(group))
+const id = computed(() => `${group}-expadable-content`)
 </script>
 
 <template>
-  <!-- TODO: Add accessibility for expandable sections -->
   <div class="section">
-    <div class="section-contents" :class="{ 'section-contents--open': layoutStore.isOpen(group) }">
-      <button class="section-header" @click="layoutStore.toggleTabOpened(group)">
-        <NavOpenIndicator :open="layoutStore.isOpen(group)" />
+    <div class="section-contents" :class="{ 'section-contents--open': isOpen }">
+      <button :aria-controls="id" :aria-expanded="isOpen" class="section-header"
+        @click="layoutStore.toggleTabOpened(group)">
+        <NavOpenIndicator :open="isOpen" />
         <h4>
           {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)} ` }}
         </h4>
       </button>
       <Transition name="section-expand">
-        <div class="section-body" v-if="layoutStore.isOpen(group)">
+        <div :id="id" class="section-body" :aria-hidden="!isOpen" v-if="isOpen">
           <slot></slot>
         </div>
       </Transition>
