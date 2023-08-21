@@ -47,8 +47,14 @@ const themeStore = useThemeStore()
   height: 100vh;
 
   overflow: hidden;
-  /* TODO: Determine if this should be removed - broken after theming */
-  /* background: linear-gradient(to bottom right, var(--primary-text)40 25%, var(--primary-text)20 80%, var(--primary-text)10); */
+  /* Reconsider how this background works */
+  /* --backdrop-color-1: color-mix(in srgb, var(--primary-text) 40%, transparent);
+  --backdrop-color-2: color-mix(in srgb, var(--primary-text) 20%, transparent);
+  --backdrop-color-3: color-mix(in srgb, var(--primary-text) 10%, transparent);
+  background: linear-gradient(to bottom right,
+      var(--backdrop-color-1) 25%,
+      var(--backdrop-color-2) 80%,
+      var(--backdrop-color-3)); */
 }
 
 .fade-in-enter-active,

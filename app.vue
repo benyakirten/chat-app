@@ -29,6 +29,6 @@ const themeStore = useThemeStore()
   min-height: 100vh;
   min-width: 100vw;
   color: var(--primary-text, '#f4f4f4');
-  background-color: var(--bg-color-primary);
+  background-color: var(--bg-color-primary, '#000');
 }
 </style>
