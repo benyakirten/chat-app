@@ -17,7 +17,7 @@ export interface ColorTheme {
   neutral: string,
 }
 
-export interface ThemeStore {
+export interface ThemeStoreState {
   themes: {
     day: ColorTheme,
     night: ColorTheme
@@ -53,7 +53,7 @@ export interface ThemeStore {
 //   /* --neutral-color-2: #e0e0e0; */
 // }
 
-const themes: ThemeStore['themes'] = {
+const defaultThemes: ThemeStoreState['themes'] = {
   day: {
     // Bg alts suck
     bgColorPrimary: '#f4f4f4',
@@ -86,20 +86,18 @@ const themes: ThemeStore['themes'] = {
   }
 }
 
-export const useThemeStore = defineStore('theme', {
-  state: (): ThemeStore => ({
-    themes,
-    active: 'night',
-  }),
-  actions: {
-    setTheme(theme: ThemeStore['active']) {
-      this.active = theme
-    }
-  },
-  getters: {
-    activeTheme: (state) => state.themes[state.active],
-    activeThemeVariables: (state) => Object.entries(state.themes[state.active]).reduce<string>((acc, [key, value]) => {
-      return `${acc} --${camelToKebabCase(key)}: ${value};`
-    }, "")
+export const useThemeStore = defineStore('theme', () => {
+  const themes = ref(defaultThemes)
+  const active = ref<ThemeStoreState['active']>('night')
+
+  function setTheme(theme: ThemeStoreState['active']) {
+    active.value = theme
   }
+
+  const activeTheme = computed(() => themes.value[active.value])
+  const activeThemeVariables = computed(() => Object.entries(themes.value[active.value]).reduce<string>((acc, [key, value]) => {
+    return `${acc} --${camelToKebabCase(key)}: ${value};`
+  }, ""))
+
+  return { themes, active, setTheme, activeTheme, activeThemeVariables }
 })

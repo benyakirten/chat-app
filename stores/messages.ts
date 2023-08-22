@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+
 import { useUsersStore } from './users';
 
 export type ConversationId = string
@@ -42,9 +43,8 @@ export const useMessageStore = defineStore("messages", () => {
   const message = computed(() => () => (conversationId: ConversationId, messageId: MessageId) => conversations.value.get(conversationId)?.messages.get(messageId))
   const timeout = computed(() => () => (conversationId: ConversationId) => conversations.value.get(conversationId)?.timeout)
 
-  // TODO: Reconsider how a conversation is stated/sent
-  function addMessage(conversationId: ConversationId, message: ConversationMessage, from: UserId = message.userId, to?: UserId) {
-    // TODO: Have a separate function for group conversation
+  function addMessage(conversationId: ConversationId, message: ConversationMessage, from: UserId = message.userId, to?: UserId | UserId[]) {
+    // Defaults are a private message from another user
     if (!to) {
       const me = userStore.me
       if (!me) {
@@ -62,7 +62,10 @@ export const useMessageStore = defineStore("messages", () => {
 
     const members = new Map<UserId, 'idle' | 'typing'>()
     members.set(from, 'idle')
-    members.set(to, 'idle')
+    to = arrayify(to)
+    to.forEach(recipient => {
+      members.set(recipient, 'idle')
+    })
 
     const messages = new Map<MessageId, ConversationMessage>()
     messages.set(message.messageId, message)
@@ -95,7 +98,7 @@ export const useMessageStore = defineStore("messages", () => {
     }, TYPING_TIMEOUT)
   }
 
-  function sendMessage(conversationId: ConversationId, message: ConversationMessage, to: UserId) {
+  function sendMessage(conversationId: ConversationId, message: ConversationMessage) {
     // Conversation ID is in case we want to programmatically send messages
     // outside of the active conversation
 
@@ -112,7 +115,8 @@ export const useMessageStore = defineStore("messages", () => {
     }
 
     if (convo.members.size > 2) {
-      // TODO: Send group conversation
+      // TODO: Send group conversation message
+      return
     }
 
     const { timeout } = convo
@@ -121,11 +125,17 @@ export const useMessageStore = defineStore("messages", () => {
       // TODO: Transmit that typing has ended
     }
 
+    // In a private conversation
+    // TODO: Outsource this to a helper function
+    const to = getOtherMapKey(convo.members, userStore.me)
+    if (!to) {
+      // TODO: Error handling
+      return
+    }
 
+    // TODO: Transmit message
     addMessage(conversationId, message, userStore.me, to)
-
   }
 
   return { conversations, activeConversation, currentConversation, conversation, message, timeout, addMessage, startTyping, sendMessage }
 })
-

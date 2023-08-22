@@ -42,42 +42,29 @@ export interface UsersStoreState {
   me: UserId | null,
 }
 
-export const useUsersStore = defineStore("users", {
-  state: (): UsersStoreState => ({
-    users: PROP_USERS,
-    me: 'u1',
-  }),
-  actions: {
-    batchAddUsers(users: User[]) {
-      users.forEach(user => this.addUser(user))
-    },
-    addUser(user: User) {
-      this.users.set(user.userId, user)
-    },
-    updateUser(userId: UserId, user: Partial<User>) {
-      const currentUser = this.users.get(userId)
-      if (!currentUser) {
-        // TODO: Error handling
-        return
-      }
-      this.users.set(userId, { ...currentUser, ...user })
-    }
-  },
-  getters: {
-    byId: (state) => (userId: UserId) => {
-      let user = state.users.get(userId)
-      if (!user) {
-        user = {
-          name: "Unknown",
-          userId,
-          state: "pending"
-        }
-        state.users.set(userId, user)
-        // Make API request for user and have it update the state.users map
-      }
+export const useUsersStore = defineStore("users", () => {
+  const users = ref<UsersStoreState['users']>(PROP_USERS)
+  const me = ref<UsersStoreState['me']>('u1')
 
-      return user
-    },
-    isMine: (state) => (message: ConversationMessage) => state.me === message.userId
+  function addUser(user: User) {
+    users.value.set(user.userId, user)
   }
+
+  function batchAddUsers(users: User[]) {
+    // TODO: Modify this when we have a backend
+    users.forEach(user => addUser(user))
+  }
+
+  function updateUser(userId: UserId, user: Partial<User>) {
+    const currentUser = users.value.get(userId)
+    if (!currentUser) {
+      // TODO: Error handling
+      return
+    }
+    users.value.set(userId, { ...currentUser, ...user })
+  }
+
+  const isMine = computed(() => (message: ConversationMessage) => me.value === message.userId)
+
+  return { users, me, addUser, batchAddUsers, updateUser, isMine }
 })

@@ -5,26 +5,27 @@ export interface LayoutState {
   sidebarTabOpened: "chat" | "account" | "other" | null
 }
 
-export const useLayoutStore = defineStore('layout', {
-  state: (): LayoutState => ({
-    sidebarOpen: false,
-    sidebarTabOpened: null,
-  }),
-  actions: {
-    toggleOpen() {
-      this.sidebarOpen = !this.sidebarOpen
-    },
-    setSidebarState(state: boolean) {
-      this.sidebarOpen = state
-    },
-    setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
-      this.sidebarTabOpened = tab
-    },
-    toggleTabOpened(tab: LayoutState["sidebarTabOpened"]) {
-      this.sidebarTabOpened = this.sidebarTabOpened === tab ? null : tab
-    },
-  },
-  getters: {
-    isOpen: (state) => (tab: LayoutState["sidebarTabOpened"]) => state.sidebarTabOpened === tab
+export const useLayoutStore = defineStore('layout', () => {
+  const sidebarOpen = ref(false)
+  const sidebarTabOpened = ref<LayoutState['sidebarTabOpened']>(null)
+
+  function toggleOpen() {
+    sidebarOpen.value = !sidebarOpen.value
   }
+
+  function setSidebarState(state: boolean) {
+    sidebarOpen.value = state
+  }
+
+  function setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
+    sidebarTabOpened.value = tab
+  }
+  function toggleTabOpened(tab: LayoutState["sidebarTabOpened"]) {
+    sidebarTabOpened.value = sidebarTabOpened.value === tab ? null : tab
+  }
+
+  const isOpen = computed(() => (tab: LayoutState["sidebarTabOpened"]) => sidebarTabOpened.value === tab)
+
+  return { sidebarOpen, sidebarTabOpened, toggleOpen, setSidebarState, setTabOpened, toggleTabOpened, isOpen }
 })
+

@@ -14,7 +14,7 @@
     <h1>Messages</h1>
     <div class="messages">
       <div class="messages-conversations">
-        <ChatConvesationList />
+        <ChatConversationList />
       </div>
       <div class="messages-current">
         <ChatMessageList />
