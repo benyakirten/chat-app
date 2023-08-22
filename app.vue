@@ -5,7 +5,7 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <div :style="themeStore.activeThemeVariables" id="main-container">
+  <div :style="themeStore.activeThemeVariables" id="app-host">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -25,7 +25,7 @@ const themeStore = useThemeStore()
   filter: blur(1rem);
 }
 
-#main-container {
+#app-host {
   min-height: 100vh;
   min-width: 100vw;
   color: var(--primary-text, '#f4f4f4');
