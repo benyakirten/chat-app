@@ -37,7 +37,7 @@ export const useToastStore = defineStore('toasts', () => {
     return toasts.value.delete(id)
   }
 
-  function clearToasts(id: ToastId) {
+  function clearToasts() {
     toasts.value = new Map()
   }
 

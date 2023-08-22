@@ -10,28 +10,29 @@
   -->
   <!-- TODO: Determine how to virtualize lists -->
   <!-- TODO: Determine how to start a conversation if you would like to create one -->
-  <BaseLayoutPage>
-    <h1>Messages</h1>
-    <div class="messages">
-      <div class="messages-conversations">
-        <ChatConversationList />
-      </div>
-      <div class="messages-current">
-        <ChatMessageList />
-      </div>
+
+  <h1>Messages</h1>
+  <div class="messages">
+    <div class="messages-conversations">
+      <ChatConversationList />
     </div>
-  </BaseLayoutPage>
+    <div class="messages-current">
+      <ChatMessageList />
+    </div>
+  </div>
 </template>
 
 <style scoped>
 h1 {
   text-align: center;
-  margin-bottom: 2rem;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
 }
 
 .messages {
   display: grid;
   grid-template-columns: 20rem 1fr;
+  height: 70vh;
 
   &-conversations {
     /*  */

@@ -30,9 +30,12 @@ html {
   }
 }
 
-body {
+* {
   margin: 0;
   padding: 0;
+}
+
+body {
   box-sizing: border-box;
   font-family: var(--font-sans-serif);
 }
@@ -43,20 +46,12 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 0;
   --font-family: var(--font-serif);
-}
-
-p {
-  margin: 0;
 }
 
 button {
   outline: none;
   border: none;
-
-  padding: 0;
-  margin: 0;
 
   &:hover {
     background-color: inherit;
@@ -67,6 +62,12 @@ a {
   text-decoration: none;
 }
 
+ul,
+ol {
+  list-style: none;
+}
+
+/* TODO: Update this to use fontaine: https://github.com/nuxt-modules/fontaine */
 /* Serif */
 @font-face {
   font-family: 'RobotoSlab';

@@ -8,6 +8,41 @@ export type UserId = string
 
 export const TYPING_TIMEOUT = 5_000
 
+const conversation1message1: ConversationMessage = {
+  userId: 'u1',
+  messageId: 'c1m1',
+  content: 'HI!',
+  status: 'read',
+  createTime: new Date('2020-1-1'),
+  updateTime: new Date('2020-1-1'),
+}
+
+const conversation1message2: ConversationMessage = {
+  userId: 'u2',
+  messageId: 'c1m2',
+  content: 'Hi to you too. Who are you?',
+  status: 'read',
+  createTime: new Date('2020-1-2'),
+  updateTime: new Date('2020-1-2'),
+}
+
+const conversation1message3: ConversationMessage = {
+  userId: 'u1',
+  messageId: 'c1m3',
+  content: 'I\'m me. Don\'t you know me?',
+  status: 'sent',
+  createTime: new Date('2020-1-2'),
+  updateTime: new Date('2020-1-4'),
+}
+
+const conversation1: Conversation = {
+  members: new Map([['u1', 'idle'], ['u2', 'idle']]),
+  conversationId: 'c1',
+  messages: new Map([['c1m1', conversation1message1], ['c1m2', conversation1message2], ['c1m3', conversation1message3]])
+}
+
+const PROP_CONVERSATIONS: MessageStoreState['conversations'] = new Map([['c1', conversation1]])
+
 export interface MessageStoreState {
   conversations: Map<ConversationId, Conversation>,
   // Retrieve previously active conversation on login from backend
@@ -19,22 +54,25 @@ export interface MessageStoreState {
 // WhatsApp shows only 1 writing indicator in a group conversation but shows
 // who is writing - 1:1 conversation doesn't matter
 export interface Conversation {
-  members: Map<UserId, "typing" | "idle">
+  conversationId: ConversationId
+  members: Map<UserId, 'typing' | 'idle'>
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
 }
 
+// TODO: Determine how to handle deleted messages
 export interface ConversationMessage {
   userId: UserId
   messageId: MessageId
   content: string
-  status: "pending" | "sent" | "read"
-  time: Date
+  status: 'pending' | 'sent' | 'read'
+  createTime: Date
+  updateTime: Date
 }
 
-export const useMessageStore = defineStore("messages", () => {
-  const conversations = ref(new Map<ConversationId, Conversation>())
-  const activeConversation = ref<UserId | null>(null)
+export const useMessageStore = defineStore('messages', () => {
+  const conversations = ref(new Map<ConversationId, Conversation>(PROP_CONVERSATIONS))
+  const activeConversation = ref<ConversationId | null>(null)
 
   const userStore = useUsersStore()
 
@@ -70,6 +108,7 @@ export const useMessageStore = defineStore("messages", () => {
     const messages = new Map<MessageId, ConversationMessage>()
     messages.set(message.messageId, message)
     const conversation: Conversation = {
+      conversationId,
       members,
       messages,
     }
