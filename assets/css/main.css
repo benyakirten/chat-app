@@ -36,8 +36,13 @@ html {
 }
 
 body {
+  background-color: #0a192f;
   box-sizing: border-box;
   font-family: var(--font-sans-serif);
+
+  @media (prefers-color-scheme: light) {
+    background-color: #f4f4f4;
+  }
 }
 
 h1,
@@ -52,6 +57,7 @@ h6 {
 button {
   outline: none;
   border: none;
+  cursor: pointer;
 
   &:hover {
     background-color: inherit;

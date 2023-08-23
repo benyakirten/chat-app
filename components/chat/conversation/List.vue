@@ -20,7 +20,7 @@ const store = useMessageStore()
       </ul>
     </div>
     <button>
-      Start a new conversatin
+      Start a new conversation
     </button>
   </div>
 </template>
@@ -32,12 +32,36 @@ const store = useMessageStore()
   justify-content: space-between;
   height: 100%;
 
+  /* TODO: Make this look better */
+  --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
+  box-shadow: 7px 8px 15px -1px var(--box-shadow);
+  border-right: 1px solid var(--accent);
+
   .conversations {
     flex-grow: 1;
   }
 
   ul {
     overflow: auto;
+  }
+
+  button {
+    cursor: pointer;
+    align-self: center;
+
+    border-radius: 4rem;
+    width: 70%;
+
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+
+    transition: background-color var(--time-150) ease-in, color var(--time-150) ease-out;
+
+    &:hover {
+      /* TODO: Improve colors/styles */
+      color: var(--primary-text);
+      background-color: var(--bg-color-alt4);
+    }
   }
 }
 </style>
