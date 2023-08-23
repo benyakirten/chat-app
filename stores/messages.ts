@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+import { arrayify, getOtherMapKey } from '@/lib/collections';
 import { useUsersStore } from './users';
 
 export type ConversationId = string
@@ -65,7 +66,7 @@ export interface ConversationMessage {
   userId: UserId
   messageId: MessageId
   content: string
-  status: 'pending' | 'sent' | 'read'
+  status: 'pending' | 'error' | 'sent' | 'read'
   createTime: Date
   updateTime: Date
 }

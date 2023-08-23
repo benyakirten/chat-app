@@ -19,19 +19,24 @@ div {
 
   height: 0.5rem;
   width: 0.5rem;
-  transform: translate(-30%, -30%);
+  /* transform: translate(-50%, -50%); */
 
-  animation: expand-out var(--time-400) ease-out;
+  animation: expand-out 800ms ease-in;
 }
 
 @keyframes expand-out {
-  from: {
+  0% {
     scale: 1;
-    opacity: 0.6;
+    opacity: 0.15;
   }
 
-  to {
-    scale: 3;
+  30% {
+    scale: 20;
+    opacity: 0.08;
+  }
+
+  90% {
+    scale: 1000 1000;
     opacity: 0;
   }
 }

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+import { arrayify } from '@/lib/collections';
 import { ConversationMessage, UserId } from "./messages";
 
 const PROP_USERS = new Map<UserId, User>()
@@ -32,6 +33,8 @@ export interface User {
   // key: string
   // For optimistic updates
   state: "failed" | "pending" | "completed"
+  // This may be a reach to add user images
+  image?: string
 }
 
 // Users can be retrieved individually
@@ -64,7 +67,19 @@ export const useUsersStore = defineStore("users", () => {
     users.value.set(userId, { ...currentUser, ...user })
   }
 
-  const isMine = computed(() => (message: ConversationMessage) => me.value === message.userId)
+  const isMine = computed(() => (message: ConversationMessage) =>
+    me.value === message.userId
+  )
 
-  return { users, me, addUser, batchAddUsers, updateUser, isMine }
+  const getOtherUsers = computed(() => (userIds: UserId | UserId[]) =>
+    arrayify(userIds).reduce<User[]>((acc, next) => {
+      const user = users.value.get(next)
+      if (user && user.userId !== me.value) {
+        acc.push(user)
+      }
+      return acc
+    }, [])
+  )
+
+  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine }
 })
