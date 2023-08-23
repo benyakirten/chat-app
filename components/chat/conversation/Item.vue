@@ -6,11 +6,15 @@ import { useUsersStore } from '@/stores/users';
 const { conversation } = defineProps<{ conversation: Conversation }>()
 const userStore = useUsersStore()
 const users = userStore.getOtherUsers([...conversation.members.keys()])
+
+async function viewConversation() {
+  await navigateTo({ query: { id: conversation.conversationId } })
+}
 </script>
 
 <template>
   <li class="conversation">
-    <button class="container">
+    <button class="container" @click="viewConversation">
       <GeneralAvatar :users="users" />
       <span>
         {{ users.map(user => user.name).join(", ") }}

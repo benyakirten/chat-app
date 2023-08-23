@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+const route = useRoute()
+const conversationId = computed(() => route.query["id"])
+</script>
+
 <template>
   <!--
     In desktop - 2 columns:
@@ -14,7 +19,7 @@
     <h1>Messages</h1>
     <div class="messages">
       <ChatConversationList />
-      <ChatMessageList />
+      <ChatMessageList :conversationId="conversationId" />
     </div>
   </BaseLayoutPage>
 </template>

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { useMessageStore } from '@/stores/messages';
+import { ConversationId, useMessageStore } from '@/stores/messages';
 
 const store = useMessageStore()
-const messages = computed(() => store.currentConversation?.messages)
+const { conversationId } = defineProps<{ conversationId: ConversationId }>()
+const messages = computed(() => store.conversation(conversationId)?.messages)
 </script>
 
 <template>
@@ -14,7 +15,7 @@ const messages = computed(() => store.currentConversation?.messages)
       <TransitionGroup name="message-list">
         <!-- Display messages from others on right, display author written mesages on right -->
         <!-- An individual message should display author, last update time, allow users to click on their own comments -->
-        <ChatMessageItem v-for="[key, value] in store.currentConversation!.messages" :key="key" :message="value" />
+        <ChatMessageItem v-for="[key, value] in messages" :key="key" :message="value" />
       </TransitionGroup>
       <!-- TODO: Add Text input that sets writing -->
     </div>

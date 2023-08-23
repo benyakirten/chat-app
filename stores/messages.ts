@@ -45,9 +45,8 @@ const conversation1: Conversation = {
 const PROP_CONVERSATIONS: MessageStoreState['conversations'] = new Map([['c1', conversation1]])
 
 export interface MessageStoreState {
-  conversations: Map<ConversationId, Conversation>,
-  // Retrieve previously active conversation on login from backend
-  activeConversation: ConversationId | null
+  conversations: Map<ConversationId, Conversation>
+  // Active conversation will be set in local storage - navigate to it
 }
 
 // TODO: Figure out how the typing indicator will work
@@ -73,11 +72,9 @@ export interface ConversationMessage {
 
 export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(new Map<ConversationId, Conversation>(PROP_CONVERSATIONS))
-  const activeConversation = ref<ConversationId | null>(null)
 
   const userStore = useUsersStore()
 
-  const currentConversation = computed(() => activeConversation.value ? conversations.value.get(activeConversation.value) ?? null : null)
   const conversation = computed(() => (conversationId: ConversationId) => conversations.value.get(conversationId))
   const message = computed(() => () => (conversationId: ConversationId, messageId: MessageId) => conversations.value.get(conversationId)?.messages.get(messageId))
   const timeout = computed(() => () => (conversationId: ConversationId) => conversations.value.get(conversationId)?.timeout)
@@ -116,9 +113,9 @@ export const useMessageStore = defineStore('messages', () => {
     conversations.value.set(conversationId, conversation)
   }
 
-  function startTyping() {
+  function startTyping(conversationId: ConversationId) {
     // Users should only be able to type in their active conversation
-    const currentConvo = currentConversation.value
+    const currentConvo = conversations.value.get(conversationId)
     // TODO: Analyze: can this situation arise? How? Do we need to handle it?
     // Presumably it will be an error state
     if (!currentConvo) {
@@ -177,5 +174,5 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(conversationId, message, userStore.me, to)
   }
 
-  return { conversations, activeConversation, currentConversation, conversation, message, timeout, addMessage, startTyping, sendMessage }
+  return { conversations, conversation, message, timeout, addMessage, startTyping, sendMessage }
 })
