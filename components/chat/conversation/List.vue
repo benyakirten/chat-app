@@ -6,8 +6,9 @@ const store = useMessageStore()
 
 <template>
   <div class="container">
+    <!-- TODO (future): Add filters -->
     <div class="conversations">
-      <div v-if="store.conversations.size === 0">
+      <div v-if="store.visibleConversations.length === 0">
         No Conversations. Click below to start a new one.
       </div>
       <!--
@@ -16,7 +17,8 @@ const store = useMessageStore()
         But this list will need to be virtualized on the frontend too
       -->
       <ul v-else>
-        <ChatConversationItem v-for="[key, value] in store.conversations" :key="key" :conversation="value" />
+        <ChatConversationItem v-for="conversation in store.visibleConversations" :key="conversation.conversationId"
+          :conversation="conversation" />
       </ul>
     </div>
     <button>

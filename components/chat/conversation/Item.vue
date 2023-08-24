@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-
 import type { Conversation } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const { conversation } = defineProps<{ conversation: Conversation }>()
 const userStore = useUsersStore()
-const users = userStore.getOtherUsers([...conversation.members.keys()])
+const users = userStore.getOtherUsers(conversation.members)
 
 async function viewConversation() {
   await navigateTo(`/chat/${conversation.conversationId}`)
