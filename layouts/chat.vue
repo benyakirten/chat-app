@@ -19,5 +19,7 @@ h1 {
   grid-template-columns: 16rem 1fr;
   column-gap: 2rem;
   height: 65vh;
+  /* I have no idea why the screen is >100% width */
+  width: 75vw;
 }
 </style>

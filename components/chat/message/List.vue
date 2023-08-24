@@ -32,9 +32,10 @@ const messages = computed(() => store.conversations.get(conversationId ?? "")?.m
   }
 
   .list {
-    max-width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+    align-items: start;
   }
 }
 </style>

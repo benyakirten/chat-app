@@ -11,6 +11,7 @@
 <style scoped>
 .container {
   position: relative;
+  max-width: 100vw;
 
   main {
     min-height: 100vh;
