@@ -2,8 +2,8 @@
 import { ConversationId, useMessageStore } from '@/stores/messages';
 
 const store = useMessageStore()
-const { conversationId } = defineProps<{ conversationId: ConversationId }>()
-const messages = computed(() => store.conversation(conversationId)?.messages)
+const { conversationId } = defineProps<{ conversationId: ConversationId | null }>()
+const messages = computed(() => store.conversation(conversationId ?? "")?.messages)
 </script>
 
 <template>

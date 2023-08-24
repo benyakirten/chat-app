@@ -8,7 +8,7 @@ const userStore = useUsersStore()
 const users = userStore.getOtherUsers([...conversation.members.keys()])
 
 async function viewConversation() {
-  await navigateTo({ query: { id: conversation.conversationId } })
+  await navigateTo(`/chat/${conversation.conversationId}`)
 }
 </script>
 

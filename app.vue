@@ -6,7 +6,7 @@ const themeStore = useThemeStore()
 
 <template>
   <div :style="themeStore.activeThemeVariables" id="app-host">
-    <NuxtLayout>
+    <NuxtLayout name="main">
       <NuxtPage />
     </NuxtLayout>
   </div>
