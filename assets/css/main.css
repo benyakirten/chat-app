@@ -55,12 +55,11 @@ h6 {
 }
 
 button {
-  outline: none;
-  border: none;
+  all: unset;
   cursor: pointer;
 
-  &:hover {
-    background-color: inherit;
+  &:focus {
+    outline: revert;
   }
 }
 

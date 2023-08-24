@@ -21,6 +21,7 @@ button {
   right: 4rem;
 
   padding: 1rem;
+  height: 1rem;
 
   display: flex;
   justify-content: space-between;
@@ -29,7 +30,6 @@ button {
   border-radius: 4px;
   background-color: lightgreen;
   border: none;
-  height: 3rem;
 
   div {
     width: 1rem;
