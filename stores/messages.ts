@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+import { ConversationMap } from '@/lib/collections';
 import { useUsersStore } from './users';
 
 export type ConversationId = string
@@ -38,11 +39,11 @@ const conversation1message3: ConversationMessage = {
 const conversation1: Conversation = {
   members: ['u1', 'u2', 'u3'],
   conversationId: 'c1',
-  messages: [conversation1message1, conversation1message2, conversation1message3],
-  unreadMessages: 0,
+  messages: new Map([[conversation1message1.messageId, conversation1message1], [conversation1message2.messageId, conversation1message2], [conversation1message3.messageId, conversation1message3]]),
+  unreadMessages: 4,
 }
 
-const PROP_CONVERSATIONS: Conversation[] = [conversation1]
+const PROP_CONVERSATIONS = new ConversationMap(conversation1)
 
 // TODO: Figure out how the typing indicator will work
 // Is it by person or one for anyone else typing in a group conversation?
@@ -51,7 +52,7 @@ const PROP_CONVERSATIONS: Conversation[] = [conversation1]
 export interface Conversation {
   conversationId: ConversationId
   members: UserId[]
-  messages: ConversationMessage[]
+  messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
   // Unread messages will be given by the server immediately
   // Added to when a message is received in a conversation that's currently not active
@@ -76,40 +77,19 @@ export const useMessageStore = defineStore('messages', () => {
 
   const userStore = useUsersStore()
 
-  const conversation = computed(() => (conversationId: ConversationId | null) => conversations.value.find(conversation => conversation.conversationId === conversationId))
   const visibleConversations = computed(() => {
     if (!filteredConversationIds.value) {
-      return conversations.value
+      return conversations.value.history
     }
 
-    const conversationsMap = conversations.value.reduce<Map<ConversationId, Conversation>>((acc, next) => {
-      acc.set(next.conversationId, next)
-      return acc
-    }, new Map())
-
     return filteredConversationIds.value.reduce<Conversation[]>((acc, next) => {
-      const convo = conversationsMap.get(next)
+      const convo = conversations.value.get(next)
       if (!convo) {
         return acc
       }
       return [...acc, convo]
     }, [])
   })
-
-  function moveConversationToTheTop(conversationId: ConversationId) {
-    const currentIdx = conversations.value.findIndex(conversation => conversation.conversationId === conversationId)
-    if (currentIdx === -1) {
-      // TODO: Error handling
-      return
-    }
-
-    if (currentIdx === 0) {
-      return
-    }
-
-    const [convo] = conversations.value.splice(currentIdx, 1)
-    conversations.value.push(convo)
-  }
 
   function addMessage(conversationId: ConversationId, message: ConversationMessage, to?: UserId | UserId[]) {
     // Defaults are a private message from another user
@@ -122,27 +102,28 @@ export const useMessageStore = defineStore('messages', () => {
       to = me
     }
 
-    const convo = conversation.value(conversationId)
+    const convo = conversations.value.get(conversationId)
     if (convo) {
-      convo.messages.push(message)
-      moveConversationToTheTop(conversationId)
+      conversations.value.addMessage(conversationId, message)
       return
     }
 
     const members = [message.sender, ...to]
 
+    // TODO: API call here
     const newConvo: Conversation = {
       conversationId,
       members,
-      messages: [message],
+      messages: new Map([[message.messageId, message]]),
       unreadMessages: 0
     }
-    conversations.value.push(newConvo)
+
+    conversations.value.add(newConvo)
   }
 
   function startTyping(conversationId: ConversationId) {
     // Users should only be able to type in their active conversation
-    const convo = conversation.value(conversationId)
+    const convo = conversations.value.get(conversationId)
     // TODO: Analyze: can this situation arise? How? Do we need to handle it?
     // Presumably it will be an error state
     if (!convo) {
@@ -172,7 +153,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const convo = conversation.value(conversationId)
+    const convo = conversations.value.get(conversationId)
     if (!convo) {
       // TODO: Error handling - must have an active conversation to send a message
       return
@@ -200,5 +181,5 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(conversationId, message, to)
   }
 
-  return { conversations, visibleConversations, conversation, moveConversationToTheTop, addMessage, startTyping, sendMessage }
+  return { conversations, visibleConversations, addMessage, startTyping, sendMessage }
 })

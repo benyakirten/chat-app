@@ -21,7 +21,7 @@ const store = useMessageStore()
           :conversation="conversation" />
       </ul>
     </div>
-    <button>
+    <button class="new-conversation">
       Start a new conversation
     </button>
   </div>
@@ -44,11 +44,7 @@ const store = useMessageStore()
     flex-grow: 1;
   }
 
-  ul {
-    overflow: auto;
-  }
-
-  button {
+  .new-conversation {
     cursor: pointer;
     align-self: center;
 

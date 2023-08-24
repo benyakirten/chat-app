@@ -11,13 +11,13 @@
 <style scoped>
 h1 {
   text-align: center;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 
 .messages {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  column-gap: 4rem;
-  height: 70vh;
+  column-gap: 2rem;
+  height: 65vh;
 }
 </style>

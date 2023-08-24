@@ -3,7 +3,7 @@ import { ConversationId, useMessageStore } from '@/stores/messages';
 
 const store = useMessageStore()
 const { conversationId } = defineProps<{ conversationId: ConversationId | null }>()
-const messages = computed(() => store.conversation(conversationId)?.messages)
+const messages = computed(() => store.conversations.get(conversationId ?? "")?.messages)
 </script>
 
 <template>
@@ -11,14 +11,14 @@ const messages = computed(() => store.conversation(conversationId)?.messages)
     <div class="no-conversation" v-if="!messages">
       The conversation couldn't be found?
     </div>
-    <div class="no-messages" v-else-if="messages.length === 0">
-      No messages in this conversation. Be t
+    <div class="no-messages" v-else-if="messages.size === 0">
+      No messages in this conversation. Be the first to send something.
     </div>
     <div class="list" v-else>
       <TransitionGroup name="message-list">
         <!-- Display messages from others on right, display author written mesages on right -->
         <!-- An individual message should display author, last update time, allow users to click on their own comments -->
-        <ChatMessageItem v-for="message in messages" :key="message.messageId" :message="message" />
+        <ChatMessageItem v-for="[key, message] in messages" :key="key" :message="message" />
       </TransitionGroup>
       <!-- TODO: Add Text input that sets writing -->
     </div>
@@ -32,7 +32,9 @@ const messages = computed(() => store.conversation(conversationId)?.messages)
   }
 
   .list {
-    /*  */
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

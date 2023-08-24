@@ -6,7 +6,7 @@
 
 <style scoped>
 .container {
-  padding-top: 4rem;
+  padding-top: 2rem;
   height: 100%;
 }
 </style>

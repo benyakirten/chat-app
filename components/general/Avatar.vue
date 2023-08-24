@@ -9,6 +9,7 @@ const { users, size } = withDefaults(defineProps<{ users: User[], size?: string 
 <template>
   <!-- TODO: What will the avatar show in a group conversation? -->
   <!-- TODO: Update the no image found with a better thing - SVG at the least -->
+  <!-- TODO: Work on CSS -->
   <div class="avatar">
     <span>?</span>
   </div>
@@ -28,7 +29,7 @@ const { users, size } = withDefaults(defineProps<{ users: User[], size?: string 
   border: 1px solid var(--secondary-text);
 
   span {
-    font-size: calc(v-bind(size) * 0.75);
+    font-size: 0.8rem;
   }
 }
 </style>
