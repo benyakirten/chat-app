@@ -21,7 +21,5 @@ h1 {
   margin: 1rem 0.5rem;
   margin-right: 2rem;
   border: 1px solid var(--accent);
-  /* I have no idea why the screen is >100% width */
-  /* width: 75vw; */
 }
 </style>

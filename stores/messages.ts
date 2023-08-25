@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { ConversationMap } from '@/lib/collections';
+import { ConversationMap, getOtherMapKey } from '@/lib/collections';
 import { useUsersStore } from './users';
 
 export type ConversationId = string
@@ -37,7 +37,7 @@ const conversation1message3: ConversationMessage = {
 }
 
 const conversation1: Conversation = {
-  members: ['u1', 'u2', 'u3'],
+  members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
   conversationId: 'c1',
   messages: new Map([[conversation1message1.messageId, conversation1message1], [conversation1message2.messageId, conversation1message2], [conversation1message3.messageId, conversation1message3]]),
   unreadMessages: 4,
@@ -45,13 +45,17 @@ const conversation1: Conversation = {
 
 const PROP_CONVERSATIONS = new ConversationMap(conversation1)
 
+export interface UserConversationState {
+  state: 'typing' | 'idle', lastRead: Date
+}
+
 // TODO: Figure out how the typing indicator will work
 // Is it by person or one for anyone else typing in a group conversation?
 // WhatsApp shows only 1 writing indicator in a group conversation but shows
 // who is writing - 1:1 conversation doesn't matter
 export interface Conversation {
   conversationId: ConversationId
-  members: UserId[]
+  members: Map<UserId, UserConversationState>
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
   // Unread messages will be given by the server immediately
@@ -70,10 +74,11 @@ export interface ConversationMessage {
   updateTime: Date
 }
 
+export type UserReadTimes = Record<UserId, Date>
+
 export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(PROP_CONVERSATIONS)
   const filteredConversationIds = ref<ConversationId[] | null>(null)
-
 
   const userStore = useUsersStore()
 
@@ -91,7 +96,28 @@ export const useMessageStore = defineStore('messages', () => {
     }, [])
   })
 
-  function addMessage(conversationId: ConversationId, message: ConversationMessage, to?: UserId | UserId[]) {
+  // This function will also be called when a channel is told that another user has read a conversation
+  function viewConversation(conversation: Conversation, userId: UserId | null = userStore.me) {
+    if (!userId) {
+      // TODO: Error handling
+      return
+    }
+
+    const member = conversation.members.get(userId)
+    if (!member) {
+      // TODO: Error handling
+      return
+    }
+
+    if (userId === userStore.me) {
+      conversation.unreadMessages = 0
+      // TODO: transmit that user has read the conversation
+    }
+
+    member.lastRead = new Date()
+  }
+
+  function addMessage(conversationId: ConversationId, message: ConversationMessage, to?: UserId) {
     // Defaults are a private message from another user
     if (!to) {
       const me = userStore.me
@@ -108,12 +134,11 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const members = [message.sender, ...to]
-
     // TODO: API call here
     const newConvo: Conversation = {
       conversationId,
-      members,
+      // TODO: Make this better
+      members: new Map([[message.sender, { state: 'idle', lastRead: new Date() }], [to, { state: 'idle', lastRead: new Date() }]]),
       messages: new Map([[message.messageId, message]]),
       unreadMessages: 0
     }
@@ -159,7 +184,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    if (convo.members.length > 2) {
+    if (convo.members.size > 2) {
       // TODO: Send group conversation message
       return
     }
@@ -171,7 +196,7 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     // In a private conversation
-    const to = convo.members.find(member => member !== userStore.me)
+    const to = getOtherMapKey(convo.members, userStore.me)
     if (!to) {
       // TODO: Error handling
       return
@@ -181,5 +206,5 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(conversationId, message, to)
   }
 
-  return { conversations, visibleConversations, addMessage, startTyping, sendMessage }
+  return { conversations, visibleConversations, addMessage, startTyping, sendMessage, viewConversation }
 })

@@ -1,37 +1,30 @@
 import { defineStore } from "pinia";
 
 import { arrayify } from '@/lib/collections';
-import { ConversationId, ConversationMessage, UserId } from "./messages";
+import { ConversationMessage, UserId } from "./messages";
 
 const PROP_USERS = new Map<UserId, User>()
 PROP_USERS.set('u1', {
   name: 'Cool Person',
   userId: 'u1',
   state: 'completed',
-  conversations: new Map([['c1', { state: 'idle', lastRead: new Date() }]])
 })
 PROP_USERS.set('u2', {
   name: 'Completed User',
   userId: 'u2',
   state: 'completed',
-  conversations: new Map([['c1', { state: 'idle', lastRead: new Date() }]])
 })
 PROP_USERS.set('u3', {
   name: 'Pending User',
   userId: 'u3',
   state: 'pending',
-  conversations: new Map([['c1', { state: 'idle', lastRead: new Date() }]])
 })
 PROP_USERS.set('u4', {
   name: 'Failed User',
   userId: 'u4',
   state: 'failed',
-  conversations: new Map([['c1', { state: 'idle', lastRead: new Date() }]])
 })
 
-interface UserConversationState {
-  state: 'typing' | 'idle', lastRead: Date
-}
 // TODO: Add details for a user
 export interface User {
   userId: UserId,
@@ -40,7 +33,6 @@ export interface User {
   // key: string
   // For optimistic updates
   state: 'failed' | 'pending' | 'completed',
-  conversations: Map<ConversationId, UserConversationState>,
   // This may be a reach to add user images
   image?: string
 }
