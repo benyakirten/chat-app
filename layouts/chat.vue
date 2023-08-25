@@ -17,9 +17,11 @@ h1 {
 .messages {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  column-gap: 2rem;
   height: 65vh;
+  margin: 1rem 0.5rem;
+  margin-right: 2rem;
+  border: 1px solid var(--accent);
   /* I have no idea why the screen is >100% width */
-  width: 75vw;
+  /* width: 75vw; */
 }
 </style>

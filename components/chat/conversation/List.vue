@@ -34,9 +34,6 @@ const store = useMessageStore()
   justify-content: space-between;
   height: 100%;
 
-  /* TODO: Make this look better */
-  --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
-  box-shadow: 7px 8px 15px -1px var(--box-shadow);
   border-right: 1px solid var(--accent);
   border-top: 1px solid var(--accent);
 

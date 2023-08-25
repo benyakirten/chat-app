@@ -12,7 +12,7 @@ const messages = computed(() => store.conversations.get(conversationId ?? "")?.m
       The conversation couldn't be found?
     </div>
     <div class="no-messages" v-else-if="messages.size === 0">
-      No messages in this conversation. Be the first to send something.
+      No messages in this conversation. Be the first to say something.
     </div>
     <div class="list" v-else>
       <TransitionGroup name="message-list">
@@ -34,8 +34,10 @@ const messages = computed(() => store.conversations.get(conversationId ?? "")?.m
   .list {
     display: flex;
     flex-direction: column;
+
     gap: 1rem;
-    align-items: start;
+    align-items: flex-start;
+    padding: 0.5rem;
   }
 }
 </style>
