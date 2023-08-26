@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 
-import { arrayify } from '@/lib/collections';
-import { ConversationMessage, UserId } from "./messages";
+import { ConversationMessage, UserConversationState, UserId } from "./messages";
 
 const PROP_USERS = new Map<UserId, User>()
 PROP_USERS.set('u1', {
@@ -71,14 +70,22 @@ export const useUsersStore = defineStore("users", () => {
     me.value === message.sender
   )
 
-  const getOtherUsers = computed(() => (userIds: UserId | UserId[]) =>
-    arrayify(userIds).reduce<User[]>((acc, next) => {
-      const user = users.value.get(next)
-      if (user && user.userId !== me.value) {
-        acc.push(user)
+  const getOtherUsers = computed(() => (userStates: Map<UserId, UserConversationState>) => {
+    const userList: User[] = []
+    for (const userId of userStates.keys()) {
+      if (userId === me.value) {
+        continue
       }
-      return acc
-    }, [])
+
+      const user = users.value.get(userId)
+      if (!user) {
+        continue
+      }
+      userList.push(user)
+    }
+
+    return userList
+  }
   )
 
   return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine }

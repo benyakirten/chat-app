@@ -3,7 +3,7 @@ import { UserReadTimes, type ConversationMessage } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const userStore = useUsersStore()
-const { message, userReadTimes } = defineProps<{ message: ConversationMessage, userReadTimes: UserReadTimes }>()
+const { message, userReadTimes, isLastMessage } = defineProps<{ message: ConversationMessage, userReadTimes: UserReadTimes, isLastMessage: boolean }>()
 const isMine = computed(() => userStore.isMine(message))
 
 const readList = computed(() => {
@@ -42,11 +42,20 @@ const status = computed(() => {
         }).format(message.createTime) }}
     </span>
     <span class="message" :class="{ right: isMine }">
-      {{ message.content }}
+      <span>
+        {{ message.content }}
+      </span>
+      <div></div>
     </span>
-    <span class="status right" v-if="isMine">
+    <span class="bottom-data right" v-if="isMine">
       <!-- TODO: Add tooltip, add pending indicator, add retry button, add, if successful, edit/delete buttons -->
-      {{ status }}
+      <span class="self-controls">
+        <button>Edit</button>
+        <button>Delete</button>
+      </span>
+      <span class="status" v-if="isLastMessage">
+        {{ status }}
+      </span>
     </span>
   </div>
 </template>
@@ -55,6 +64,7 @@ const status = computed(() => {
 .container {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
 
   .right {
     align-self: flex-end;
@@ -68,15 +78,38 @@ const status = computed(() => {
   .message {
     border-radius: 2rem;
     background-color: var(--bg-color-alt1);
-    --r: 25px;
-    --t: 30px;
+
     position: relative;
     padding: 0.5rem 0.75rem;
     width: max-content;
+
+    display: grid;
+    place-items: center;
+
+    div {
+      place-items: end;
+    }
   }
+
+  .bottom-data {
+    color: var(--neutral);
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+  }
+
+  .self-controls {
+    button {
+      display: inline;
+      margin-right: 0.5rem;
+    }
+  }
+
 
   .status {
     text-transform: capitalize;
+    margin-right: 1rem;
   }
 }
 </style>

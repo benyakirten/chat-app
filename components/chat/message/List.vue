@@ -33,8 +33,8 @@ function getUserReadTimes(conversation: Conversation): UserReadTimes {
       <TransitionGroup name="message-list">
         <!-- Display messages from others on right, display author written mesages on right -->
         <!-- An individual message should display author, last update time, allow users to click on their own comments -->
-        <ChatMessageItem v-for="[key, message] in messages" :key="key" :message="message"
-          :user-read-times="userReadTimes" />
+        <ChatMessageItem v-for="([key, message], idx) of messages" :key="key" :message="message"
+          :user-read-times="userReadTimes" :is-last-message="idx === messages.size - 1" />
       </TransitionGroup>
       <!-- TODO: Add Text input that sets writing -->
     </div>

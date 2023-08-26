@@ -18,8 +18,9 @@ h1 {
   display: grid;
   grid-template-columns: 16rem 1fr;
   height: 65vh;
-  margin: 1rem 0.5rem;
+  margin: 1rem 0.5rem 0;
   margin-right: 2rem;
   border: 1px solid var(--accent);
+  border-left: none;
 }
 </style>
