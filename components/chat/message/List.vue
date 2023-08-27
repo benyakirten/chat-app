@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Conversation, ConversationId, UserId, UserReadTimes, useMessageStore } from '@/stores/messages';
+import { Conversation, ConversationId, ConversationMessage, MessageId, UserId, UserReadTimes, useMessageStore } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const messageStore = useMessageStore()
@@ -19,24 +19,46 @@ function getUserReadTimes(conversation: Conversation): UserReadTimes {
   }
   return readMap
 }
+
+function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
+  const messageChunks: ConversationMessage[][] = []
+
+  let lastAuthor: UserId | null = null
+  let currentChunk: ConversationMessage[] = []
+  for (const message of messages.values()) {
+    if (lastAuthor && lastAuthor !== message.sender) {
+      messageChunks.push(currentChunk)
+      currentChunk = []
+    }
+
+    lastAuthor = message.sender
+    currentChunk.push(message)
+  }
+
+  // TODO: Figure out how to make sure last chunk is
+  if (currentChunk.length > 0) {
+    messageChunks.push(currentChunk)
+  }
+
+  return messageChunks
+}
+
+const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 </script>
 
 <template>
   <div class="container">
-    <div class="no-conversation" v-if="!messages || !conversationId">
+    <div class="no-conversation" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found?
     </div>
-    <div class="no-messages" v-else-if="messages.size === 0">
+    <div class="no-messages" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
     </div>
     <div class="list" v-else>
       <TransitionGroup name="message-list">
-        <!-- Display messages from others on right, display author written mesages on right -->
-        <!-- An individual message should display author, last update time, allow users to click on their own comments -->
-        <ChatMessageItem v-for="([key, message], idx) of messages" :key="key" :message="message"
-          :user-read-times="userReadTimes" :is-last-message="idx === messages.size - 1" />
+        <ChatMessageChunk v-for="chunk of messageChunks" :key="chunk[0].messageId" :chunk="chunk"
+          :user-read-times="userReadTimes" />
       </TransitionGroup>
-      <!-- TODO: Add Text input that sets writing -->
     </div>
   </div>
 </template>
@@ -55,5 +77,18 @@ function getUserReadTimes(conversation: Conversation): UserReadTimes {
     align-items: flex-start;
     padding: 0.5rem;
   }
+}
+
+.message-list-enter-active,
+.message-list-leave-active {
+  transition: opacity var(--time-150) ease, transform var(--time-200), ease-in var(--time-50);
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.message-list-enter-from,
+.message-list-leave-to {
+  opacity: 0;
+  transform: scaleX(0);
 }
 </style>

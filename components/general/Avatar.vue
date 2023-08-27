@@ -1,9 +1,13 @@
 <script lang="ts" setup>
-import { User } from '@/stores/users';
+import { UserId } from '@/stores/messages';
+import { useUsersStore } from '@/stores/users';
+import { UserIcon } from '@heroicons/vue/24/solid';
 
-const { users, size } = withDefaults(defineProps<{ users: User[], size?: string }>(), {
+const userStore = useUsersStore()
+const { userId, size } = withDefaults(defineProps<{ userId: UserId, size?: string }>(), {
   size: "1.5rem",
 })
+const user = computed(() => userStore.users.get(userId))
 </script>
 
 <template>
@@ -11,7 +15,8 @@ const { users, size } = withDefaults(defineProps<{ users: User[], size?: string 
   <!-- TODO: Update the no image found with a better thing - SVG at the least -->
   <!-- TODO: Work on CSS -->
   <div class="avatar">
-    <span>?</span>
+    <img v-if="user?.image" :src="user.image" :alt="user.name" />
+    <UserIcon v-else :aria-label="user?.name ?? 'Unknown User'" />
   </div>
 </template>
 

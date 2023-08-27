@@ -18,8 +18,8 @@ async function viewConversation() {
         <!-- TODO: Make everythign here into its own component, improve CSS -->
         <div class="unread" v-if="conversation.unreadMessages > 0">{{ conversation.unreadMessages }}</div>
       </Transition>
-      <GeneralAvatar :users="users" />
       <span>
+        <!-- TODO: Make this better -->
         {{ users.map(user => user.name).join(", ") }}
       </span>
     </button>
@@ -54,12 +54,12 @@ async function viewConversation() {
 
 .unread-enter-from,
 .unread-leave-to {
-  scale: 0;
+  opacity: 0;
 }
 
 .unread-enter-active,
 .unread-leave-active {
-  transition: scale var(--time-250) ease-in;
-  scale: 1;
+  transition: opacity var(--time-100) ease-in;
+  opacity: 1;
 }
 </style>

@@ -28,18 +28,43 @@ const conversation1message2: ConversationMessage = {
 }
 
 const conversation1message3: ConversationMessage = {
-  sender: 'u1',
+  sender: 'u2',
   messageId: 'c1m3',
-  content: 'I\'m me. Don\'t you know me?',
+  content: 'Interested in knowing?',
   status: 'complete',
   createTime: new Date('2020-1-2'),
+  updateTime: new Date('2020-1-4'),
+}
+
+
+const conversation1message4: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c1m4',
+  content: 'I\'m me. Don\'t you know me?',
+  status: 'complete',
+  createTime: new Date('2020-1-4'),
+  updateTime: new Date('2020-1-4'),
+}
+
+const conversation1message5: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c1m5',
+  content: 'Everyone knows me.',
+  status: 'complete',
+  createTime: new Date('2020-1-4'),
   updateTime: new Date('2020-1-4'),
 }
 
 const conversation1: Conversation = {
   members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
   conversationId: 'c1',
-  messages: new Map([[conversation1message1.messageId, conversation1message1], [conversation1message2.messageId, conversation1message2], [conversation1message3.messageId, conversation1message3]]),
+  messages: new Map([
+    [conversation1message1.messageId, conversation1message1],
+    [conversation1message2.messageId, conversation1message2],
+    [conversation1message3.messageId, conversation1message3],
+    [conversation1message4.messageId, conversation1message4],
+    [conversation1message5.messageId, conversation1message5]
+  ]),
   unreadMessages: 4,
 }
 
