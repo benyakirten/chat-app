@@ -47,7 +47,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
       -->
       {{ formatMessageDate(message.createTime) }}
     </div>
-    <div v-if="isLast" class="message-tail" :class="isMine ? 'right' : 'left'"></div>
+    <div v-if="isLast" class="message-tail" :class="isMine ? 'message-tail-right' : 'message-tail-left'"></div>
   </div>
 </template>
 
@@ -58,7 +58,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
   row-gap: 0.5rem;
   place-items: center;
 
-  border-radius: 2rem;
+  /* border-radius: 2rem; */
   background-color: var(--bg-color-alt1);
 
   padding: 0.75rem;
@@ -85,18 +85,23 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
 
   &-tail {
     place-self: end;
-    width: 25px;
-    height: 25px;
-    background-color: pink;
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--bg-color-alt1);
     position: absolute;
 
-    .left {
-      /*  */
+    &-left {
+      left: -0.75rem;
+      bottom: 0.5rem;
+      clip-path: polygon(0 100%, 100% 100%, 100% 0);
     }
 
-    .right {
-      /*  */
+    &-right {
+      right: -0.75rem;
+      bottom: 0.5rem;
+      clip-path: polygon(0 0, 0 100%, 100% 100%);
     }
   }
+
 }
 </style>
