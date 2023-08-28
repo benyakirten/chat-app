@@ -81,6 +81,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     color: var(--neutral);
     width: 100%;
     text-align: v-bind(textAlign);
+    font-size: 0.6rem;
   }
 
   &-tail {
@@ -90,15 +91,17 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     background-color: var(--bg-color-alt1);
     position: absolute;
 
+    --dist: 0.75rem;
+
     &-left {
-      left: -0.75rem;
-      bottom: 0.5rem;
+      left: calc(-1 * var(--dist));
+      bottom: var(--dist);
       clip-path: polygon(0 100%, 100% 100%, 100% 0);
     }
 
     &-right {
-      right: -0.75rem;
-      bottom: 0.5rem;
+      right: calc(-1 * var(--dist));
+      bottom: var(--dist);
       clip-path: polygon(0 0, 0 100%, 100% 100%);
     }
   }
