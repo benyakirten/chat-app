@@ -66,20 +66,24 @@ const id = computed(() => `${group}-expadable-content`)
     transition: transform var(--time-250) ease-in;
 
     &--open {
-      transition: padding-bottom var(--time-50) ease var(--time-200);
+      transition: padding-bottom var(--time-50) ease;
       padding-bottom: 1rem;
     }
   }
 
   &:hover {
-    /* TODO: Figure out how to do this with scaleX and not width */
     width: calc(v-bind(width) * 1.05);
   }
 }
 
-.section-expand-enter-active,
+.section-expand-enter-active {
+  transition: height var(--time-400) ease-in-out, opacity var(--time-100) ease-in-out var(--time-150);
+  height: v-bind(height);
+  opacity: 1;
+}
+
 .section-expand-leave-active {
-  transition: height var(--time-250) ease-in-out, opacity var(--time-100) ease-in-out var(--time-50);
+  transition: height var(--time-250) ease-in-out;
   height: v-bind(height);
   opacity: 1;
 }

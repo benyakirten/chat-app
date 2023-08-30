@@ -1,8 +1,14 @@
+<script setup lang="ts">
+import { useLayoutStore } from '@/stores/layout';
+
+const layoutStore = useLayoutStore()
+</script>
+
 <template>
   <div class="container">
     <NavTheSidebar />
     <NavTheHamburgerMenu />
-    <main>
+    <main :class="{ filter: layoutStore.sidebarOpen }">
       <slot></slot>
     </main>
   </div>

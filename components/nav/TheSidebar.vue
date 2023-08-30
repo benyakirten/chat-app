@@ -12,19 +12,19 @@ const themeStore = useThemeStore()
   </Transition>
   <Transition name="slide-in">
     <nav v-if="layoutStore.sidebarOpen">
-      <NavSection height="4rem" width="100%" group="chat" :z-index="5"
+      <NavSection height="8rem" width="100%" group="chat" :z-index="5"
         :background-color="themeStore.activeTheme.bgColorAlt1">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="95%" group="other" :z-index="4"
+      <NavSection height="4rem" width="90%" group="other" :z-index="4"
         :background-color="themeStore.activeTheme.bgColorAlt2">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="90%" group="account" :z-index="3"
+      <NavSection height="4rem" width="80%" group="account" :z-index="3"
         :background-color="themeStore.activeTheme.bgColorAlt3">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
@@ -56,14 +56,8 @@ const themeStore = useThemeStore()
   height: 100vh;
 
   overflow: hidden;
-  /* Reconsider how this background works */
-  /* --backdrop-color-1: color-mix(in srgb, var(--primary-text) 40%, transparent);
-  --backdrop-color-2: color-mix(in srgb, var(--primary-text) 20%, transparent);
-  --backdrop-color-3: color-mix(in srgb, var(--primary-text) 10%, transparent);
-  background: linear-gradient(to bottom right,
-      var(--backdrop-color-1) 25%,
-      var(--backdrop-color-2) 80%,
-      var(--backdrop-color-3)); */
+  backdrop-filter: blur(4px);
+  transition: backdrop-filter var(--time-100) ease;
 }
 
 .fade-in-enter-active,
@@ -86,7 +80,7 @@ nav {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: 70%;
+  width: 40%;
 
   .recent {
     flex-grow: 1;
