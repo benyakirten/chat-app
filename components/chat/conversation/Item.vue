@@ -12,12 +12,13 @@ async function viewConversation() {
 </script>
 
 <template>
-  <li class="conversation">
-    <div class="spacer"></div>
-    <button class="container" @click="viewConversation">
+  <li>
+    <button class="conversation" @click="viewConversation">
+      <!-- TODO: Make this better -->
+      <div></div>
       <Transition name="unread">
         <!-- TODO: Make everythign here into its own component, improve CSS -->
-        <div class="unread" v-if="conversation.unreadMessages > 0">{{ conversation.unreadMessages }}</div>
+        <span class="unread" v-if="conversation.unreadMessages > 0">{{ conversation.unreadMessages }}</span>
       </Transition>
       <span>
         <!-- TODO: Make this better -->
@@ -30,25 +31,18 @@ async function viewConversation() {
 <style scoped>
 .conversation {
   border-bottom: 1px solid var(--accent);
-  padding-right: 0.5rem;
-}
-
-.container {
   position: relative;
 
   display: flex;
   gap: 2rem;
-  padding: 0.5rem 0;
 
-  height: 4rem;
+  height: 100%;
+  width: 100%;
+
+  padding: 0.5rem 0;
 
   background-color: var(--bg-color-primary);
   color: var(--primary-text);
-
-  /* TODO: Replace this with padding - figure out why padding is disrupting shape */
-  .spacer {
-    width: 0.5rem;
-  }
 }
 
 .unread {

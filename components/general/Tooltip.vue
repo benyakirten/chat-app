@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { v4 as uuid } from "uuid";
+
 const { direction, debounceTimeout, id } = withDefaults(
   defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string }>(),
-  { direction: 'right', debounceTimeout: 1600, id: uuid() }
+  { direction: 'top', debounceTimeout: 1600, id: uuid() }
 )
 
-const hovered = ref(true)
+const hovered = ref(false)
 const timeout = ref<NodeJS.Timeout | null>(null)
 
 // Should this be a hook?
@@ -23,21 +24,19 @@ function handleMouseLeave() {
   hovered.value = false
 }
 
-watch(() => hovered.value, val => console.log(val))
-
 const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
 </script>
 
 <template>
   <!-- Not sure why these events are not triggering -->
-  <span class="tooltip" @keydown.escape="hovered = false" @mouseenter="handleMouseEnter" @click.stop="hovered = !hovered"
-    @mouseleave="handleMouseLeave">
+  <span class="tooltip">
     <Transition name="tooltip">
       <div :id="id" role="tooltip" v-if="hovered" class="tooltip-content" :class="tooltipDirectionClass">
         <slot :hovered="hovered" name="content"></slot>
       </div>
     </Transition>
-    <span :aria-describedby="id">
+    <span @keydown.escape="hovered = false" @mouseover="handleMouseEnter" @click.stop="hovered = !hovered"
+      @mouseleave="handleMouseLeave" :aria-describedby="id">
       <slot></slot>
     </span>
   </span>

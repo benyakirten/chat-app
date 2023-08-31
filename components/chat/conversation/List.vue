@@ -35,7 +35,6 @@ const store = useMessageStore()
   height: 100%;
 
   border-right: 1px solid var(--accent);
-  border-top: 1px solid var(--accent);
 
   .conversations {
     flex-grow: 1;
@@ -43,15 +42,13 @@ const store = useMessageStore()
 
   .new-conversation {
     cursor: pointer;
-    align-self: center;
-
-    border-radius: 4rem;
-    width: 70%;
-
-    padding: 0.5rem 1rem;
-    margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0;
+    text-align: center;
 
     transition: background-color var(--time-150) ease-in, color var(--time-150) ease-out;
+
+    border-top: 1px solid var(--accent);
 
     &:hover {
       /* TODO: Improve colors/styles */
