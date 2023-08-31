@@ -85,7 +85,7 @@ nav {
   .recent {
     flex-grow: 1;
     padding: 1rem;
-    width: 30%;
+    width: 70%;
     background-color: var(--bg-color-alt4);
   }
 }

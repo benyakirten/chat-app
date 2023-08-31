@@ -13,6 +13,7 @@ async function viewConversation() {
 
 <template>
   <li class="conversation">
+    <div class="spacer"></div>
     <button class="container" @click="viewConversation">
       <Transition name="unread">
         <!-- TODO: Make everythign here into its own component, improve CSS -->
@@ -37,13 +38,17 @@ async function viewConversation() {
 
   display: flex;
   gap: 2rem;
-  padding-top: 0.5rem;
-  padding-left: 1rem;
+  padding: 0.5rem 0;
 
   height: 4rem;
 
   background-color: var(--bg-color-primary);
   color: var(--primary-text);
+
+  /* TODO: Replace this with padding - figure out why padding is disrupting shape */
+  .spacer {
+    width: 0.5rem;
+  }
 }
 
 .unread {

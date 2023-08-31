@@ -45,6 +45,12 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
         For both: if edited, say edited (time)
         For example - isMine, errored
       -->
+      <GeneralTooltip>
+        <template #content>
+          Tooltip content
+        </template>
+        This is the hoverable text
+      </GeneralTooltip>
       {{ formatMessageDate(message.createTime) }}
     </div>
     <div v-if="isLast" class="message-tail" :class="isMine ? 'message-tail-right' : 'message-tail-left'"></div>
