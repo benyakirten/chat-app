@@ -1,7 +1,8 @@
 <script setup lang="ts">
-const { direction, debounceTimeout } = withDefaults(
-  defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number }>(),
-  { direction: 'top', debounceTimeout: 800 }
+import { v4 as uuid } from "uuid";
+const { direction, debounceTimeout, id } = withDefaults(
+  defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string }>(),
+  { direction: 'right', debounceTimeout: 1600, id: uuid() }
 )
 
 const hovered = ref(true)
@@ -29,13 +30,16 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
 
 <template>
   <!-- Not sure why these events are not triggering -->
-  <span class="tooltip" @mouseenter="handleMouseEnter" @click.stop="hovered = !hovered" @mouseleave="handleMouseLeave">
+  <span class="tooltip" @keydown.escape="hovered = false" @mouseenter="handleMouseEnter" @click.stop="hovered = !hovered"
+    @mouseleave="handleMouseLeave">
     <Transition name="tooltip">
-      <div v-if="hovered" class="tooltip-content" :class="tooltipDirectionClass">
+      <div :id="id" role="tooltip" v-if="hovered" class="tooltip-content" :class="tooltipDirectionClass">
         <slot :hovered="hovered" name="content"></slot>
       </div>
     </Transition>
-    <slot></slot>
+    <span :aria-describedby="id">
+      <slot></slot>
+    </span>
   </span>
 </template>
 
@@ -46,6 +50,7 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
   &-content {
     background-color: var(--bg-color-alt4);
     /* TODO: Use the popover/anchor API when they are well supported */
+    /* TODO: Use variables to make code more DRY */
     position: absolute;
     z-index: 1;
     padding: 0.25rem 0.5rem;
@@ -64,9 +69,8 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
     }
 
     &-top {
-      top: -100%;
+      bottom: 0;
       left: 50%;
-      /* Extra distance for tail */
       transform: translate(-50%, calc(-50% - 0.35rem));
 
       &::after {
@@ -79,22 +83,54 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
     }
 
     &-bottom {
-      /*  */
+      bottom: -100%;
+      left: 50%;
+      transform: translate(-50%, calc(50% + 0.35rem));
+
+      &::after {
+        top: -0.35rem;
+        left: 50%;
+        width: 0.5rem;
+        transform: translateX(-50%);
+        clip-path: polygon(100% 100%, 0% 100%, 50% 0);
+      }
     }
 
     &-right {
-      /*  */
+      top: 50%;
+      right: -100%;
+      transform: translate(calc(-25% - 0.35rem), -50%);
+
+      &::after {
+        top: 50%;
+        left: -0.35rem;
+        width: 0.35rem;
+        height: 0.35rem;
+        transform: translateY(-50%);
+        clip-path: polygon(100% 0, 100% 100%, 0 50%);
+      }
     }
 
     &-left {
-      /*  */
+      top: 50%;
+      right: 100%;
+      transform: translate(-0.35rem, -50%);
+
+      &::after {
+        top: 50%;
+        left: 100%;
+        width: 0.35rem;
+        height: 0.35rem;
+        transform: translateY(-50%);
+        clip-path: polygon(100% 50%, 0% 100%, 0 0);
+      }
     }
   }
 }
 
 .tooltip-enter-active,
 .tooltip-leave-active {
-  transition: all var(--time-400);
+  transition: all var(--time-300) ease;
 }
 
 .tooltip-enter-from,
