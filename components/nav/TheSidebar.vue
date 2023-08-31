@@ -86,7 +86,7 @@ nav {
     flex-grow: 1;
     padding: 1rem;
     width: 30%;
-    background-color: v-bind('themeStore.activeTheme.bgColorAlt4')
+    background-color: var(--bg-color-alt4);
   }
 }
 

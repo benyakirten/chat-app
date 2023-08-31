@@ -43,6 +43,7 @@ const id = computed(() => `${group}-expadable-content`)
   box-shadow: -7px 8px 6px -3px var(--box-shadow);
   transition: width var(--time-250) ease-in;
   z-index: var(--z-index);
+  padding: 1rem;
 
   &-header {
     cursor: pointer;
@@ -56,9 +57,9 @@ const id = computed(() => `${group}-expadable-content`)
     border: none;
     color: var(--primary-text);
     background-color: var(--bgcolor);
-    padding: 1rem;
     width: 100%;
     height: 100%;
+    padding: 0.5rem 0;
   }
 
   &-body {
