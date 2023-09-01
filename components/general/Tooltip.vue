@@ -6,13 +6,14 @@ const { direction, debounceTimeout, id } = withDefaults(
   { direction: 'top', debounceTimeout: 800, id: uuid() }
 )
 
-const hovered = ref(false)
+const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
+
 const timeout = ref<NodeJS.Timeout | null>(null)
 
 // Should this be a hook?
 function handleMouseEnter() {
   timeout.value = setTimeout(() => {
-    hovered.value = true
+    tooltipState.value = 'hovered'
     timeout.value = null
   }, debounceTimeout)
 }
@@ -21,22 +22,38 @@ function handleMouseLeave() {
   if (timeout.value) {
     clearTimeout(timeout.value)
   }
-  hovered.value = false
+  if (tooltipState.value === 'hovered') {
+    tooltipState.value = 'hidden'
+  }
+}
+
+function handleClick() {
+  tooltipState.value = tooltipState.value === 'hidden' ? 'clicked' : 'hidden'
 }
 
 const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
+
+onMounted(() => {
+  const listener = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      tooltipState.value = 'hidden'
+    }
+  }
+  window.addEventListener('keydown', listener)
+  return () => window.removeEventListener('keydown', listener)
+})
 </script>
 
 <template>
   <!-- Not sure why these events are not triggering -->
   <span class="tooltip">
     <Transition name="tooltip">
-      <div :id="id" role="tooltip" v-if="hovered" class="tooltip-content" :class="tooltipDirectionClass">
-        <slot :hovered="hovered" name="content"></slot>
+      <div :id="id" role="tooltip" v-if="tooltipState !== 'hidden'" class="tooltip-content"
+        :class="tooltipDirectionClass">
+        <slot :state="tooltipState" name="content"></slot>
       </div>
     </Transition>
-    <span @keydown.escape="hovered = false" @mouseover="handleMouseEnter" @click.stop="hovered = !hovered"
-      @mouseleave="handleMouseLeave" :aria-describedby="id">
+    <span @mouseover="handleMouseEnter" @click.stop="handleClick" @mouseleave="handleMouseLeave" :aria-describedby="id">
       <slot></slot>
     </span>
   </span>
@@ -44,6 +61,7 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
 
 <style scoped>
 .tooltip {
+  /* TODO: Get tooltip positioning to work correctly for all items */
   position: relative;
 
   &-content {
@@ -127,9 +145,12 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
   }
 }
 
-.tooltip-enter-active,
-.tooltip-leave-active {
+.tooltip-enter-active {
   transition: all var(--time-300) ease;
+}
+
+.tooltip-leave-active {
+  transition: all var(--time-300) ease var(--time-100);
 }
 
 .tooltip-enter-from,

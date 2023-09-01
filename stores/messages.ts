@@ -41,7 +41,7 @@ const conversation1message4: ConversationMessage = {
   sender: 'u1',
   messageId: 'c1m4',
   content: 'I\'m me. Don\'t you know me?',
-  status: 'complete',
+  status: 'pending',
   createTime: new Date('2020-1-4'),
   updateTime: new Date('2020-1-4'),
 }
@@ -50,7 +50,7 @@ const conversation1message5: ConversationMessage = {
   sender: 'u1',
   messageId: 'c1m5',
   content: 'Everyone knows me.',
-  status: 'complete',
+  status: 'error',
   createTime: new Date('2020-1-4'),
   updateTime: new Date('2020-1-4'),
 }

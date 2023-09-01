@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+
 import { formatMessageDate } from '@/lib/dates';
 import type { ConversationMessage, UserReadTimes } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
@@ -45,13 +47,18 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
         For both: if edited, say edited (time)
         For example - isMine, errored
       -->
-      <span v-if="isMine && message.status === 'error'">An error happened</span>
+      <span class="message-error" v-if="isMine && message.status === 'error'">
+        <span>An error occurred</span>
+        <GeneralIconButton size="0.8rem" title="Retry">
+          <ArrowPathIcon />
+        </GeneralIconButton>
+      </span>
       <span v-else-if="isMine && message.status === 'pending'">Loading</span>
       <span v-else>
         Sent {{ formatMessageDate(message.createTime) }}
         <GeneralTooltip v-if="message.createTime.valueOf() !== message.updateTime.valueOf()">
           <template #content>
-            <div class="tooltip-content">Edited at {{ formatMessageDate(message.updateTime) }}</div>
+            Edited at {{ formatMessageDate(message.updateTime) }}
           </template>
           (Edited)
         </GeneralTooltip>
@@ -73,9 +80,15 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
 
   padding: 0.75rem;
 
-
   &-author {
     color: var(--highlight);
+  }
+
+  &-error {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    justify-content: flex-end;
   }
 
   &-buttons {
