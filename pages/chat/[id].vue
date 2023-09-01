@@ -1,7 +1,13 @@
 <script lang="ts" setup>
+import { useMessageStore } from '@/stores/messages';
+
 const route = useRoute()
+const messageStore = useMessageStore()
 // TODO: Work on types here
-const conversationId = computed(() => route.params["id"] as string)
+const conversationId = computed(() => route.params['id'] as string)
+onMounted(() => {
+  messageStore.viewConversation(conversationId.value)
+})
 </script>
 
 <template>

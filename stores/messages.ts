@@ -122,8 +122,14 @@ export const useMessageStore = defineStore('messages', () => {
   })
 
   // This function will also be called when a channel is told that another user has read a conversation
-  function viewConversation(conversation: Conversation, userId: UserId | null = userStore.me) {
+  function viewConversation(conversationId: ConversationId, userId: UserId | null = userStore.me) {
     if (!userId) {
+      // TODO: Error handling
+      return
+    }
+
+    const conversation = conversations.value.get(conversationId)
+    if (!conversation) {
       // TODO: Error handling
       return
     }
@@ -136,9 +142,9 @@ export const useMessageStore = defineStore('messages', () => {
 
     if (userId === userStore.me) {
       conversation.unreadMessages = 0
-      // TODO: transmit that user has read the conversation
     }
 
+    // TODO: transmit that user has read the conversation
     member.lastRead = new Date()
   }
 

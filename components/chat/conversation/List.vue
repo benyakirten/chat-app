@@ -18,10 +18,10 @@ const store = useMessageStore()
       -->
       <ul v-else>
         <ChatConversationItem v-for="conversation in store.visibleConversations" :key="conversation.conversationId"
-          :conversation="conversation" />
+          :conversation-id="conversation.conversationId" />
       </ul>
     </div>
-    <button class="new-conversation">
+    <button class="new-conversation" disabled>
       Start a new conversation
     </button>
   </div>

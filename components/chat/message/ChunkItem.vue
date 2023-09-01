@@ -6,7 +6,7 @@ import type { ConversationMessage, UserReadTimes } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const userStore = useUsersStore()
-const { message, isMine, readTimes, isFirst, isLast } = defineProps<{ message: ConversationMessage, readTimes: UserReadTimes, isMine: boolean, isFirst: boolean, isLast: boolean }>()
+const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{ message: ConversationMessage, readTimes: UserReadTimes, isMine: boolean, isFirst: boolean, isLast: boolean, isPrivate: boolean }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
@@ -36,9 +36,17 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     -->
     <!-- <div class="message-buttons" v-if="isMine"></div> -->
     <div v-if="isFirst" class="message-author">{{ userStore.users.get(message.sender)?.name ?? "Unknown User" }}</div>
-    <div class="message-content">
+    <div class="message-content" :style="{ opacity: isMine && message.status === 'pending' ? 0.6 : 1 }">
       <!-- TODO: Add parsing for code blocks/etc -->
-      {{ message.content }}
+      <span v-if="!isMine || message.status !== 'error'">
+        {{ message.content }}
+      </span>
+      <span class="message-error">
+        <span>An error occurred</span>
+        <GeneralIconButton size="0.8rem" title="Retry">
+          <ArrowPathIcon />
+        </GeneralIconButton>
+      </span>
     </div>
     <div class="message-status">
       <!--
@@ -48,14 +56,25 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
         For example - isMine, errored
       -->
       <span class="message-error" v-if="isMine && message.status === 'error'">
-        <span>An error occurred</span>
-        <GeneralIconButton size="0.8rem" title="Retry">
-          <ArrowPathIcon />
-        </GeneralIconButton>
+        Error
       </span>
       <span v-else-if="isMine && message.status === 'pending'">Loading</span>
       <span v-else>
-        Sent {{ formatMessageDate(message.createTime) }}
+        <span v-if="isMine && isPrivate && readList.length > 0">
+          Read
+        </span>
+        <span v-if="isMine && readList.length > 0">
+          <GeneralTooltip>
+            <template #content>
+              By {{ readList.join(", ") }}
+            </template>
+            Read
+          </GeneralTooltip>
+        </span>
+        <span v-else>
+          Sent
+        </span>
+        {{ formatMessageDate(message.createTime) }}
         <GeneralTooltip v-if="message.createTime.valueOf() !== message.updateTime.valueOf()">
           <template #content>
             Edited at {{ formatMessageDate(message.updateTime) }}

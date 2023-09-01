@@ -57,7 +57,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
     <div class="list" v-else>
       <TransitionGroup name="message-list">
         <ChatMessageChunk v-for="chunk of messageChunks" :key="chunk[0].messageId" :chunk="chunk"
-          :user-read-times="userReadTimes" />
+          :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
       </TransitionGroup>
     </div>
   </div>

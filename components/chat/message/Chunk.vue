@@ -3,7 +3,7 @@ import type { ConversationMessage, UserReadTimes } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const userStore = useUsersStore()
-const { chunk, userReadTimes } = defineProps<{ chunk: ConversationMessage[], userReadTimes: UserReadTimes }>()
+const { chunk, userReadTimes, isPrivate } = defineProps<{ chunk: ConversationMessage[], userReadTimes: UserReadTimes, isPrivate: boolean }>()
 const userId = computed(() => chunk[0].sender)
 const isMine = computed(() => userStore.isMine(chunk[0]))
 const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
@@ -13,7 +13,7 @@ const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
   <div class="message-group" :class="{ right: isMine }">
     <div class="messages">
       <ChatMessageChunkItem v-for="(message, i) in chunk" :read-times="userReadTimes" :message="message" :is-mine="isMine"
-        :is-first="i === 0" :is-last="i === chunk.length - 1" />
+        :is-first="i === 0" :is-last="i === chunk.length - 1" :is-private="isPrivate" />
     </div>
     <div class="avatar">
       <GeneralAvatar :user-id="userId" />

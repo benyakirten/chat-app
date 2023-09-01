@@ -1,28 +1,33 @@
 <script lang="ts" setup>
-import type { Conversation } from '@/stores/messages';
+import { ConversationId, useMessageStore } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
-const { conversation } = defineProps<{ conversation: Conversation }>()
+const messageStore = useMessageStore()
 const userStore = useUsersStore()
-const users = userStore.getOtherUsers(conversation.members)
+
+const { conversationId } = defineProps<{ conversationId: ConversationId }>()
+const conversation = messageStore.conversations.get(conversationId)
 
 async function viewConversation() {
-  await navigateTo(`/chat/${conversation.conversationId}`)
+  await navigateTo(`/chat/${conversationId}`)
 }
 </script>
 
 <template>
   <li>
+    <!-- TODO: Clean up this template -->
     <button class="conversation" @click="viewConversation">
-      <!-- TODO: Make this better -->
-      <div></div>
       <Transition name="unread">
-        <!-- TODO: Make everythign here into its own component, improve CSS -->
-        <span class="unread" v-if="conversation.unreadMessages > 0">{{ conversation.unreadMessages }}</span>
+        <!-- TODO: Make everything here into its own component, improve CSS -->
+        <span class="conversation-unread" v-if="conversation?.unreadMessages && conversation.unreadMessages > 0">{{
+          conversation.unreadMessages }}</span>
       </Transition>
-      <span>
+      <span class="conversation-unread" v-if="!conversation || conversation.unreadMessages === 0"></span>
+
+      <span class="conversation-participants">
         <!-- TODO: Make this better -->
-        {{ users.map(user => user.name).join(", ") }}
+        {{ conversation ? userStore.getOtherUsers(conversation.members).map(user => user.name).join(", ") : `Unable to
+        determine other participants in conversation` }}
       </span>
     </button>
   </li>
@@ -33,23 +38,34 @@ async function viewConversation() {
   border-bottom: 1px solid var(--accent);
   position: relative;
 
-  display: flex;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  column-gap: 2rem;
 
-  height: 100%;
+  min-height: 2rem;
   width: 100%;
 
   padding: 1rem 0;
 
   background-color: var(--bg-color-primary);
   color: var(--primary-text);
+
+  &-unread {
+    font-size: 1.4rem;
+    justify-self: center;
+    align-self: center;
+    color: var(--highlight);
+    grid-column: 1 / 2;
+  }
+
+  &-participants {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    grid-column: 2 / -1;
+  }
 }
 
-.unread {
-  font-size: 1.4rem;
-  align-self: center;
-  color: var(--highlight);
-}
 
 .unread-enter-from,
 .unread-leave-to {
