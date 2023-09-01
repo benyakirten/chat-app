@@ -45,13 +45,17 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
         For both: if edited, say edited (time)
         For example - isMine, errored
       -->
-      <GeneralTooltip>
-        <template #content>
-          Tooltip content
-        </template>
-        This is the hoverable text
-      </GeneralTooltip>
-      {{ formatMessageDate(message.createTime) }}
+      <span v-if="isMine && message.status === 'error'">An error happened</span>
+      <span v-else-if="isMine && message.status === 'pending'">Loading</span>
+      <span v-else>
+        Sent {{ formatMessageDate(message.createTime) }}
+        <GeneralTooltip v-if="message.createTime.valueOf() !== message.updateTime.valueOf()">
+          <template #content>
+            <div class="tooltip-content">Edited at {{ formatMessageDate(message.updateTime) }}</div>
+          </template>
+          (Edited)
+        </GeneralTooltip>
+      </span>
     </div>
     <div v-if="isLast" class="message-tail" :class="isMine ? 'message-tail-right' : 'message-tail-left'"></div>
   </div>
@@ -88,6 +92,11 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     width: 100%;
     text-align: v-bind(textAlign);
     font-size: 0.6rem;
+
+    .tooltip-content {
+      font-size: 1.4rem;
+      padding: 1rem 0.5rem;
+    }
   }
 
   &-tail {

@@ -39,7 +39,7 @@ async function viewConversation() {
   height: 100%;
   width: 100%;
 
-  padding: 0.5rem 0;
+  padding: 1rem 0;
 
   background-color: var(--bg-color-primary);
   color: var(--primary-text);

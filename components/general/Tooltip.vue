@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 
 const { direction, debounceTimeout, id } = withDefaults(
   defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string }>(),
-  { direction: 'top', debounceTimeout: 1600, id: uuid() }
+  { direction: 'top', debounceTimeout: 800, id: uuid() }
 )
 
 const hovered = ref(false)

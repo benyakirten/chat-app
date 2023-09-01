@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, skipHydrate } from 'pinia';
 
 import { ConversationMap, getOtherMapKey } from '@/lib/collections';
 import { useUsersStore } from './users';
@@ -231,5 +231,5 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(conversationId, message, to)
   }
 
-  return { conversations, visibleConversations, addMessage, startTyping, sendMessage, viewConversation }
+  return { conversations: skipHydrate(conversations), visibleConversations, addMessage, startTyping, sendMessage, viewConversation }
 })
