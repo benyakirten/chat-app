@@ -2,21 +2,28 @@
 const text = ref("")
 const itemHeight = ref("0px")
 const textArea = ref<HTMLTextAreaElement | null>(null)
-function handleKeypress(e: KeyboardEvent) {
-  const area = e.target as HTMLTextAreaElement
+const hiddenDiv = ref<HTMLDivElement | null>(null)
+
+watch(text, () => {
   requestAnimationFrame(() => {
-    if (!(e.target instanceof HTMLTextAreaElement)) {
+    if (!hiddenDiv.value) {
       return
     }
-    itemHeight.value = `${e.target.scrollHeight + 4}px`
+    console.log(hiddenDiv.value.scrollHeight)
+    itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
   })
+})
+
+function handleKeydown(e: KeyboardEvent) {
+  //
 }
 </script>
 
 <template>
   <div class="new-message">
+    <div ref="hiddenDiv" class="new-message-hidden">{{ text }}</div>
     <textarea ref="textArea" v-model="text" class="new-message-input" placeholder="Write your message here..."
-      @keydown="handleKeypress"></textarea>
+      @keydown="handleKeydown"></textarea>
   </div>
 </template>
 
@@ -38,8 +45,17 @@ function handleKeypress(e: KeyboardEvent) {
     resize: none;
     font-size: 1.2rem;
 
+    /* TODO: Figure out why this has to be specified */
     font-family: "Roboto";
-    height: clamp(3rem, v-bind(itemHeight), calc(16rem));
+    height: clamp(3.2rem, v-bind(itemHeight), 12.8rem);
+  }
+
+  &-hidden {
+    position: absolute;
+    word-break: break-all;
+    height: min-content;
+    z-index: -100;
+    pointer-events: none;
   }
 }
 </style>
