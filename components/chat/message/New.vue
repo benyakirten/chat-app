@@ -4,7 +4,10 @@ import { ConversationId, useMessageStore } from '@/stores/messages';
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
 
-const text = ref("")
+const text = ref<string | undefined>(undefined)
+const button = ref<HTMLButtonElement | null>(null)
+const form = ref<HTMLFormElement | null>(null)
+const textarea = ref<HTMLTextAreaElement | null>(null)
 const itemHeight = ref("0px")
 const hiddenDiv = ref<HTMLDivElement | null>(null)
 
@@ -18,20 +21,25 @@ watch(text, () => {
 })
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key !== "Enter" || e.shiftKey) {
-    return
+  if (button.value && e.key === "Enter" && !e.shiftKey) {
+    button.value.click()
   }
+  text.value = text.value?.trimEnd()
+}
 
-  messageStore.sendMessage(conversationId, text.value)
+function handleSubmit() {
+  messageStore.sendMessage(conversationId, text.value ?? "")
+  requestAnimationFrame(() => text.value = '')
 }
 </script>
 
 <template>
-  <div class="new-message">
+  <form ref="form" @submit.prevent="handleSubmit" class="new-message">
     <div ref="hiddenDiv" class="new-message-hidden">{{ text }}</div>
-    <textarea v-model="text" class="new-message-input" placeholder="Write your message here..."
-      @keydown="handleKeydown"></textarea>
-  </div>
+    <textarea aria-label="Write Message" ref="textarea" @keydown="handleKeydown" v-model="text" class="new-message-input"
+      placeholder="Write your message here..."></textarea>
+    <button ref="button" type="submit" style="{ display: 'none' }"></button>
+  </form>
 </template>
 
 <style scoped>

@@ -203,7 +203,6 @@ export const useMessageStore = defineStore('messages', () => {
   function sendMessage(conversationId: ConversationId, message: string) {
     // Conversation ID is in case we want to programmatically send messages
     // outside of the active conversation
-
     if (!userStore.me) {
       // TODO: Error handling - this shouldn't be able to happen
       // If we get to this point there has been an error

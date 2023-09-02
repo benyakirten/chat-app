@@ -26,11 +26,12 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
       return false
     }
 
+    convo.messages.set(message.messageId, message)
+    console.log(message)
     if (historyIndex === 0) {
       return true
     }
 
-    convo.messages.set(message.messageId, message)
     this.history.splice(historyIndex, 1)
     this.history.push(convo)
 
