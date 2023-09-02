@@ -1,12 +1,15 @@
 <script setup lang="ts">
-const { title, size } = defineProps<{ title: string, size: string }>()
+const { title, size, type } = withDefaults(
+  defineProps<{ title: string, size: string, type?: 'submit' | 'button' }>(),
+  { type: 'button' }
+)
 const emits = defineEmits<{
   (e: 'click'): void
 }>()
 </script>
 
 <template>
-  <button class="icon-button" :aria-label="title" @click.stop="emits('click')">
+  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click')">
     <GeneralTooltip>
       <template #content>
         {{ title }}

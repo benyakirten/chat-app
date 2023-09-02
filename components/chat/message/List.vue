@@ -49,7 +49,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
 <template>
   <div class="container">
     <div class="no-conversation" v-if="!messageChunks || !conversationId">
-      The conversation couldn't be found?
+      The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </div>
     <div class="no-messages" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
@@ -60,11 +60,15 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
           :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
       </TransitionGroup>
     </div>
+    <ChatMessageNew />
   </div>
 </template>
 
 <style scoped>
 .container {
+  display: grid;
+  padding-bottom: 0.5rem;
+
   .no-messages {
     /*  */
   }
