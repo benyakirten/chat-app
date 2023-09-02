@@ -22,7 +22,6 @@ async function viewConversation() {
         <span class="conversation-unread" v-if="conversation?.unreadMessages && conversation.unreadMessages > 0">{{
           conversation.unreadMessages }}</span>
       </Transition>
-      <span class="conversation-unread" v-if="!conversation || conversation.unreadMessages === 0"></span>
 
       <span class="conversation-participants">
         <!-- TODO: Make this better -->
@@ -70,11 +69,11 @@ async function viewConversation() {
 .unread-enter-from,
 .unread-leave-to {
   opacity: 0;
+  scale: 0.5;
 }
 
 .unread-enter-active,
 .unread-leave-active {
-  transition: opacity var(--time-100) ease-in;
-  opacity: 1;
+  transition: opacity var(--time-200) ease-in, scale var(--time-250) ease;
 }
 </style>

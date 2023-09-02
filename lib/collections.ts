@@ -11,8 +11,12 @@ export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
   return null
 }
 
+// Is this worthwhile over just using a Conversaiton[]?
 export class ConversationMap extends Map<ConversationId, Conversation> {
-  public history: Conversation[] = []
+  private _history: Conversation[] = []
+  public get history() {
+    return this._history.slice()
+  }
 
   constructor(conversations: Conversation | Conversation[]) {
     super()
@@ -21,29 +25,29 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
-    const historyIndex = this.history.findIndex(convo => convo.conversationId === id)
+    const historyIndex = this._history.findIndex(convo => convo.conversationId === id)
     if (!convo || historyIndex === -1) {
       return false
     }
 
     convo.messages.set(message.messageId, message)
-    console.log(message)
     if (historyIndex === 0) {
       return true
     }
 
-    this.history.splice(historyIndex, 1)
-    this.history.push(convo)
+    this._history.splice(historyIndex, 1)
+    this._history.push(convo)
 
     return true
   }
 
   public add(conversation: Conversation) {
-    this.history.push(conversation)
-    this.set(conversation.conversationId, conversation)
+    this._history.push(conversation)
+    return this.set(conversation.conversationId, conversation)
   }
 
   public batchAdd(conversations: Conversation[]) {
     conversations.forEach(conversation => this.add(conversation))
+    return this
   }
 }

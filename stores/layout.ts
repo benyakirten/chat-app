@@ -20,6 +20,7 @@ export const useLayoutStore = defineStore('layout', () => {
   function setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
     sidebarTabOpened.value = tab
   }
+
   function toggleTabOpened(tab: LayoutState["sidebarTabOpened"]) {
     sidebarTabOpened.value = sidebarTabOpened.value === tab ? null : tab
   }

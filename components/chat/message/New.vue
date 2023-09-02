@@ -4,11 +4,9 @@ import { ConversationId, useMessageStore } from '@/stores/messages';
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
 
-const text = ref<string | undefined>(undefined)
+const text = ref('')
 const button = ref<HTMLButtonElement | null>(null)
-const form = ref<HTMLFormElement | null>(null)
-const textarea = ref<HTMLTextAreaElement | null>(null)
-const itemHeight = ref("0px")
+const itemHeight = ref('0px')
 const hiddenDiv = ref<HTMLDivElement | null>(null)
 
 watch(text, () => {
@@ -21,23 +19,25 @@ watch(text, () => {
 })
 
 function handleKeydown(e: KeyboardEvent) {
-  if (button.value && e.key === "Enter" && !e.shiftKey) {
+  if (button.value && e.key === 'Enter' && !e.shiftKey) {
     button.value.click()
   }
-  text.value = text.value?.trimEnd()
 }
 
 function handleSubmit() {
-  messageStore.sendMessage(conversationId, text.value ?? "")
+  messageStore.sendMessage(conversationId, text.value)
+  // Intercept and remove extra end line
+  // which will only be added when the dom next updates
   requestAnimationFrame(() => text.value = '')
 }
 </script>
 
 <template>
-  <form ref="form" @submit.prevent="handleSubmit" class="new-message">
+  <form @submit.prevent="handleSubmit" class="new-message">
     <div ref="hiddenDiv" class="new-message-hidden">{{ text }}</div>
-    <textarea aria-label="Write Message" ref="textarea" @keydown="handleKeydown" v-model="text" class="new-message-input"
+    <textarea aria-label="Write Message" @keydown="handleKeydown" v-model="text" class="new-message-input"
       placeholder="Write your message here..."></textarea>
+    <!-- Should this be visible? Most conversation UIs don't display the button these days -->
     <button ref="button" type="submit" style="{ display: 'none' }"></button>
   </form>
 </template>
