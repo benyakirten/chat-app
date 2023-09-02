@@ -22,7 +22,7 @@ onMounted(() => {
   -->
   <!-- TODO: Determine how to virtualize lists -->
   <!-- TODO: Determine how to start a conversation if you would like to create one -->
-  <NuxtLayout name="chat">
+  <ChatLayout>
     <ChatMessageList :conversationId="conversationId" />
-  </NuxtLayout>
+  </ChatLayout>
 </template>

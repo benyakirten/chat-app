@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="chat">
+  <ChatLayout>
     Select a conversation to see the relevant messages.
-  </NuxtLayout>
+  </ChatLayout>
 </template>
