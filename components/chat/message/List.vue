@@ -60,7 +60,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
           :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
       </TransitionGroup>
     </div>
-    <ChatMessageNew />
+    <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />
   </div>
 </template>
 

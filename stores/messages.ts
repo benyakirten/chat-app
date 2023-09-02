@@ -1,4 +1,5 @@
 import { defineStore, skipHydrate } from 'pinia';
+import { v4 as uuid } from "uuid";
 
 import { ConversationMap, getOtherMapKey } from '@/lib/collections';
 import { useUsersStore } from './users';
@@ -199,7 +200,7 @@ export const useMessageStore = defineStore('messages', () => {
     }, TYPING_TIMEOUT)
   }
 
-  function sendMessage(conversationId: ConversationId, message: ConversationMessage) {
+  function sendMessage(conversationId: ConversationId, message: string) {
     // Conversation ID is in case we want to programmatically send messages
     // outside of the active conversation
 
@@ -233,8 +234,17 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    // TODO: Transmit message
-    addMessage(conversationId, message, to)
+    const convoMessage: ConversationMessage = {
+      sender: userStore.me,
+      messageId: uuid(),
+      content: message,
+      status: 'pending',
+      createTime: new Date(),
+      updateTime: new Date()
+    }
+
+    // TODO: Transmit message for the channel
+    addMessage(conversationId, convoMessage, to)
   }
 
   return { conversations: skipHydrate(conversations), visibleConversations, addMessage, startTyping, sendMessage, viewConversation }

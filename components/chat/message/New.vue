@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { ConversationId, useMessageStore } from '@/stores/messages';
+
+const { conversationId } = defineProps<{ conversationId: ConversationId }>()
+const messageStore = useMessageStore()
+
 const text = ref("")
 const itemHeight = ref("0px")
-const textArea = ref<HTMLTextAreaElement | null>(null)
 const hiddenDiv = ref<HTMLDivElement | null>(null)
 
 watch(text, () => {
@@ -9,20 +13,23 @@ watch(text, () => {
     if (!hiddenDiv.value) {
       return
     }
-    console.log(hiddenDiv.value.scrollHeight)
     itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
   })
 })
 
 function handleKeydown(e: KeyboardEvent) {
-  //
+  if (e.key !== "Enter" || e.shiftKey) {
+    return
+  }
+
+  messageStore.sendMessage(conversationId, text.value)
 }
 </script>
 
 <template>
   <div class="new-message">
     <div ref="hiddenDiv" class="new-message-hidden">{{ text }}</div>
-    <textarea ref="textArea" v-model="text" class="new-message-input" placeholder="Write your message here..."
+    <textarea v-model="text" class="new-message-input" placeholder="Write your message here..."
       @keydown="handleKeydown"></textarea>
   </div>
 </template>
@@ -38,6 +45,7 @@ function handleKeydown(e: KeyboardEvent) {
   place-content: center;
   justify-content: stretch;
 
+  /* Make CSS less horrid */
   &-input,
   &-hidden {
     padding: 0.5rem 1rem;
