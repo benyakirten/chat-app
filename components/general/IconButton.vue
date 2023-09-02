@@ -4,13 +4,13 @@ const { title, size, type } = withDefaults(
   { type: 'button' }
 )
 const emits = defineEmits<{
-  (e: 'click'): void
+  (e: 'click', event: Event): void
 }>()
 </script>
 
 <template>
-  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click')">
-    <GeneralTooltip>
+  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click', $event)">
+    <GeneralTooltip :disable-click="true">
       <template #content>
         {{ title }}
       </template>

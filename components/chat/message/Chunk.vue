@@ -7,14 +7,16 @@ const { chunk, userReadTimes, isPrivate } = defineProps<{ chunk: ConversationMes
 const userId = computed(() => chunk[0].sender)
 const isMine = computed(() => userStore.isMine(chunk[0]))
 const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
+const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'other'}`)
 </script>
 
 <template>
   <div class="message-group" :class="{ right: isMine }">
-    <div class="messages">
+    <!-- TODO: Figure out why this transition group isn't working -->
+    <TransitionGroup tag="ul" class="messages" :name="transitionGroupName">
       <ChatMessageChunkItem v-for="(message, i) in chunk" :read-times="userReadTimes" :message="message" :is-mine="isMine"
         :is-first="i === 0" :is-last="i === chunk.length - 1" :is-private="isPrivate" />
-    </div>
+    </TransitionGroup>
     <div class="avatar">
       <GeneralAvatar :user-id="userId" />
     </div>
@@ -26,6 +28,7 @@ const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
   display: flex;
   gap: 1rem;
   flex-direction: v-bind(flexDirection);
+  /* overflow: hidden; */
 }
 
 .avatar {
@@ -40,5 +43,37 @@ const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
 
 .right {
   align-self: flex-end;
+}
+
+/* These transitions aren't working */
+.message-mine-move,
+.message-other-move,
+.message-mine-enter-active,
+.message-mine-leave-active,
+.message-other-enter-active,
+.message-other-leave-active {
+  transition: all var(--time-300) ease;
+}
+
+.message-mine-enter-from,
+.message-mine-leave-to,
+.message-other-enter-to,
+.message-other-leave-from {
+  opacity: 0.2;
+}
+
+.message-mine-enter-from,
+.message-mine-leave-to {
+  transform: translateX(100%);
+}
+
+.message-other-enter-to,
+.message-other-leave-from {
+  transform: translateX(-100%);
+}
+
+.message-mine-leave-active,
+.message-other-leave-active {
+  position: absolute;
 }
 </style>

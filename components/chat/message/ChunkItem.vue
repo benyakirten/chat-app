@@ -2,9 +2,10 @@
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 
 import { formatMessageDate } from '@/lib/dates';
-import type { ConversationMessage, UserReadTimes } from '@/stores/messages';
+import { ConversationMessage, UserReadTimes, useMessageStore } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
+const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{ message: ConversationMessage, readTimes: UserReadTimes, isMine: boolean, isFirst: boolean, isLast: boolean, isPrivate: boolean }>()
 
@@ -28,7 +29,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
 </script>
 
 <template>
-  <div class="message">
+  <li class="message">
     <!--
       How should message buttons be displayed
       Implanted into message box on side/top?
@@ -36,27 +37,18 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     -->
     <!-- <div class="message-buttons" v-if="isMine"></div> -->
     <div v-if="isFirst" class="message-author">{{ userStore.users.get(message.sender)?.name ?? "Unknown User" }}</div>
-    <div class="message-content" :style="{ opacity: isMine && message.status === 'pending' ? 0.6 : 1 }">
+    <div class="message-content">
       <!-- TODO: Add parsing for code blocks/etc -->
-      <span v-if="!isMine || message.status !== 'error'">
+      <span :class="{ errored: message.status === 'error', loading: message.status === 'pending' }">
         {{ message.content }}
-      </span>
-      <span class="message-error">
-        <span>An error occurred</span>
-        <GeneralIconButton size="0.8rem" title="Retry">
-          <ArrowPathIcon />
-        </GeneralIconButton>
       </span>
     </div>
     <div class="message-status">
-      <!--
-        If isMine: {{ processing/errored/success/read }} -
-          if success, include createTime, if read, include earliest read time, hover tooltip lists all users that have read it
-        For both: if edited, say edited (time)
-        For example - isMine, errored
-      -->
       <span class="message-error" v-if="isMine && message.status === 'error'">
-        Error
+        <span>An error occurred</span>
+        <GeneralIconButton size="0.8rem" title="Retry Sending Message" @click.stop="messageStore.resendMessage(message)">
+          <ArrowPathIcon />
+        </GeneralIconButton>
       </span>
       <span v-else-if="isMine && message.status === 'pending'">Loading</span>
       <span v-else>
@@ -84,7 +76,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
       </span>
     </div>
     <div v-if="isLast" class="message-tail" :class="isMine ? 'message-tail-right' : 'message-tail-left'"></div>
-  </div>
+  </li>
 </template>
 
 <style scoped>
@@ -94,7 +86,6 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
   row-gap: 0.5rem;
   place-items: center;
 
-  /* border-radius: 2rem; */
   background-color: var(--bg-color-alt1);
 
   padding: 0.75rem;
@@ -110,13 +101,19 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     justify-content: flex-end;
   }
 
-  &-buttons {
-    /*  */
-  }
-
   &-content {
     text-align: left;
     width: 100%;
+    transition: all var(--time-250) ease-in;
+
+    .errored {
+      text-decoration: line-through;
+    }
+
+    .loading,
+    .errored {
+      opacity: 0.7;
+    }
   }
 
   &-status {

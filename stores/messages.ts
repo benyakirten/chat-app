@@ -246,5 +246,16 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(conversationId, convoMessage, to)
   }
 
-  return { conversations: skipHydrate(conversations), visibleConversations, addMessage, startTyping, sendMessage, viewConversation }
+  function resendMessage(message: ConversationMessage) {
+    console.log("CALLED")
+    message.status = 'pending'
+    // TODO: Attempt to create the message again
+
+    // TODO: Delete this
+    setTimeout(() => {
+      message.status = 'complete'
+    }, 1000)
+  }
+
+  return { conversations: skipHydrate(conversations), visibleConversations, resendMessage, addMessage, startTyping, sendMessage, viewConversation }
 })

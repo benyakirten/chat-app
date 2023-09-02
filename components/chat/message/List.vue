@@ -55,10 +55,8 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
       No messages in this conversation. Be the first to say something.
     </div>
     <div class="list" v-else>
-      <TransitionGroup name="message-list">
-        <ChatMessageChunk v-for="chunk of messageChunks" :key="chunk[0].messageId" :chunk="chunk"
-          :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
-      </TransitionGroup>
+      <ChatMessageChunk v-for="chunk of messageChunks" :key="chunk[0].messageId" :chunk="chunk"
+        :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
     </div>
     <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />
   </div>
@@ -81,18 +79,5 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
     align-items: flex-start;
     padding: 0.5rem;
   }
-}
-
-.message-list-enter-active,
-.message-list-leave-active {
-  transition: opacity var(--time-150) ease, transform var(--time-200), ease-in var(--time-50);
-  opacity: 1;
-  transform: scaleX(1);
-}
-
-.message-list-enter-from,
-.message-list-leave-to {
-  opacity: 0;
-  transform: scaleX(0);
 }
 </style>

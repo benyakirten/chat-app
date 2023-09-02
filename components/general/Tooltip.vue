@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { v4 as uuid } from "uuid";
 
-const { direction, debounceTimeout, id } = withDefaults(
-  defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string }>(),
-  { direction: 'top', debounceTimeout: 800, id: uuid() }
+const { direction, debounceTimeout, id, disableClick } = withDefaults(
+  defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string, disableClick?: boolean }>(),
+  { direction: 'top', debounceTimeout: 800, id: uuid(), disableClick: false }
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
@@ -27,7 +27,16 @@ function handleMouseLeave() {
   }
 }
 
-function handleClick() {
+function handleClick(e: Event) {
+  if (disableClick) {
+    tooltipState.value = 'hidden'
+    if (timeout.value) {
+      clearTimeout(timeout.value)
+    }
+
+    return
+  }
+  e.stopPropagation()
   tooltipState.value = tooltipState.value === 'hidden' ? 'clicked' : 'hidden'
 }
 
@@ -53,7 +62,7 @@ onMounted(() => {
         <slot :state="tooltipState" name="content"></slot>
       </div>
     </Transition>
-    <span @mouseover="handleMouseEnter" @click.stop="handleClick" @mouseleave="handleMouseLeave" :aria-describedby="id">
+    <span @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave" :aria-describedby="id">
       <slot></slot>
     </span>
   </span>
