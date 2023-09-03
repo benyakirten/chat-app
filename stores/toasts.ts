@@ -3,6 +3,8 @@
 import { defineStore } from "pinia"
 import { v4 as uuid } from "uuid"
 
+const DEFAULT_TOAST_TIMEOUT = 3_000
+
 export type ToastId = string
 // TODO: Consider how that would be implemented/typed
 export interface Toast {
@@ -12,7 +14,7 @@ export interface Toast {
   type: 'success' | 'warning' | 'error' | 'info'
 }
 
-type ToastOptions = Partial<Omit<Toast, 'id' | 'content'> & { timeout: number }>
+type ToastOptions = Partial<Omit<Toast, 'id' | 'content'> & { timeout: number | null }>
 
 export const useToastStore = defineStore('toasts', () => {
   const toasts = ref<Map<ToastId, Toast>>(new Map())
@@ -21,7 +23,7 @@ export const useToastStore = defineStore('toasts', () => {
    * If timeout is null, the toast won't close on its own.
    * If closeable is false then the user cannot remove the toast.
    */
-  function add(content: string, { closeable = true, type = 'success', timeout = 3000 }: ToastOptions) {
+  function add(content: string, { closeable = true, type = 'success', timeout = DEFAULT_TOAST_TIMEOUT }: ToastOptions = {}) {
     const id = uuid()
     const toast: Toast = { id, content, closeable, type }
 

@@ -8,15 +8,17 @@ const toastStore = useToastStore()
 
 <template>
   <section class="toaster">
-    <output role="status" class="toaster-toast" v-for="[id, toast] of toastStore.toasts" :key="id" :class="toast.type">
-      <span class="toaster-toast-content">
-        {{ toast.content }}
-      </span>
-      <GeneralIconButton size="1.4rem" title="Close" :disabled="!toast.closeable" @click="toastStore.dismiss(id)">
-        <!-- TODO: Make this better/used by the component -->
-        <XCircleIcon :style="{ color: toast.closeable ? 'white' : 'gray' }" />
-      </GeneralIconButton>
-    </output>
+    <TransitionGroup name="toast">
+      <output role="status" class="toaster-toast" v-for="[id, toast] of toastStore.toasts" :key="id" :class="toast.type">
+        <span class="toaster-toast-content">
+          {{ toast.content }}
+        </span>
+        <GeneralIconButton size="1.4rem" title="Close" :disabled="!toast.closeable" @click="toastStore.dismiss(id)">
+          <!-- TODO: Make this better/used by the component -->
+          <XCircleIcon :style="{ color: toast.closeable ? 'white' : 'gray' }" />
+        </GeneralIconButton>
+      </output>
+    </TransitionGroup>
   </section>
 </template>
 
@@ -64,5 +66,16 @@ const toastStore = useToastStore()
       background-color: blue;
     }
   }
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: transform var(--time-400) ease;
+  transform-origin: left;
+}
+
+.toast-leave-to,
+.toast-enter-from {
+  transform: scaleX(0);
 }
 </style>
