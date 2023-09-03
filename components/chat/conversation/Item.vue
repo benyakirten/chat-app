@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { v4 as uuid } from "uuid";
+
 import { ConversationId, useMessageStore } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
@@ -8,15 +10,37 @@ const userStore = useUsersStore()
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const conversation = messageStore.conversations.get(conversationId)
 
-async function viewConversation() {
+const points = ref<Map<string, { x: number, y: number }>>(new Map())
+
+async function viewConversation(e: MouseEvent) {
   await navigateTo(`/chat/${conversationId}`)
+
+  // TODO: Make this into a hook/component
+  if (!(e.target instanceof HTMLButtonElement)) {
+    return
+  }
+
+  const id = uuid()
+  const { left, top } = e.target.getBoundingClientRect()
+  const { clientX, clientY } = e
+
+  const x = clientX - left
+  const y = clientY - top
+
+  points.value.set(id, { x, y })
+  setTimeout(() => {
+    points.value.delete(id)
+  }, 400)
 }
+
+
 </script>
 
 <template>
   <li>
     <!-- TODO: Clean up this template -->
     <button class="conversation" @click="viewConversation">
+      <GeneralBlip v-for="[id, { x, y }] of points" :key="id" :x="x" :y="y" />
       <Transition name="unread">
         <!-- TODO: Make everything here into its own component, improve CSS -->
         <span class="conversation-unread" v-if="conversation?.unreadMessages && conversation.unreadMessages > 0">{{
@@ -36,6 +60,9 @@ async function viewConversation() {
 .conversation {
   border-bottom: 1px solid var(--accent);
   position: relative;
+
+  overflow: hidden;
+  user-select: none;
 
   display: grid;
   grid-template-columns: 4rem 1fr;
@@ -62,6 +89,7 @@ async function viewConversation() {
     align-items: center;
     justify-items: center;
     grid-column: 2 / -1;
+    user-select: auto;
   }
 }
 

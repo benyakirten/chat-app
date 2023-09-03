@@ -10,18 +10,21 @@ const top = computed(() => `${y}px`)
 
 <style scoped>
 div {
+  pointer-events: none;
+
   position: absolute;
   top: v-bind(top);
   left: v-bind(left);
 
   border-radius: 9999px;
-  background-color: var(--bg-color-primary);
+  background-color: var(--primary-text);
+  opacity: 0;
 
   height: 0.5rem;
   width: 0.5rem;
-  /* transform: translate(-50%, -50%); */
 
-  animation: expand-out 800ms ease-in;
+  /* TODO: Make timing function */
+  animation: expand-out var(--time-400) ease-in;
 }
 
 @keyframes expand-out {
@@ -36,7 +39,7 @@ div {
   }
 
   90% {
-    scale: 1000 1000;
+    scale: 1000;
     opacity: 0;
   }
 }
