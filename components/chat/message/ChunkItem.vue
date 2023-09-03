@@ -29,7 +29,7 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
 </script>
 
 <template>
-  <li class="message">
+  <li class="message" :class="{ first: isFirst, last: isLast }">
     <!--
       How should message buttons be displayed
       Implanted into message box on side/top?
@@ -91,6 +91,16 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
   background-color: var(--bg-color-alt1);
 
   padding: 0.75rem;
+
+  &.first {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+
+  &.last {
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+  }
 
   &-author {
     color: var(--highlight);

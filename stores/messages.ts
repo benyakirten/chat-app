@@ -10,6 +10,76 @@ export type UserId = string
 
 export const TYPING_TIMEOUT = 2_000
 
+const conversation2message1: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c2m1',
+  content: 'HI AGAIN!',
+  status: 'complete',
+  createTime: new Date('2020-1-1'),
+  updateTime: new Date('2020-1-1'),
+}
+
+const conversation2message2: ConversationMessage = {
+  sender: 'u2',
+  messageId: 'c2m2',
+  content: 'Hi to you too. Who are you AGAIN?',
+  status: 'complete',
+  createTime: new Date('2020-1-2'),
+  updateTime: new Date('2020-1-2'),
+}
+
+const conversation2message3: ConversationMessage = {
+  sender: 'u2',
+  messageId: 'c2m3',
+  content: 'Interested in knowing?',
+  status: 'complete',
+  createTime: new Date('2020-1-2'),
+  updateTime: new Date('2020-1-4'),
+}
+
+
+const conversation2message4: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c2m4',
+  content: 'I\'m me. Don\'t you know me AGAIN?',
+  status: 'pending',
+  createTime: new Date('2020-1-4'),
+  updateTime: new Date('2020-1-4'),
+}
+
+const conversation2message5: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c2m5',
+  content: 'Everyone knows me AGAIN.',
+  status: 'error',
+  createTime: new Date('2020-1-4'),
+  updateTime: new Date('2020-1-4'),
+}
+
+const conversation2message6: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c2m6',
+  content: 'I can assure you AGAIN.',
+  status: 'complete',
+  createTime: new Date('2020-1-5'),
+  updateTime: new Date('2020-1-5'),
+}
+
+const conversation2: Conversation = {
+  members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
+  conversationId: 'c2',
+  messages: new Map([
+    [conversation2message1.messageId, conversation2message1],
+    [conversation2message2.messageId, conversation2message2],
+    [conversation2message3.messageId, conversation2message3],
+    [conversation2message4.messageId, conversation2message4],
+    [conversation2message5.messageId, conversation2message5],
+    [conversation2message6.messageId, conversation2message6]
+  ]),
+  unreadMessages: 3,
+}
+
+
 const conversation1message1: ConversationMessage = {
   sender: 'u1',
   messageId: 'c1m1',
@@ -56,6 +126,15 @@ const conversation1message5: ConversationMessage = {
   updateTime: new Date('2020-1-4'),
 }
 
+const conversation1message6: ConversationMessage = {
+  sender: 'u1',
+  messageId: 'c1m6',
+  content: 'I can assure you.',
+  status: 'complete',
+  createTime: new Date('2020-1-5'),
+  updateTime: new Date('2020-1-5'),
+}
+
 const conversation1: Conversation = {
   members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
   conversationId: 'c1',
@@ -64,12 +143,13 @@ const conversation1: Conversation = {
     [conversation1message2.messageId, conversation1message2],
     [conversation1message3.messageId, conversation1message3],
     [conversation1message4.messageId, conversation1message4],
-    [conversation1message5.messageId, conversation1message5]
+    [conversation1message5.messageId, conversation1message5],
+    [conversation1message6.messageId, conversation1message6]
   ]),
   unreadMessages: 4,
 }
 
-const PROP_CONVERSATIONS = new ConversationMap(conversation1)
+const PROP_CONVERSATIONS = new ConversationMap([conversation1, conversation2])
 
 export interface UserConversationState {
   state: 'typing' | 'idle', lastRead: Date

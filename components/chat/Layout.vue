@@ -17,7 +17,7 @@ h1 {
 .messages {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  height: 65vh;
+  height: 80vh;
   margin: 1rem 0.5rem 0;
   margin-right: 2rem;
   border: 1px solid var(--accent);

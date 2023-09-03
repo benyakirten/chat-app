@@ -13,10 +13,13 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 <template>
   <div class="message-group" :class="{ right: isMine }">
     <!-- TODO: Figure out why this transition group isn't working -->
-    <TransitionGroup tag="ul" class="messages" :name="transitionGroupName">
-      <ChatMessageChunkItem v-for="(message, i) in chunk" :read-times="userReadTimes" :message="message" :is-mine="isMine"
-        :is-first="i === 0" :is-last="i === chunk.length - 1" :is-private="isPrivate" />
-    </TransitionGroup>
+    <ul class="messages">
+      <TransitionGroup :name="transitionGroupName">
+        <ChatMessageChunkItem v-for="(message, i) in chunk" :read-times="userReadTimes" :message="message"
+          :is-mine="isMine" :is-first="i === 0" :is-last="i === chunk.length - 1" :is-private="isPrivate"
+          :key="message.messageId" />
+      </TransitionGroup>
+    </ul>
     <div class="avatar">
       <GeneralAvatar :user-id="userId" />
     </div>
@@ -39,14 +42,14 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .right {
   align-self: flex-end;
 }
 
-/* These transitions aren't working */
+/* TODO: Figure out why these transitions aren't working */
 .message-mine-move,
 .message-other-move,
 .message-mine-enter-active,
