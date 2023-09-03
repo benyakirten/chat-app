@@ -8,6 +8,7 @@ const layoutStore = useLayoutStore()
   <div class="container">
     <NavTheSidebar />
     <NavTheHamburgerMenu />
+    <ToasterComponent />
     <main :class="{ filter: layoutStore.sidebarOpen }">
       <slot></slot>
     </main>

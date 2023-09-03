@@ -15,7 +15,8 @@ const points = ref<Map<string, { x: number, y: number }>>(new Map())
 async function viewConversation(e: MouseEvent) {
   await navigateTo(`/chat/${conversationId}`)
 
-  // TODO: Make this into a hook/component
+  // TODO: Make this into a hook/component/reusable instead of magic numbers
+  // TODO: Figure out the best way to tie the timeout with the animation length
   if (!(e.target instanceof HTMLButtonElement)) {
     return
   }

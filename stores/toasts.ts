@@ -9,7 +9,10 @@ export interface Toast {
   id: string
   content: string
   closeable: boolean
+  type: 'success' | 'warning' | 'error'
 }
+
+type ToastOptions = Partial<Omit<Toast, 'id' | 'content'> & { timeout: number }>
 
 export const useToastStore = defineStore('toasts', () => {
   const toasts = ref<Map<ToastId, Toast>>(new Map())
@@ -18,9 +21,9 @@ export const useToastStore = defineStore('toasts', () => {
    * If timeout is null, the toast won't close on its own.
    * If closeable is false then the user cannot remove the toast.
    */
-  function addToast(content: string, timeout: number | null = 3000, closeable: boolean = true) {
+  function addToast(content: string, { closeable = true, type = 'success', timeout = 3000 }: ToastOptions) {
     const id = uuid()
-    const toast: Toast = { id, content, closeable }
+    const toast: Toast = { id, content, closeable, type }
 
     toasts.value.set(id, toast)
 
