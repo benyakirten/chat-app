@@ -50,7 +50,10 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
           <ArrowPathIcon />
         </GeneralIconButton>
       </span>
-      <span v-else-if="isMine && message.status === 'pending'">Loading</span>
+      <span v-else-if="isMine && message.status === 'pending'" class="message-loading">
+        Loading
+        <GeneralLoading size="1.2rem" />
+      </span>
       <span v-else>
         <span v-if="isMine && isPrivate && readList.length > 0">
           Read
@@ -98,6 +101,13 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     display: flex;
     align-items: center;
     gap: 0.35rem;
+    justify-content: flex-end;
+  }
+
+  &-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     justify-content: flex-end;
   }
 
