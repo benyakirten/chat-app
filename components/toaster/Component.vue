@@ -13,10 +13,8 @@ const toastStore = useToastStore()
         <span class="toaster-toast-content">
           {{ toast.content }}
         </span>
-        <GeneralIconButton size="1.4rem" title="Close" :disabled="!toast.closeable" @click="toastStore.dismiss(id)">
-          <!-- TODO: Make this better/used by the component -->
-          <XCircleIcon :style="{ color: toast.closeable ? 'white' : 'gray' }" />
-        </GeneralIconButton>
+        <GeneralIconButton size="1.4rem" title="Close" :disabled="!toast.closeable" @click="toastStore.dismiss(id)"
+          :icon="XCircleIcon" />
       </output>
     </TransitionGroup>
   </section>

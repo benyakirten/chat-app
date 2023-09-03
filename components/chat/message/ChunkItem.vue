@@ -46,9 +46,8 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
     <div class="message-status">
       <span class="message-error" v-if="isMine && message.status === 'error'">
         <span>An error occurred</span>
-        <GeneralIconButton size="0.8rem" title="Retry Sending Message" @click.stop="messageStore.resendMessage(message)">
-          <ArrowPathIcon />
-        </GeneralIconButton>
+        <GeneralIconButton :icon="ArrowPathIcon" size="0.8rem" title="Retry Sending Message"
+          @click.stop="messageStore.resendMessage(message)" />
       </span>
       <span v-else-if="isMine && message.status === 'pending'" class="message-loading">
         Loading

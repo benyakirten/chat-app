@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const { title, size, type } = withDefaults(
-  defineProps<{ title: string, size: string, type?: 'submit' | 'button', disabled?: boolean }>(),
+import type { FunctionalComponent, HTMLAttributes, VNodeProps } from 'nuxt/dist/app/compat/capi';
+
+const { title, size, type, icon } = withDefaults(
+  defineProps<{ title: string, size: string, icon: FunctionalComponent<HTMLAttributes & VNodeProps, {}, any>, type?: 'submit' | 'button', disabled?: boolean, }>(),
   { type: 'button', disabled: false },
 )
 
@@ -15,7 +17,7 @@ const emits = defineEmits<{
       <template #content>
         {{ title }}
       </template>
-      <slot></slot>
+      <component :is="icon" :style="{ color: disabled ? 'gray' : 'white', width: size, height: size }" />
     </GeneralTooltip>
   </button>
 </template>
