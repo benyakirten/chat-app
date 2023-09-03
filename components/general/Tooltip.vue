@@ -22,6 +22,7 @@ function handleMouseLeave() {
   if (timeout.value) {
     clearTimeout(timeout.value)
   }
+
   if (tooltipState.value === 'hovered') {
     tooltipState.value = 'hidden'
   }
@@ -55,14 +56,14 @@ onMounted(() => {
 
 <template>
   <!-- Not sure why these events are not triggering -->
-  <span class="tooltip">
+  <span class="tooltip" @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave">
     <Transition name="tooltip">
       <div :id="id" role="tooltip" v-if="tooltipState !== 'hidden'" class="tooltip-content"
         :class="tooltipDirectionClass">
         <slot :state="tooltipState" name="content"></slot>
       </div>
     </Transition>
-    <span @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave" :aria-describedby="id">
+    <span :aria-describedby="id">
       <slot></slot>
     </span>
   </span>

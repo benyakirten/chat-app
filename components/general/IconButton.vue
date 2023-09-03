@@ -1,15 +1,16 @@
 <script setup lang="ts">
 const { title, size, type } = withDefaults(
-  defineProps<{ title: string, size: string, type?: 'submit' | 'button' }>(),
-  { type: 'button' }
+  defineProps<{ title: string, size: string, type?: 'submit' | 'button', disabled?: boolean }>(),
+  { type: 'button', disabled: false },
 )
+
 const emits = defineEmits<{
   (e: 'click', event: Event): void
 }>()
 </script>
 
 <template>
-  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click', $event)">
+  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click', $event)" :disabled="disabled">
     <GeneralTooltip :disable-click="true">
       <template #content>
         {{ title }}
