@@ -28,7 +28,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   display: flex;
   gap: 1rem;
   flex-direction: v-bind(flexDirection);
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 .avatar {
@@ -36,6 +36,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 }
 
 .messages {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
