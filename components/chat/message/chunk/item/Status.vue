@@ -28,7 +28,7 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList } = d
     </span>
     <span v-else-if="isMine && status === 'pending'" class="status-loading">
       Loading
-      <GeneralLoading size="1.2rem" />
+      <GeneralLoading size="0.8rem" />
     </span>
     <span v-else>
       <span v-if="isMine && isPrivate && readList.length > 0">

@@ -49,7 +49,6 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   align-self: flex-end;
 }
 
-/* TODO: Figure out why these transitions aren't working */
 .message-mine-move,
 .message-other-move,
 .message-mine-enter-active,

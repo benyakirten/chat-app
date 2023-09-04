@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const { name } = defineProps<{ name?: string }>()
+const { name, justify } = defineProps<{ name?: string, justify: 'flex-end' | 'flex-start' }>()
 </script>
 
 <template>
@@ -10,5 +10,6 @@ const { name } = defineProps<{ name?: string }>()
 <style scoped>
 .author {
   color: var(--highlight);
+  justify-self: v-bind(justify);
 }
 </style>

@@ -30,13 +30,16 @@ const readList = computed(() => {
 
   return readUsers
 })
+
+const justifyAuthor = computed(() => isMine ? 'flex-end' : 'flex-start')
 const textAlign = computed(() => isMine ? 'right' : 'left')
 </script>
 
 <template>
   <li class="message" :class="{ first: isFirst, last: isLast }">
     <ChatMessageChunkItemButtons v-if="isMine" />
-    <ChatMessageChunkItemAuthor v-if="isFirst" :name="userStore.users.get(message.sender)?.name" />
+    <ChatMessageChunkItemAuthor v-if="isFirst" :justify="justifyAuthor"
+      :name="userStore.users.get(message.sender)?.name" />
     <ChatMessageChunkItemContent :content="message.content" :status="message.status" />
     <ChatMessageChunkItemStatus @resend="messageStore.resendMessage(message)" :is-mine="isMine" :is-private="isPrivate"
       :align="textAlign" :read-list="readList" :create-time="message.createTime" :update-time="message.updateTime"
