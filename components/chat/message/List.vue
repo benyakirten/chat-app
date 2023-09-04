@@ -48,17 +48,35 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
 
 <template>
   <div class="container">
-    <div class="no-conversation" v-if="!messageChunks || !conversationId">
+    <div
+      class="no-conversation"
+      v-if="!messageChunks || !conversationId"
+    >
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </div>
-    <div class="no-messages" v-else-if="messageChunks.length === 0">
+    <div
+      class="no-messages"
+      v-else-if="messageChunks.length === 0"
+    >
       No messages in this conversation. Be the first to say something.
     </div>
-    <div class="list" v-else>
-      <ChatMessageChunk v-for="chunk of messageChunks" :key="chunk[0].messageId" :chunk="chunk"
-        :user-read-times="userReadTimes" :is-private="(conversation?.members.size ?? 0) > 2" />
+    <div
+      class="list"
+      v-else
+    >
+      <ChatMessageChunk
+        v-for="chunk of messageChunks"
+        :key="chunk[0].messageId"
+        :chunk="chunk"
+        :user-read-times="userReadTimes"
+        :is-private="(conversation?.members.size ?? 0) > 2"
+        :conversation-id="conversationId"
+      />
     </div>
-    <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />
+    <ChatMessageNew
+      v-if="conversationId"
+      :conversation-id="conversationId"
+    />
   </div>
 </template>
 

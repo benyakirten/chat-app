@@ -23,14 +23,24 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 </script>
 
 <template>
-  <div class="message-group" :class="{ right: isMine }">
+  <div
+    class="message-group"
+    :class="{ right: isMine }"
+  >
     <!-- TODO: Figure out why this transition group isn't working -->
     <ul class="messages">
       <TransitionGroup :name="transitionGroupName">
-        <ChatMessageChunkItem v-for="(message, i) in chunk"
-          @delete="messageStore.deleteMessage(conversationId, message.messageId)" :read-times="userReadTimes"
-          :message="message" :is-mine="isMine" :is-first="i === 0" :is-last="i === chunk.length - 1"
-          :is-private="isPrivate" :key="message.messageId" />
+        <ChatMessageChunkItem
+          v-for="(message, i) in chunk"
+          @delete="messageStore.deleteMessage(conversationId, message.messageId)"
+          :read-times="userReadTimes"
+          :message="message"
+          :is-mine="isMine"
+          :is-first="i === 0"
+          :is-last="i === chunk.length - 1"
+          :is-private="isPrivate"
+          :key="message.messageId"
+        />
       </TransitionGroup>
     </ul>
     <div class="avatar">

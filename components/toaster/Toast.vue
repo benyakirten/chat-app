@@ -8,12 +8,21 @@ const toastStore = useToastStore()
 </script>
 
 <template>
-  <output role="status" class="toast" :class="toast.type">
+  <output
+    role="status"
+    class="toast"
+    :class="toast.type"
+  >
     <span class="toast-content">
       {{ toast.content }}
     </span>
-    <GeneralIconButton size="1.4rem" title="Close" :disabled="!toast.closeable" @click="toastStore.dismiss(toast.id)"
-      :icon="XCircleIcon" />
+    <GeneralIconButton
+      size="1.4rem"
+      title="Close"
+      :disabled="!toast.closeable"
+      @click="toastStore.dismiss(toast.id)"
+      :icon="XCircleIcon"
+    />
   </output>
 </template>
 
@@ -48,5 +57,4 @@ const toastStore = useToastStore()
   &.info {
     background-color: blue;
   }
-}
-</style>
+}</style>

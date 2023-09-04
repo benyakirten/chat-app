@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ConversationMessage } from '@/stores/messages';
 
-const { content, status } = defineProps<{ content: string, status: ConversationMessage['status'] }>()
+const { content, status, isEditing } = defineProps<{ content: string, status: ConversationMessage['status'], isEditing: boolean }>()
 </script>
 
 <template>
-  <div class="content" :class="{ errored: status === 'error', loading: status === 'pending' }">
+  <div v-if="isEditing">
+    <!-- TODO -->
+  </div>
+  <div v-else class="content" :class="{ errored: status === 'error', loading: status === 'pending' }">
     <!-- TODO: Add parsing for code blocks/etc -->
     {{ content }}
   </div>

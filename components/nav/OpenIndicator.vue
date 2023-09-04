@@ -3,10 +3,22 @@ const { open } = defineProps<{ open: boolean }>()
 </script>
 
 <template>
-  <div class="indicator" aria-hidden="true">
-    <Transition name="arrow" mode="out-in">
-      <div class="indicator-top" v-if="open"></div>
-      <div class="indicator-bottom" v-else></div>
+  <div
+    class="indicator"
+    aria-hidden="true"
+  >
+    <Transition
+      name="arrow"
+      mode="out-in"
+    >
+      <div
+        class="indicator-top"
+        v-if="open"
+      ></div>
+      <div
+        class="indicator-bottom"
+        v-else
+      ></div>
     </Transition>
   </div>
 </template>
@@ -41,5 +53,4 @@ const { open } = defineProps<{ open: boolean }>()
   .arrow-leave-to {
     scale: 0;
   }
-}
-</style>
+}</style>

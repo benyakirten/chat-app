@@ -12,20 +12,27 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <button :type="type" class="icon-button" :aria-label="title" @click.stop="emits('click', $event)" :disabled="disabled">
+  <button
+    :type="type"
+    class="icon-button"
+    :aria-label="title"
+    @click.stop="emits('click', $event)"
+    :disabled="disabled"
+  >
     <GeneralTooltip :disable-click="true">
       <template #content>
         {{ title }}
       </template>
-      <component :is="icon" :style="{ color: disabled ? 'gray' : 'white', width: size, height: size }" />
+      <component
+        :is="icon"
+        :style="{ color: disabled ? 'gray' : 'white', width: size, height: size }"
+      />
     </GeneralTooltip>
   </button>
 </template>
 
-<style scoped>
-.icon-button {
+<style scoped>.icon-button {
   display: inline-block;
   width: v-bind(size);
   height: v-bind(size);
-}
-</style>
+}</style>

@@ -8,24 +8,43 @@ const themeStore = useThemeStore()
 
 <template>
   <Transition name="fade-in">
-    <div v-if="layoutStore.sidebarOpen" class="backdrop" @click="layoutStore.setSidebarState(false)"></div>
+    <div
+      v-if="layoutStore.sidebarOpen"
+      class="backdrop"
+      @click="layoutStore.setSidebarState(false)"
+    ></div>
   </Transition>
   <Transition name="slide-in">
     <nav v-if="layoutStore.sidebarOpen">
-      <NavSection height="8rem" width="100%" group="chat" :z-index="5"
-        :background-color="themeStore.activeTheme.bgColorAlt1">
+      <NavSection
+        height="8rem"
+        width="100%"
+        group="chat"
+        :z-index="5"
+        :background-color="themeStore.activeTheme.bgColorAlt1"
+      >
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="90%" group="other" :z-index="4"
-        :background-color="themeStore.activeTheme.bgColorAlt2">
+      <NavSection
+        height="4rem"
+        width="90%"
+        group="other"
+        :z-index="4"
+        :background-color="themeStore.activeTheme.bgColorAlt2"
+      >
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection height="4rem" width="80%" group="account" :z-index="3"
-        :background-color="themeStore.activeTheme.bgColorAlt3">
+      <NavSection
+        height="4rem"
+        width="80%"
+        group="account"
+        :z-index="3"
+        :background-color="themeStore.activeTheme.bgColorAlt3"
+      >
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
@@ -98,5 +117,4 @@ nav {
 .slide-in-enter-from,
 .slide-in-leave-to {
   translate: -100% 0;
-}
-</style>
+}</style>

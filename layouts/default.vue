@@ -7,7 +7,11 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <div class="container" :style="themeStore.activeThemeVariables" id="app-host">
+  <div
+    class="container"
+    :style="themeStore.activeThemeVariables"
+    id="app-host"
+  >
     <NavTheSidebar />
     <NavTheHamburgerMenu />
     <ToasterComponent />
@@ -28,5 +32,4 @@ const themeStore = useThemeStore()
   main {
     min-height: 100vh;
   }
-}
-</style>
+}</style>

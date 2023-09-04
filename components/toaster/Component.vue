@@ -8,7 +8,11 @@ const toastStore = useToastStore()
 <template>
   <section class="toaster">
     <TransitionGroup name="toast">
-      <ToasterToast v-for="[id, toast] of toastStore.toasts" :key="id" :toast="toast" />
+      <ToasterToast
+        v-for="[id, toast] of toastStore.toasts"
+        :key="id"
+        :toast="toast"
+      />
     </TransitionGroup>
   </section>
 </template>
@@ -43,5 +47,4 @@ const toastStore = useToastStore()
 .toast-leave-to,
 .toast-enter-from {
   transform: scaleX(0);
-}
-</style>
+}</style>

@@ -15,8 +15,15 @@ const user = computed(() => userStore.users.get(userId))
   <!-- TODO: Update the no image found with a better thing - SVG at the least -->
   <!-- TODO: Work on CSS -->
   <div class="avatar">
-    <img v-if="user?.image" :src="user.image" :alt="user.name" />
-    <UserIcon v-else :aria-label="user?.name ?? 'Unknown User'" />
+    <img
+      v-if="user?.image"
+      :src="user.image"
+      :alt="user.name"
+    />
+    <UserIcon
+      v-else
+      :aria-label="user?.name ?? 'Unknown User'"
+    />
   </div>
 </template>
 
@@ -36,5 +43,4 @@ const user = computed(() => userStore.users.get(userId))
   span {
     font-size: 0.8rem;
   }
-}
-</style>
+}</style>

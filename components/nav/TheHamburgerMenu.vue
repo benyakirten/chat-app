@@ -5,7 +5,11 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
 </script>
 
 <template>
-  <button @click="layoutStore.toggleOpen" :aria-label="ariaLabel" :aria-expanded="layoutStore.sidebarOpen">
+  <button
+    @click="layoutStore.toggleOpen"
+    :aria-label="ariaLabel"
+    :aria-expanded="layoutStore.sidebarOpen"
+  >
     <div :aria-hidden="true"></div>
     <div :aria-hidden="true"></div>
     <div :aria-hidden="true"></div>
@@ -68,5 +72,4 @@ button {
     }
   }
 
-}
-</style>
+}</style>

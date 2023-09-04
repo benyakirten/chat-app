@@ -3,7 +3,10 @@ const { isMine } = defineProps<{ isMine: boolean }>()
 </script>
 
 <template>
-  <div class="tail" :class="isMine ? 'tail-right' : 'tail-left'"></div>
+  <div
+    class="tail"
+    :class="isMine ? 'tail-right' : 'tail-left'"
+  ></div>
 </template>
 
 <style scoped>
@@ -27,5 +30,4 @@ const { isMine } = defineProps<{ isMine: boolean }>()
     bottom: var(--dist);
     clip-path: polygon(0 0, 0 100%, 100% 100%);
   }
-}
-</style>
+}</style>

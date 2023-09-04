@@ -33,12 +33,27 @@ function handleSubmit() {
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="new-message">
-    <div ref="hiddenDiv" class="new-message-hidden">{{ text }}</div>
-    <textarea aria-label="Write Message" @keydown="handleKeydown" v-model="text" class="new-message-input"
-      placeholder="Write your message here..."></textarea>
+  <form
+    @submit.prevent="handleSubmit"
+    class="new-message"
+  >
+    <div
+      ref="hiddenDiv"
+      class="new-message-hidden"
+    >{{ text }}</div>
+    <textarea
+      aria-label="Write Message"
+      @keydown="handleKeydown"
+      v-model="text"
+      class="new-message-input"
+      placeholder="Write your message here..."
+    ></textarea>
     <!-- Should this be visible? Most conversation UIs don't display the button these days -->
-    <button ref="button" type="submit" style="{ display: 'none' }"></button>
+    <button
+      ref="button"
+      type="submit"
+      style="{ display: 'none' }"
+    ></button>
   </form>
 </template>
 
@@ -73,5 +88,4 @@ function handleSubmit() {
     z-index: -100;
     pointer-events: none;
   }
-}
-</style>
+}</style>

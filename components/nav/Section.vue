@@ -15,11 +15,20 @@ const id = computed(() => `${group}-expadable-content`)
 
 <template>
   <!-- Some reason vbind in the css styles isn't working -->
-  <div class="section"
-    :style="`--height: ${height}; --z-index: ${zIndex}; --bgcolor: ${backgroundColor}; --width: ${width};`">
-    <div class="section-contents" :class="{ 'section-contents--open': isOpen }">
-      <button :aria-controls="id" :aria-expanded="isOpen" class="section-header"
-        @click="layoutStore.toggleTabOpened(group)">
+  <div
+    class="section"
+    :style="`--height: ${height}; --z-index: ${zIndex}; --bgcolor: ${backgroundColor}; --width: ${width};`"
+  >
+    <div
+      class="section-contents"
+      :class="{ 'section-contents--open': isOpen }"
+    >
+      <button
+        :aria-controls="id"
+        :aria-expanded="isOpen"
+        class="section-header"
+        @click="layoutStore.toggleTabOpened(group)"
+      >
         <NavOpenIndicator :open="isOpen" />
         <h4>
           {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)} ` }}
@@ -27,7 +36,12 @@ const id = computed(() => `${group}-expadable-content`)
       </button>
       <Transition name="section-expand">
         <!-- Section body width isn't matching parent -->
-        <div :id="id" class="section-body" :aria-hidden="!isOpen" v-if="isOpen">
+        <div
+          :id="id"
+          class="section-body"
+          :aria-hidden="!isOpen"
+          v-if="isOpen"
+        >
           <slot></slot>
         </div>
       </Transition>
@@ -98,5 +112,4 @@ const id = computed(() => `${group}-expadable-content`)
 .section-expand-leave-to {
   height: 0px;
   opacity: 0;
-}
-</style>
+}</style>

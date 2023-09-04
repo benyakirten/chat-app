@@ -21,12 +21,22 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList } = d
 <template>
   <!-- TODO: Make this less 🍝 -->
   <div class="status">
-    <span class="status-error" v-if="isMine && status === 'error'">
+    <span
+      class="status-error"
+      v-if="isMine && status === 'error'"
+    >
       <span>An error occurred</span>
-      <GeneralIconButton :icon="ArrowPathIcon" size="0.8rem" title="Retry Sending Message"
-        @click="emits('resend', $event)" />
+      <GeneralIconButton
+        :icon="ArrowPathIcon"
+        size="0.8rem"
+        title="Retry Sending Message"
+        @click="emits('resend', $event)"
+      />
     </span>
-    <span v-else-if="isMine && status === 'pending'" class="status-loading">
+    <span
+      v-else-if="isMine && status === 'pending'"
+      class="status-loading"
+    >
       Loading
       <GeneralLoading size="0.8rem" />
     </span>
@@ -76,5 +86,4 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList } = d
     gap: 0.5rem;
     justify-content: flex-end;
   }
-}
-</style>
+}</style>

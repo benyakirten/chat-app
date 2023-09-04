@@ -56,12 +56,25 @@ onMounted(() => {
 
 <template>
   <!-- Not sure why these events are not triggering -->
-  <span class="tooltip" @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave"
-    @mouseout="handleMouseLeave">
+  <span
+    class="tooltip"
+    @mouseover="handleMouseEnter"
+    @click="handleClick"
+    @mouseleave="handleMouseLeave"
+    @mouseout="handleMouseLeave"
+  >
     <Transition name="tooltip">
-      <div :id="id" role="tooltip" v-if="tooltipState !== 'hidden'" class="tooltip-content"
-        :class="tooltipDirectionClass">
-        <slot :state="tooltipState" name="content"></slot>
+      <div
+        :id="id"
+        role="tooltip"
+        v-if="tooltipState !== 'hidden'"
+        class="tooltip-content"
+        :class="tooltipDirectionClass"
+      >
+        <slot
+          :state="tooltipState"
+          name="content"
+        ></slot>
       </div>
     </Transition>
     <span :aria-describedby="id">
@@ -171,5 +184,4 @@ onMounted(() => {
   opacity: 0;
   filter: blur(1rem);
   scale: 0.5;
-}
-</style>
+}</style>
