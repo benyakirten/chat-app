@@ -14,7 +14,6 @@ const { size } = defineProps<{ size: string }>()
 .loader {
   position: relative;
   display: inline-block;
-  z-index: 100;
 
   height: v-bind(size);
   width: v-bind(size);

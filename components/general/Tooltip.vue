@@ -56,7 +56,8 @@ onMounted(() => {
 
 <template>
   <!-- Not sure why these events are not triggering -->
-  <span class="tooltip" @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave">
+  <span class="tooltip" @mouseover="handleMouseEnter" @click="handleClick" @mouseleave="handleMouseLeave"
+    @mouseout="handleMouseLeave">
     <Transition name="tooltip">
       <div :id="id" role="tooltip" v-if="tooltipState !== 'hidden'" class="tooltip-content"
         :class="tooltipDirectionClass">
@@ -79,7 +80,7 @@ onMounted(() => {
     /* TODO: Use the popover/anchor API when they are well supported */
     /* TODO: Use variables to make code more DRY */
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     padding: 0.25rem 0.5rem;
     width: max-content;
     isolation: isolate;
@@ -157,15 +158,18 @@ onMounted(() => {
 
 .tooltip-enter-active {
   transition: all var(--time-300) ease;
+  transform-origin: center;
 }
 
 .tooltip-leave-active {
   transition: all var(--time-300) ease var(--time-100);
+  transform-origin: center;
 }
 
 .tooltip-enter-from,
 .tooltip-leave-to {
   opacity: 0;
   filter: blur(1rem);
+  scale: 0.5;
 }
 </style>
