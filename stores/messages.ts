@@ -164,6 +164,7 @@ export interface Conversation {
   members: Map<UserId, UserConversationState>
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
+  alias?: string
   // Unread messages will be given by the server immediately
   // Added to when a message is received in a conversation that's currently not active
   // And reduced to 0 when a conversation is read
@@ -313,29 +314,65 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
+    const newId = uuid()
     const convoMessage: ConversationMessage = {
       sender: userStore.me,
-      messageId: uuid(),
+      messageId: newId,
       content: message,
       status: 'pending',
       createTime: new Date(),
       updateTime: new Date()
     }
 
-    // TODO: Transmit message for the channel
     addMessage(conversationId, convoMessage, to)
+
+    // TODO: Transmit message to the channel then use the api to update the data
+    // i.e. call synchronizeMessage
+  }
+
+  function synchronizeMessage(
+    conversationId: ConversationId,
+    oldId: MessageId,
+    newId: MessageId,
+    successful: boolean,
+    createTime?: Date,
+    updateTime?: Date
+  ) {
+    const conversation = conversations.value.get(conversationId)
+    if (!conversation) {
+      // TODO: Error handling
+      return
+    }
+
+    const message = conversation.messages.get(oldId)
+    if (!message) {
+      // TODO: Error handling
+      return
+    }
+
+    const newMessage: ConversationMessage = structuredClone(message)
+    newMessage.status = successful ? 'complete' : 'error'
+    if (createTime) {
+      newMessage.createTime = createTime
+    }
+
+    if (updateTime) {
+      newMessage.updateTime = updateTime
+    }
+
+    conversation.messages.delete(oldId)
+    conversation.messages.set(newId, newMessage)
   }
 
   function resendMessage(message: ConversationMessage) {
-    console.log("CALLED")
     message.status = 'pending'
     // TODO: Attempt to create the message again
 
-    // TODO: Delete this
+    // TODO: Delete the timeout when we have an actual backend
     setTimeout(() => {
       message.status = 'complete'
     }, 1000)
   }
 
-  return { conversations: skipHydrate(conversations), visibleConversations, resendMessage, addMessage, startTyping, sendMessage, viewConversation }
+  return { conversations: skipHydrate(conversations), visibleConversations, resendMessage, addMessage, startTyping, sendMessage, viewConversation, synchronizeMessage }
 })

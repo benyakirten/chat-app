@@ -7,7 +7,7 @@ const { title, size, type, icon } = withDefaults(
 )
 
 const emits = defineEmits<{
-  (e: 'click', event: Event): void
+  (e: 'click', event: MouseEvent): void
 }>()
 </script>
 

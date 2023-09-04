@@ -34,7 +34,17 @@ async function viewConversation(e: MouseEvent) {
   }, 400)
 }
 
+const conversationName = computed(() => {
+  if (!conversation) {
+    return 'Unable to determine other participants in conversation'
+  }
 
+  if (conversation.alias) {
+    return conversation.alias
+  }
+
+  return userStore.getOtherUsers(conversation.members).map(user => user.name).join(", ")
+})
 </script>
 
 <template>
@@ -50,8 +60,7 @@ async function viewConversation(e: MouseEvent) {
 
       <span class="conversation-participants">
         <!-- TODO: Make this better -->
-        {{ conversation ? userStore.getOtherUsers(conversation.members).map(user => user.name).join(", ") : `Unable to
-        determine other participants in conversation` }}
+        {{ conversationName }}
       </span>
     </button>
   </li>
