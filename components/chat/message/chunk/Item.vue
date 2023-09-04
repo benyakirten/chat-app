@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import { ConversationMessage, UserReadTimes, useMessageStore } from '@/stores/messages';
+import { ConversationMessage, MessageId, UserReadTimes, useMessageStore } from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const messageStore = useMessageStore()
@@ -13,6 +12,7 @@ const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{
   isLast: boolean,
   isPrivate: boolean
 }>()
+const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
@@ -37,7 +37,8 @@ const textAlign = computed(() => isMine ? 'right' : 'left')
 
 <template>
   <li class="message" :class="{ first: isFirst, last: isLast }">
-    <ChatMessageChunkItemButtons v-if="isMine" />
+    <ChatMessageChunkItemButtons @delete="emits('delete', message.messageId)"
+      @edit="messageStore.startMessageEdit(message)" v-if="isMine" />
     <ChatMessageChunkItemAuthor v-if="isFirst" :justify="justifyAuthor"
       :name="userStore.users.get(message.sender)?.name" />
     <ChatMessageChunkItemContent :content="message.content" :status="message.status" />

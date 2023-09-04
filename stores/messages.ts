@@ -186,6 +186,7 @@ export type UserReadTimes = Record<UserId, Date>
 export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(PROP_CONVERSATIONS)
   const filteredConversationIds = ref<ConversationId[] | null>(null)
+  const editedMessage = ref<MessageId | null>(null)
 
   const userStore = useUsersStore()
 
@@ -374,5 +375,71 @@ export const useMessageStore = defineStore('messages', () => {
     }, 1000)
   }
 
-  return { conversations: skipHydrate(conversations), visibleConversations, resendMessage, addMessage, startTyping, sendMessage, viewConversation, synchronizeMessage }
+  function deleteMessage(conversationId: ConversationId, messageId: MessageId) {
+    const conversation = conversations.value.get(conversationId)
+    if (!conversation) {
+      // TODO: Error handling
+      return
+    }
+
+    const message = conversation.messages.get(messageId)
+    if (!message) {
+      // TODO: Error handling
+      return
+    }
+
+    if (!userStore.me || message.sender !== userStore.me) {
+      // TODO: Error handling
+      return
+    }
+
+    // TODO: Transmit that the message has been deleted
+    conversation.messages.delete(messageId)
+  }
+
+  function startMessageEdit(message: ConversationMessage) {
+    if (!userStore.me || message.sender !== userStore.me) {
+      // TODO: Error handling - can't edit others' messages
+      return
+    }
+
+    editedMessage.value = message.messageId
+  }
+
+  function editMessage(message: ConversationMessage, content: string) {
+    if (!editedMessage.value) {
+      // TODO: Error handling
+      return
+    }
+
+    if (message.content === content) {
+      return
+    }
+
+    // TODO: Transmit new message content - if successful, we'll get a new update time
+    message.content = content
+    message.updateTime = new Date()
+
+    stopMessageEdit()
+  }
+
+  function stopMessageEdit() {
+    editedMessage.value = null
+  }
+
+  return {
+    conversations: skipHydrate(conversations),
+    visibleConversations,
+    resendMessage,
+    addMessage,
+    startTyping,
+    sendMessage,
+    viewConversation,
+    synchronizeMessage,
+    deleteMessage,
+    editedMessage,
+    startMessageEdit,
+    editMessage,
+    stopMessageEdit,
+  }
 })

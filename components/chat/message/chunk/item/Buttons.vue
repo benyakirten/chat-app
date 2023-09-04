@@ -6,12 +6,8 @@ const emits = defineEmits<{ (e: 'edit'): void, (e: 'delete'): void }>()
 
 <template>
   <div class="container">
-    <div class="container-round">
-      <GeneralIconButton title="Edit Message" :icon="PencilIcon" size="0.8rem" @click="emits('edit')" />
-    </div>
-    <div class="container-round">
-      <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="0.8rem" @click="emits('delete')" />
-    </div>
+    <GeneralIconButton title="Edit Message" :icon="PencilIcon" size="0.8rem" @click="emits('edit')" />
+    <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="0.8rem" @click="emits('delete')" />
   </div>
 </template>
 
@@ -24,9 +20,5 @@ const emits = defineEmits<{ (e: 'edit'): void, (e: 'delete'): void }>()
 
   display: flex;
   gap: 0.35rem;
-
-  &-round {
-    border-radius: 9999px;
-  }
 }
 </style>

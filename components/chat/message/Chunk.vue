@@ -1,9 +1,21 @@
 <script lang="ts" setup>
-import type { ConversationMessage, UserReadTimes } from '@/stores/messages';
+import {
+  useMessageStore,
+  type ConversationId,
+  type ConversationMessage,
+  type UserReadTimes
+} from '@/stores/messages';
 import { useUsersStore } from '@/stores/users';
 
 const userStore = useUsersStore()
-const { chunk, userReadTimes, isPrivate } = defineProps<{ chunk: ConversationMessage[], userReadTimes: UserReadTimes, isPrivate: boolean }>()
+const {
+  chunk,
+  userReadTimes,
+  isPrivate,
+  conversationId
+} = defineProps<{ chunk: ConversationMessage[], userReadTimes: UserReadTimes, isPrivate: boolean, conversationId: ConversationId }>()
+
+const messageStore = useMessageStore()
 const userId = computed(() => chunk[0].sender)
 const isMine = computed(() => userStore.isMine(chunk[0]))
 const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
@@ -15,9 +27,10 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
     <!-- TODO: Figure out why this transition group isn't working -->
     <ul class="messages">
       <TransitionGroup :name="transitionGroupName">
-        <ChatMessageChunkItem v-for="(message, i) in chunk" :read-times="userReadTimes" :message="message"
-          :is-mine="isMine" :is-first="i === 0" :is-last="i === chunk.length - 1" :is-private="isPrivate"
-          :key="message.messageId" />
+        <ChatMessageChunkItem v-for="(message, i) in chunk"
+          @delete="messageStore.deleteMessage(conversationId, message.messageId)" :read-times="userReadTimes"
+          :message="message" :is-mine="isMine" :is-first="i === 0" :is-last="i === chunk.length - 1"
+          :is-private="isPrivate" :key="message.messageId" />
       </TransitionGroup>
     </ul>
     <div class="avatar">
