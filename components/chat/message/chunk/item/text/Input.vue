@@ -7,10 +7,12 @@ const messageStore = useMessageStore()
 
 <template>
   <!-- TODO: Should we maintain a partially completed message per conversation? -->
+  <!-- TODO: Make the transition less jarring -->
   <GeneralInputAutosize
     placeholder="Edit message..."
     label="Edit message"
     :value="content"
     @cancel="messageStore.stopMessageEdit()"
+    @submit="messageStore.editMessage($event)"
   />
 </template>

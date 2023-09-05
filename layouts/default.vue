@@ -52,14 +52,4 @@ useHead({
   opacity: 0.5;
   filter: blur(4px);
 }
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity var(--time-250) ease-in-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0.5;
-}
 </style>

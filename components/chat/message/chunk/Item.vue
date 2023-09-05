@@ -12,7 +12,7 @@ const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{
   isLast: boolean,
   isPrivate: boolean
 }>()
-const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void }>()
+const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void, (e: 'edit', messageId: MessageId): void }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
@@ -33,7 +33,7 @@ const readList = computed(() => {
 
 const justifyAuthor = computed(() => isMine ? 'flex-end' : 'flex-start')
 const textAlign = computed(() => isMine ? 'right' : 'left')
-const isEditing = computed(() => message.messageId === messageStore.editedMessage)
+const isEditing = computed(() => message.messageId === messageStore.editedMessage?.messageId)
 </script>
 
 <template>
@@ -43,7 +43,7 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
   >
     <ChatMessageChunkItemButtons
       @delete="emits('delete', message.messageId)"
-      @edit="messageStore.startMessageEdit(message)"
+      @edit="emits('edit', message.messageId)"
       :showEditButton="!messageStore.editedMessage"
       v-if="isMine && message.status === 'complete'"
     />

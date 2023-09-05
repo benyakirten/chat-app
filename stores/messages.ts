@@ -180,7 +180,7 @@ export type UserReadTimes = Record<UserId, Date>
 export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(PROP_CONVERSATIONS)
   const filteredConversationIds = ref<ConversationId[] | null>(null)
-  const editedMessage = ref<MessageId | null>(null)
+  const editedMessage = ref<{ conversationId: ConversationId, messageId: MessageId } | null>(null)
 
 
   const userStore = useUsersStore()
@@ -411,17 +411,31 @@ export const useMessageStore = defineStore('messages', () => {
     conversation.messages.delete(messageId)
   }
 
-  function startMessageEdit(message: ConversationMessage) {
+  function startMessageEdit(conversationId: ConversationId, message: ConversationMessage) {
     if (!userStore.me || message.sender !== userStore.me) {
       // TODO: Error handling - can't edit others' messages
       return
     }
 
-    editedMessage.value = message.messageId
+    editedMessage.value = { conversationId, messageId: message.messageId }
   }
 
-  function editMessage(message: ConversationMessage, content: string) {
+  function editMessage(content: string) {
     if (!editedMessage.value) {
+      // TODO: Error handling
+      return
+    }
+
+    const { conversationId, messageId } = editedMessage.value
+
+    const conversation = conversations.value.get(conversationId)
+    if (!conversation) {
+      // TODO: Error handling
+      return
+    }
+
+    const message = conversation.messages.get(messageId)
+    if (!message) {
       // TODO: Error handling
       return
     }
