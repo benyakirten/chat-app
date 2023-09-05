@@ -1,6 +1,6 @@
 <template>
   <BaseLayoutPage>
-    <h1>Messages</h1>
+    <h1>Chat</h1>
     <div class="messages">
       <ChatConversationList />
       <slot></slot>

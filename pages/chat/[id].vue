@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { useMessageStore } from '@/stores/messages';
 
+definePageMeta({
+  pageTransition: false,
+})
+
 const route = useRoute()
 const messageStore = useMessageStore()
 // TODO: Work on types here
@@ -14,7 +18,7 @@ onMounted(() => {
   <div>
     <!-- TODO: Figure out why this has to be wrapped in a div -->
     <ChatLayout>
-      <ChatMessageList :conversationId="conversationId" />
+      <ChatMessageList :conversation-id="conversationId" />
     </ChatLayout>
   </div>
 </template>

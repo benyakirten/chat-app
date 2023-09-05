@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout';
 import { useThemeStore } from '@/stores/theme';
+import { useTitleStore } from '@/stores/title';
 
 const layoutStore = useLayoutStore()
 const themeStore = useThemeStore()
+const titleStore = useTitleStore()
 </script>
 
 <template>
+  <Head>
+    <Title>{{ titleStore.title }}</Title>
+  </Head>
   <div
     class="container"
     :style="themeStore.activeThemeVariables"
@@ -21,8 +26,8 @@ const themeStore = useThemeStore()
   </div>
 </template>
 
-<style scoped>
-.container {
+<style>
+#app-host {
   color: var(--primary-text, '#f4f4f4');
   background-color: var(--bg-color-primary, '#000');
 
@@ -32,4 +37,16 @@ const themeStore = useThemeStore()
   main {
     min-height: 100vh;
   }
-}</style>
+}
+
+.page-leave-active,
+.page-enter-active {
+  transition: all var(--time-300) ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0.5;
+  filter: blur(4px);
+}
+</style>

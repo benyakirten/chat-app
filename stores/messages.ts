@@ -76,7 +76,6 @@ const conversation2: Conversation = {
     [conversation2message5.messageId, conversation2message5],
     [conversation2message6.messageId, conversation2message6]
   ]),
-  unreadMessages: 3,
 }
 
 
@@ -146,7 +145,6 @@ const conversation1: Conversation = {
     [conversation1message5.messageId, conversation1message5],
     [conversation1message6.messageId, conversation1message6]
   ]),
-  unreadMessages: 4,
 }
 
 const PROP_CONVERSATIONS = new ConversationMap([conversation1, conversation2])
@@ -165,10 +163,6 @@ export interface Conversation {
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
   alias?: string
-  // Unread messages will be given by the server immediately
-  // Added to when a message is received in a conversation that's currently not active
-  // And reduced to 0 when a conversation is read
-  unreadMessages: number
 }
 
 // TODO: Determine how to handle deleted messages
@@ -188,7 +182,32 @@ export const useMessageStore = defineStore('messages', () => {
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<MessageId | null>(null)
 
+
   const userStore = useUsersStore()
+
+  const unreadMessages = computed(() => (conversation?: Conversation) => {
+    if (!conversation || !userStore.me) {
+      return 0
+    }
+
+    const myConversationDetails = conversation.members.get(userStore.me)
+    if (!myConversationDetails) {
+      return 0
+    }
+
+    let unreadMessages = 0
+    for (const message of conversation.messages.values()) {
+      if (userStore.me === message.sender) {
+        continue
+      }
+
+      if (message.createTime.valueOf() < myConversationDetails.lastRead.valueOf()) {
+        unreadMessages++
+      }
+    }
+
+    return unreadMessages
+  })
 
   const visibleConversations = computed(() => {
     if (!filteredConversationIds.value) {
@@ -223,10 +242,6 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    if (userId === userStore.me) {
-      conversation.unreadMessages = 0
-    }
-
     // TODO: transmit that user has read the conversation
     member.lastRead = new Date()
   }
@@ -254,7 +269,6 @@ export const useMessageStore = defineStore('messages', () => {
       // TODO: Make this better
       members: new Map([[message.sender, { state: 'idle', lastRead: new Date() }], [to, { state: 'idle', lastRead: new Date() }]]),
       messages: new Map([[message.messageId, message]]),
-      unreadMessages: 0
     }
 
     conversations.value.add(newConvo)
@@ -441,5 +455,6 @@ export const useMessageStore = defineStore('messages', () => {
     startMessageEdit,
     editMessage,
     stopMessageEdit,
+    unreadMessages,
   }
 })

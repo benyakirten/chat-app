@@ -34,6 +34,7 @@ async function viewConversation(e: MouseEvent) {
   }, 400)
 }
 
+// TODO: Generalize this function
 const conversationName = computed(() => {
   if (!conversation) {
     return 'Unable to determine other participants in conversation'
@@ -45,21 +46,31 @@ const conversationName = computed(() => {
 
   return userStore.getOtherUsers(conversation.members).map(user => user.name).join(", ")
 })
+
+const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 </script>
 
 <template>
   <li>
-    <!-- TODO: Clean up this template -->
-    <button class="conversation" @click="viewConversation">
-      <GeneralBlip v-for="[id, { x, y }] of points" :key="id" :x="x" :y="y" />
+    <!-- TODO: Make everything here into its own component, improve CSS -->
+    <button
+      class="conversation"
+      @click="viewConversation"
+    >
+      <GeneralBlip
+        v-for="[id, { x, y }] of points"
+        :key="id"
+        :x="x"
+        :y="y"
+      />
       <Transition name="unread">
-        <!-- TODO: Make everything here into its own component, improve CSS -->
-        <span class="conversation-unread" v-if="conversation?.unreadMessages && conversation.unreadMessages > 0">{{
-          conversation.unreadMessages }}</span>
+        <span
+          class="conversation-unread"
+          v-if="unreadMessages > 0"
+        >{{
+          unreadMessages }}</span>
       </Transition>
-
       <span class="conversation-participants">
-        <!-- TODO: Make this better -->
         {{ conversationName }}
       </span>
     </button>
@@ -72,7 +83,6 @@ const conversationName = computed(() => {
   position: relative;
 
   overflow: hidden;
-  user-select: none;
 
   display: grid;
   grid-template-columns: 4rem 1fr;
@@ -99,7 +109,7 @@ const conversationName = computed(() => {
     align-items: center;
     justify-items: center;
     grid-column: 2 / -1;
-    user-select: auto;
+    pointer-events: none;
   }
 }
 

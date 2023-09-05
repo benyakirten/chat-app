@@ -5,13 +5,22 @@ const { content, status, isEditing } = defineProps<{ content: string, status: Co
 </script>
 
 <template>
-  <div v-if="isEditing">
-    <!-- TODO -->
-  </div>
-  <div v-else class="content" :class="{ errored: status === 'error', loading: status === 'pending' }">
-    <!-- TODO: Add parsing for code blocks/etc -->
-    {{ content }}
-  </div>
+  <Transition
+    name="fade"
+    mode="out-in"
+  >
+    <div v-if="isEditing">
+      <!-- TODO -->
+    </div>
+    <div
+      v-else
+      class="content"
+      :class="{ errored: status === 'error', loading: status === 'pending' }"
+    >
+      <!-- TODO: Add parsing for code blocks/etc -->
+      {{ content }}
+    </div>
+  </Transition>
 </template>
 
 <style scoped>

@@ -14,15 +14,8 @@ const id = computed(() => `${group}-expadable-content`)
 </script>
 
 <template>
-  <!-- Some reason vbind in the css styles isn't working -->
-  <div
-    class="section"
-    :style="`--height: ${height}; --z-index: ${zIndex}; --bgcolor: ${backgroundColor}; --width: ${width};`"
-  >
-    <div
-      class="section-contents"
-      :class="{ 'section-contents--open': isOpen }"
-    >
+  <div class="section">
+    <div class="section-contents">
       <button
         :aria-controls="id"
         :aria-expanded="isOpen"
@@ -31,11 +24,10 @@ const id = computed(() => `${group}-expadable-content`)
       >
         <NavOpenIndicator :open="isOpen" />
         <h4>
-          {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)} ` }}
+          {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)}` }}
         </h4>
       </button>
       <Transition name="section-expand">
-        <!-- Section body width isn't matching parent -->
         <div
           :id="id"
           class="section-body"
@@ -51,12 +43,12 @@ const id = computed(() => `${group}-expadable-content`)
 
 <style scoped>
 .section {
-  width: var(--width);
-  background-color: var(--bgcolor);
+  width: v-bind(width);
+  background-color: v-bind(backgroundColor);
   --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
   box-shadow: -7px 8px 6px -3px var(--box-shadow);
   transition: width var(--time-250) ease-in;
-  z-index: var(--z-index);
+  z-index: v-bind(zIndex);
   padding: 1rem;
 
   &-header {
@@ -70,7 +62,7 @@ const id = computed(() => `${group}-expadable-content`)
     outline: none;
     border: none;
     color: var(--primary-text);
-    background-color: var(--bgcolor);
+    background-color: inherit;
     width: 100%;
     height: 100%;
     padding: 0.5rem 0;
@@ -82,27 +74,22 @@ const id = computed(() => `${group}-expadable-content`)
 
   &-contents {
     transition: transform var(--time-250) ease-in;
-
-    &--open {
-      transition: padding-bottom var(--time-50) ease;
-      padding-bottom: 1rem;
-    }
   }
 
   &:hover {
-    width: calc(var(--width) * 1.05);
+    width: calc(v-bind(width) * 1.05);
   }
 }
 
 .section-expand-enter-active {
   transition: height var(--time-400) ease-in-out, opacity var(--time-100) ease-in-out var(--time-150);
-  height: var(--height);
+  height: v-bind(height);
   opacity: 1;
 }
 
 .section-expand-leave-active {
   transition: height var(--time-250) ease-in-out;
-  height: var(--height);
+  height: v-bind(height);
   opacity: 1;
 }
 
@@ -112,4 +99,5 @@ const id = computed(() => `${group}-expadable-content`)
 .section-expand-leave-to {
   height: 0px;
   opacity: 0;
-}</style>
+}
+</style>
