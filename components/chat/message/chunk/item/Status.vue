@@ -7,23 +7,27 @@ import { ConversationMessage } from '@/stores/messages';
 const emits = defineEmits<{
   (e: 'resend', event: MouseEvent): void
 }>()
-const { isMine, isPrivate, createTime, updateTime, status, align, readList } = defineProps<{
+const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEditing } = defineProps<{
   isMine: boolean,
   readList: string[],
   isPrivate: boolean,
   createTime: Date,
   updateTime: Date,
   status: ConversationMessage['status'],
-  align: 'right' | 'left'
+  align: 'right' | 'left',
+  isEditing: boolean
 }>()
 </script>
 
 <template>
   <!-- TODO: Make this less 🍝 -->
   <div class="status">
+    <span v-if="isEditing">
+      Press escape to cancel or enter to commit the edited message.
+    </span>
     <span
       class="status-error"
-      v-if="isMine && status === 'error'"
+      v-else-if="isMine && status === 'error'"
     >
       <span>An error occurred</span>
       <GeneralIconButton
@@ -86,4 +90,5 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList } = d
     gap: 0.5rem;
     justify-content: flex-end;
   }
-}</style>
+}
+</style>

@@ -98,9 +98,4 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 .message-other-leave-from {
   transform: translateX(-100%);
 }
-
-.message-mine-leave-active,
-.message-other-leave-active {
-  position: absolute;
-}
 </style>

@@ -66,6 +66,7 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
       :create-time="message.createTime"
       :update-time="message.updateTime"
       :status="message.status"
+      :is-editing="isEditing"
     />
     <ChatMessageChunkItemTail
       v-if="isLast"
