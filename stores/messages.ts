@@ -66,7 +66,7 @@ const conversation2message6: ConversationMessage = {
 }
 
 const conversation2: Conversation = {
-  members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
+  members: new Map([['u1', { state: 'idle', lastRead: new Date('2000-1-1') }], ['u2', { state: 'idle', lastRead: new Date() }]]),
   conversationId: 'c2',
   messages: new Map([
     [conversation2message1.messageId, conversation2message1],
@@ -201,7 +201,7 @@ export const useMessageStore = defineStore('messages', () => {
         continue
       }
 
-      if (message.createTime.valueOf() < myConversationDetails.lastRead.valueOf()) {
+      if (message.createTime.valueOf() > myConversationDetails.lastRead.valueOf()) {
         unreadMessages++
       }
     }

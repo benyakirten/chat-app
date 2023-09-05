@@ -44,7 +44,7 @@ const conversationName = computed(() => {
     return conversation.alias
   }
 
-  return userStore.getOtherUsers(conversation.members).map(user => user.name).join(", ")
+  return userStore.getOtherUsers(conversation.members).map(user => user.name).join(', ')
 })
 
 const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
@@ -109,7 +109,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
     align-items: center;
     justify-items: center;
     grid-column: 2 / -1;
-    pointer-events: none;
+    text-overflow: ellipsis;
   }
 }
 
