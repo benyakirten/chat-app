@@ -23,7 +23,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 </script>
 
 <template>
-  <div
+  <li
     class="message-group"
     :class="{ right: isMine }"
   >
@@ -46,7 +46,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
     <div class="avatar">
       <GeneralAvatar :user-id="userId" />
     </div>
-  </div>
+  </li>
 </template>
 
 <style scoped>
@@ -54,6 +54,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   display: flex;
   gap: 1rem;
   flex-direction: v-bind(flexDirection);
+  max-width: 60%;
 }
 
 .avatar {

@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import { useLayoutStore } from '@/stores/layout';
 import { useThemeStore } from '@/stores/theme';
 import { useTitleStore } from '@/stores/title';
 
-const layoutStore = useLayoutStore()
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
+
+useHead({
+  title: titleStore.title,
+  // Replace the content with an apt description
+  meta: [{ name: 'description', content: titleStore.title }],
+  bodyAttrs: {
+    style: themeStore.activeThemeVariables
+  }
+})
 </script>
 
 <template>
-  <Head>
-    <Title>{{ titleStore.title }}</Title>
-  </Head>
   <div
     class="container"
-    :style="themeStore.activeThemeVariables"
     id="app-host"
   >
     <NavTheSidebar />
     <NavTheHamburgerMenu />
     <ToasterComponent />
-    <main :class="{ filter: layoutStore.sidebarOpen }">
+    <main>
       <slot></slot>
     </main>
   </div>
@@ -48,5 +51,15 @@ const titleStore = useTitleStore()
 .page-leave-to {
   opacity: 0.5;
   filter: blur(4px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--time-250) ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0.5;
 }
 </style>

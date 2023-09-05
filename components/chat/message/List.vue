@@ -6,6 +6,7 @@ const messageStore = useMessageStore()
 const userStore = useUsersStore()
 
 const { conversationId } = defineProps<{ conversationId: ConversationId | null }>()
+const list = ref<HTMLUListElement | null>(null)
 const conversation = computed(() => messageStore.conversations.get(conversationId ?? ""))
 const messages = computed(() => conversation.value?.messages)
 const userReadTimes = computed(() => conversation.value ? getUserReadTimes(conversation.value) : {})
@@ -60,8 +61,9 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
     >
       No messages in this conversation. Be the first to say something.
     </div>
-    <div
+    <ul
       class="list"
+      ref="list"
       v-else
     >
       <ChatMessageChunk
@@ -72,7 +74,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
         :is-private="(conversation?.members.size ?? 0) > 2"
         :conversation-id="conversationId"
       />
-    </div>
+    </ul>
     <ChatMessageNew
       v-if="conversationId"
       :conversation-id="conversationId"
@@ -83,7 +85,8 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
 <style scoped>
 .container {
   display: grid;
-  padding-bottom: 0.5rem;
+  padding: 1rem 0;
+  height: inherit;
 
   .no-messages {
     /*  */
@@ -96,6 +99,8 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
     gap: 1rem;
     align-items: flex-start;
     padding: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 </style>

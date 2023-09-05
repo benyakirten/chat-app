@@ -44,7 +44,8 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
     <ChatMessageChunkItemButtons
       @delete="emits('delete', message.messageId)"
       @edit="messageStore.startMessageEdit(message)"
-      v-if="isMine"
+      :showEditButton="!messageStore.editedMessage"
+      v-if="isMine && message.status === 'complete'"
     />
     <ChatMessageChunkItemAuthor
       v-if="isFirst"

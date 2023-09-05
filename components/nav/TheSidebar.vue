@@ -7,12 +7,12 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <Transition name="fade-in">
-    <div
+  <Transition name="backdrop-blur">
+    <button
       v-if="layoutStore.sidebarOpen"
       class="backdrop"
       @click="layoutStore.setSidebarState(false)"
-    ></div>
+    ></button>
   </Transition>
   <Transition name="slide-in">
     <nav v-if="layoutStore.sidebarOpen">
@@ -64,6 +64,7 @@ const themeStore = useThemeStore()
 
 <style scoped>
 .backdrop {
+  cursor: default;
   position: absolute;
   top: 0;
   left: 0;
@@ -75,19 +76,7 @@ const themeStore = useThemeStore()
   height: 100vh;
 
   overflow: hidden;
-  backdrop-filter: blur(4px);
-  transition: backdrop-filter var(--time-100) ease;
-}
-
-.fade-in-enter-active,
-.fade-in-leave-active {
-  transition: opacity var(--time-250) ease-in-out var(--time-100);
-  transform-origin: left;
-}
-
-.fade-in-enter-from,
-.fade-in-leave-to {
-  opacity: 0;
+  backdrop-filter: blur(3px);
 }
 
 nav {
@@ -117,4 +106,16 @@ nav {
 .slide-in-enter-from,
 .slide-in-leave-to {
   translate: -100% 0;
-}</style>
+}
+
+.backdrop-blur-enter-active,
+.backdrop-blur-leave-active {
+  transition: backdrop-filter var(--time-250) ease-in-out var(--time-100);
+  backdrop-filter: blur(3px);
+}
+
+.backdrop-blur-enter-from,
+.backdrop-blur-leave-to {
+  backdrop-filter: blur(0px);
+}
+</style>

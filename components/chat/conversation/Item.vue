@@ -37,7 +37,7 @@ async function viewConversation(e: MouseEvent) {
 // TODO: Generalize this function
 const conversationName = computed(() => {
   if (!conversation) {
-    return 'Unable to determine other participants in conversation'
+    return 'Unknown'
   }
 
   if (conversation.alias) {
