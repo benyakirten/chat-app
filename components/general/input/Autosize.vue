@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { value, placeholder, label } = withDefaults(defineProps<{ value?: string, placeholder: string, label: string }>(), { value: '' })
 
-const emits = defineEmits<{ (e: 'keydown', event: KeyboardEvent): void, (e: 'submit', value: string): void, (e: 'cancel'): void }>()
+const emits = defineEmits<{ (e: 'keydown', event: KeyboardEvent): void, (e: 'submit', value: string): void, (e: 'cancel'): void, (e: 'keyup', value: string): void }>()
 
 const text = ref(value)
 const itemHeight = ref('0px')
@@ -44,6 +44,7 @@ function handleKeydown(e: KeyboardEvent) {
       ref="textarea"
       :aria-label="label"
       @keydown="handleKeydown"
+      @keyup="emits('keyup', text)"
       v-model="text"
       class="autosize-input"
       :placeholder="placeholder"

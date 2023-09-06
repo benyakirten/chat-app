@@ -5,10 +5,12 @@ import { useUsersStore } from '@/stores/users';
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 
-const { conversationId } = defineProps<{ conversationId: ConversationId | null }>()
+const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const list = ref<HTMLUListElement | null>(null)
-const conversation = computed(() => messageStore.conversations.get(conversationId ?? ""))
+const lastMessageSize = ref(0)
+const conversation = computed(() => messageStore.conversations.get(conversationId))
 const messages = computed(() => conversation.value?.messages)
+
 const userReadTimes = computed(() => conversation.value ? getUserReadTimes(conversation.value) : {})
 function getUserReadTimes(conversation: Conversation): UserReadTimes {
   const readMap: Record<UserId, Date> = {}
@@ -23,6 +25,12 @@ function getUserReadTimes(conversation: Conversation): UserReadTimes {
 
 function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
   const messageChunks: ConversationMessage[][] = []
+
+  // TODO: Make this into a watcher function
+  if (messages.size > lastMessageSize.value) {
+    lastMessageSize.value = messages.size
+    scrollToListBottom()
+  }
 
   let lastAuthor: UserId | null = null
   let currentChunk: ConversationMessage[] = []
@@ -44,23 +52,41 @@ function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
   return messageChunks
 }
 
+async function scrollToListBottom() {
+  await nextTick()
+  if (!list.value) {
+    return
+  }
+  list.value.scrollBy({
+    top: list.value.scrollHeight, behavior: 'smooth'
+  })
+}
+
+onMounted(() => {
+  scrollToListBottom()
+})
+
+onUnmounted(() => {
+  messageStore.stopMessageEdit()
+})
+
 const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 </script>
 
 <template>
   <div class="container">
-    <div
+    <p
       class="no-conversation"
       v-if="!messageChunks || !conversationId"
     >
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
-    </div>
-    <div
+    </p>
+    <p
       class="no-messages"
       v-else-if="messageChunks.length === 0"
     >
       No messages in this conversation. Be the first to say something.
-    </div>
+    </p>
     <ul
       class="list"
       ref="list"
@@ -87,9 +113,10 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
   display: grid;
   padding: 1rem 0;
   height: inherit;
+  position: relative;
 
   .no-messages {
-    /*  */
+    padding: 1rem;
   }
 
   .list {

@@ -163,6 +163,7 @@ export interface Conversation {
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
   alias?: string
+  draft?: string
 }
 
 // TODO: Determine how to handle deleted messages
@@ -181,7 +182,6 @@ export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(PROP_CONVERSATIONS)
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<{ conversationId: ConversationId, messageId: MessageId } | null>(null)
-
 
   const userStore = useUsersStore()
 
@@ -311,6 +311,9 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
+    // TODO: Consider if this should be null
+    convo.draft = undefined
+
     if (convo.members.size > 2) {
       // TODO: Send group conversation message
       return
@@ -345,6 +348,10 @@ export const useMessageStore = defineStore('messages', () => {
     // i.e. call synchronizeMessage
   }
 
+  /**
+   * Optimistic updates will add the message with loading
+   * However, update/create time and ID will be different and need to be updated
+   */
   function synchronizeMessage(
     conversationId: ConversationId,
     oldId: MessageId,
