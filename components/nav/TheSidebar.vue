@@ -2,6 +2,9 @@
 import { useLayoutStore } from "@/stores/layout";
 import { useThemeStore } from "@/stores/theme";
 
+const route = useRoute()
+console.log(route.path)
+
 const layoutStore = useLayoutStore()
 const themeStore = useThemeStore()
 </script>
@@ -15,7 +18,11 @@ const themeStore = useThemeStore()
     ></button>
   </Transition>
   <Transition name="slide-in">
-    <nav v-if="layoutStore.sidebarOpen">
+    <nav
+      id="nav"
+      v-if="layoutStore.sidebarOpen"
+    >
+      <NavTheSearchBar />
       <NavSection
         height="8rem"
         width="100%"
@@ -23,9 +30,12 @@ const themeStore = useThemeStore()
         :z-index="5"
         :background-color="themeStore.activeTheme.bgColorAlt1"
       >
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
+        <NuxtLink
+          class="router-link"
+          to="/chat"
+        >All Chats</NuxtLink>
+        <p>Recent Chat #1</p>
+        <p>Recent Chat #2</p>
       </NavSection>
       <NavSection
         height="4rem"
@@ -45,9 +55,9 @@ const themeStore = useThemeStore()
         :z-index="3"
         :background-color="themeStore.activeTheme.bgColorAlt3"
       >
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
+        <p>View account page</p>
+        <p>Details about me</p>
+        <p>More Details</p>
       </NavSection>
       <div class="recent">
         <!-- TODO: Get font sizes correct -->
@@ -95,6 +105,16 @@ nav {
     padding: 1rem;
     width: 70%;
     background-color: var(--bg-color-alt4);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    ul>li {
+      &:not(:last-child) {
+        margin-bottom: 0.5rem;
+      }
+    }
   }
 }
 
@@ -117,5 +137,37 @@ nav {
 .backdrop-blur-enter-from,
 .backdrop-blur-leave-to {
   backdrop-filter: blur(0px);
+}
+
+.router-link {
+  position: relative;
+  color: var(--primary-text);
+  display: inline-block;
+
+  &:not(:last-child) {
+    margin-bottom: 2px;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+
+  &::after {
+    content: '';
+
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--time-250) ease;
+    border: 1px solid var(--accent);
+  }
+}
+
+.router-link-active {
+  color: var(--secondary-text);
 }
 </style>

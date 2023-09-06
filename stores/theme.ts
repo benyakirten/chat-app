@@ -79,7 +79,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     bgColorAlt5: '#071828',
     accent: '#00b894',
     primaryText: '#f4f4f4',
-    secondaryText: '#777777',
+    secondaryText: '#c1c1c1',
     highlight: '#f39c12',
     link: '#3498db',
     neutral: '#bdc3c7',

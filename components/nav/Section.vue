@@ -31,7 +31,6 @@ const id = computed(() => `${group}-expadable-content`)
         <div
           :id="id"
           class="section-body"
-          :aria-hidden="!isOpen"
           v-if="isOpen"
         >
           <slot></slot>
@@ -70,6 +69,7 @@ const id = computed(() => `${group}-expadable-content`)
 
   &-body {
     padding-left: 1rem;
+    height: v-bind(height);
   }
 
   &-contents {
@@ -92,8 +92,6 @@ const id = computed(() => `${group}-expadable-content`)
   height: v-bind(height);
   opacity: 1;
 }
-
-
 
 .section-expand-enter-from,
 .section-expand-leave-to {

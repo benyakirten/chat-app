@@ -53,4 +53,5 @@ const { open } = defineProps<{ open: boolean }>()
   .arrow-leave-to {
     scale: 0;
   }
-}</style>
+}
+</style>

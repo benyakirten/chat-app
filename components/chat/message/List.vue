@@ -37,9 +37,6 @@ watchEffect(() => {
 function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
   const messageChunks: ConversationMessage[][] = []
 
-  // TODO: Make this into a watcher function
-
-
   let lastAuthor: UserId | null = null
   let currentChunk: ConversationMessage[] = []
   for (const message of messages.values()) {
@@ -123,6 +120,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
   height: inherit;
   position: relative;
 
+  .no-conversation,
   .no-messages {
     padding: 1rem;
   }

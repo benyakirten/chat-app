@@ -9,10 +9,11 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
     @click="layoutStore.toggleOpen"
     :aria-label="ariaLabel"
     :aria-expanded="layoutStore.sidebarOpen"
+    aria-controls="nav"
   >
-    <div :aria-hidden="true"></div>
-    <div :aria-hidden="true"></div>
-    <div :aria-hidden="true"></div>
+    <div aria-hidden="true"></div>
+    <div aria-hidden="true"></div>
+    <div aria-hidden="true"></div>
   </button>
 </template>
 
@@ -32,13 +33,13 @@ button {
   flex-direction: column;
 
   border-radius: 4px;
-  background-color: lightgreen;
+  background-color: var(--accent);
   border: none;
 
   div {
     width: 1rem;
     height: 2px;
-    background-color: black;
+    background-color: var(--bg-color-primary);
     transition: rotate var(--time-200) ease-in, scale var(--time-200) ease-in var(--time-100);
   }
 
@@ -72,4 +73,5 @@ button {
     }
   }
 
-}</style>
+}
+</style>
