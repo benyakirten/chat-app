@@ -23,14 +23,22 @@ function getUserReadTimes(conversation: Conversation): UserReadTimes {
   return readMap
 }
 
+watchEffect(() => {
+  if (!messages.value) {
+    return
+  }
+
+  if (messages.value.size > lastMessageSize.value) {
+    lastMessageSize.value = messages.value.size
+    scrollToListBottom()
+  }
+})
+
 function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
   const messageChunks: ConversationMessage[][] = []
 
   // TODO: Make this into a watcher function
-  if (messages.size > lastMessageSize.value) {
-    lastMessageSize.value = messages.size
-    scrollToListBottom()
-  }
+
 
   let lastAuthor: UserId | null = null
   let currentChunk: ConversationMessage[] = []
