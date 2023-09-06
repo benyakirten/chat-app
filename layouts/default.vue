@@ -4,11 +4,14 @@ import { useTitleStore } from '@/stores/title';
 
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
+const route = useRoute()
+
+// TODO: Figure out why this needs to be computed here
+const title = computed(() => titleStore.title(route.path, route.params['id']))
 
 useHead({
-  title: titleStore.title,
   // Replace the content with an apt description
-  meta: [{ name: 'description', content: titleStore.title }],
+  meta: [{ name: 'description', content: title }],
   bodyAttrs: {
     style: themeStore.activeThemeVariables
   }
@@ -16,6 +19,9 @@ useHead({
 </script>
 
 <template>
+  <Head>
+    <Title>{{ title }}</Title>
+  </Head>
   <div
     class="container"
     id="app-host"

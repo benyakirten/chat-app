@@ -62,6 +62,40 @@ describe('LRU Cache', () => {
       expect(cacheResults[2]).toEqual('you')
     })
 
+    it('should accurately remove the last N entries if the size has been reduced by N', () => {
+      lru.visit('me')
+      lru.visit('you')
+      lru.visit('them')
+
+      let cache = lru.cache
+      expect(cache.length).toEqual(3)
+
+      lru.size = 2
+      cache = lru.cache
+
+      expect(cache.length).toEqual(2)
+      expect(cache[0]).toEqual('them')
+      expect(cache[1]).toEqual('you')
+    })
+
+    it('should be able to increase the size of the cache', () => {
+      lru.visit('me')
+      lru.visit('you')
+      lru.visit('them')
+      lru.visit('us')
+
+      let cache = lru.cache
+      expect(cache.length).toEqual(3)
+      expect(cache).toEqual(['us', 'them', 'you'])
+
+      lru.size = 4
+      lru.visit('me')
+
+      cache = lru.cache
+      expect(cache.length).toEqual(4)
+      expect(cache).toEqual(['me', 'us', 'them', 'you'])
+    })
+
     it('should maintain accuracy with repeated operations over many iterations', () => {
       const tests: { toVisit: string, expected: string[] }[] = [
         {

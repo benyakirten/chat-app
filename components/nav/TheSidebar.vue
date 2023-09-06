@@ -3,7 +3,6 @@ import { useLayoutStore } from "@/stores/layout";
 import { useThemeStore } from "@/stores/theme";
 
 const route = useRoute()
-console.log(route.path)
 
 const layoutStore = useLayoutStore()
 const themeStore = useThemeStore()

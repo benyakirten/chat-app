@@ -5,12 +5,11 @@ import { useUsersStore } from "./users";
 
 export const useTitleStore = defineStore('title', () => {
   const userStore = useUsersStore()
-  const route = useRoute()
   const messageStore = useMessageStore()
 
   // TODO: Clean this the F up
-  const title = computed(() => {
-    const sections = route.path.slice(1).split('/')
+  const title = computed(() => (path: string, id?: string | string[]) => {
+    const sections = path.slice(1).split('/')
     if (sections.length === 0) {
       return 'Chat App'
     }
@@ -18,14 +17,14 @@ export const useTitleStore = defineStore('title', () => {
     const pageTitle = capitalize(sections[0])
     if (
       pageTitle !== 'Chat' ||
-      (!('id' in route.params && typeof route.params['id'] === "string")) ||
+      ((typeof id !== "string")) ||
       !userStore.me
     ) {
       return pageTitle
     }
 
     let subpageTitle: string | null = null
-    const conversation = messageStore.conversations.get(route.params['id'])
+    const conversation = messageStore.conversations.get(id)
 
     // TODO: Make this into a function
     if (conversation) {

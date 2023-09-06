@@ -20,7 +20,7 @@ const conversation2message1: ConversationMessage = {
 }
 
 const conversation2message2: ConversationMessage = {
-  sender: 'u2',
+  sender: 'u3',
   messageId: 'c2m2',
   content: 'Hi to you too. Who are you AGAIN?',
   status: 'complete',
@@ -29,7 +29,7 @@ const conversation2message2: ConversationMessage = {
 }
 
 const conversation2message3: ConversationMessage = {
-  sender: 'u2',
+  sender: 'u3',
   messageId: 'c2m3',
   content: 'Interested in knowing?',
   status: 'complete',
@@ -66,7 +66,7 @@ const conversation2message6: ConversationMessage = {
 }
 
 const conversation2: Conversation = {
-  members: new Map([['u1', { state: 'idle', lastRead: new Date('2000-1-1') }], ['u2', { state: 'idle', lastRead: new Date() }]]),
+  members: new Map([['u1', { state: 'idle', lastRead: new Date('2000-1-1') }], ['u3', { state: 'idle', lastRead: new Date() }]]),
   conversationId: 'c2',
   messages: new Map([
     [conversation2message1.messageId, conversation2message1],

@@ -16,11 +16,32 @@ export class LRU {
     return [...this._cache.values()].reverse()
   }
 
-  private get first() {
-    return this._cache.keys().next().value
+  private remove(n: number) {
+    for (let i = 0; i < n; i++) {
+      const iter = this._cache.keys().next()
+      if (iter.done) {
+        break
+      }
+      this._cache.delete(iter.value)
+    }
   }
 
-  constructor(private size = 10,) { }
+  constructor(private _size = 10) { }
+
+  public get size() {
+    return this._size
+  }
+
+  public set size(newSize: number) {
+    if (newSize < 1) {
+      newSize = 1
+    }
+
+    if (newSize < this._size) {
+      this.remove(this._size - newSize)
+    }
+    this._size = newSize
+  }
 
   public visit(page: string) {
     if (this._cache.has(page)) {
@@ -29,8 +50,8 @@ export class LRU {
       return
     }
 
-    if (this._cache.size >= this.size) {
-      this._cache.delete(this.first)
+    if (this._cache.size >= this._size) {
+      this.remove(1)
     }
 
     this._cache.add(page)
