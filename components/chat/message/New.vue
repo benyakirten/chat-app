@@ -4,7 +4,7 @@ import { ConversationId, useMessageStore } from '@/stores/messages';
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
 const conversation = computed(() => messageStore.conversations.get(conversationId))
-const debouncer = useDebounce((val: string) => {
+const { debouncer } = useDebounce((val: string) => {
   if (conversation.value) {
     conversation.value.draft = val
   }

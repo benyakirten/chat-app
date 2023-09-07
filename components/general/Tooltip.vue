@@ -9,18 +9,10 @@ const { direction, debounceTimeout, id, disableClick } = withDefaults(
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
 
 const timeout = ref<NodeJS.Timeout | null>(null)
-
-// TODO: Think about how to use the composable
-function handleMouseEnter() {
-  timeout.value = setTimeout(() => {
-    tooltipState.value = 'hovered'
-  }, debounceTimeout)
-}
+const { clear, debouncer } = useDebounce(() => tooltipState.value = 'hovered', debounceTimeout)
 
 function handleMouseLeave() {
-  if (timeout.value) {
-    clearTimeout(timeout.value)
-  }
+  clear()
 
   if (tooltipState.value === 'hovered') {
     tooltipState.value = 'hidden'
@@ -29,13 +21,11 @@ function handleMouseLeave() {
 
 function handleClick(e: Event) {
   if (disableClick) {
+    clear()
     tooltipState.value = 'hidden'
-    if (timeout.value) {
-      clearTimeout(timeout.value)
-    }
-
     return
   }
+
   e.stopPropagation()
   tooltipState.value = tooltipState.value === 'hidden' ? 'clicked' : 'hidden'
 }
@@ -44,7 +34,7 @@ const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
 
 onMounted(() => {
   const listener = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       tooltipState.value = 'hidden'
     }
   }
@@ -57,7 +47,7 @@ onMounted(() => {
   <!-- Not sure why these events are not triggering -->
   <span
     class="tooltip"
-    @mouseover="handleMouseEnter"
+    @mouseover="debouncer"
     @click="handleClick"
     @mouseleave="handleMouseLeave"
     @mouseout="handleMouseLeave"

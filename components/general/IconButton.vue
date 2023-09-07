@@ -2,8 +2,15 @@
 import type { FunctionalComponent, HTMLAttributes, VNodeProps } from 'nuxt/dist/app/compat/capi';
 
 const { title, size, type, icon } = withDefaults(
-  defineProps<{ title: string, size: string, icon: FunctionalComponent<HTMLAttributes & VNodeProps, {}, any>, type?: 'submit' | 'button', disabled?: boolean, }>(),
-  { type: 'button', disabled: false },
+  defineProps<{
+    title: string,
+    size: string,
+    icon: FunctionalComponent<HTMLAttributes & VNodeProps, {}, any>,
+    type?: 'submit' | 'button',
+    disabled?: boolean,
+    color?: string
+  }>(),
+  { type: 'button', disabled: false, color: 'var(--primary-text)' },
 )
 
 const emits = defineEmits<{
@@ -25,14 +32,16 @@ const emits = defineEmits<{
       </template>
       <component
         :is="icon"
-        :style="{ color: disabled ? 'gray' : 'white', width: size, height: size }"
+        :style="{ color: disabled ? 'gray' : color, width: size, height: size }"
       />
     </GeneralTooltip>
   </button>
 </template>
 
-<style scoped>.icon-button {
+<style scoped>
+.icon-button {
   display: inline-block;
   width: v-bind(size);
   height: v-bind(size);
-}</style>
+}
+</style>

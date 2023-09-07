@@ -34,5 +34,6 @@ const emits = defineEmits<{ (e: 'edit'): void, (e: 'delete'): void }>()
 
   display: flex;
   gap: 0.35rem;
+  color: var(--accent);
 }
 </style>
