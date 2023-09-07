@@ -1,8 +1,8 @@
-import { defineStore, skipHydrate } from 'pinia';
-import { v4 as uuid } from "uuid";
+import { defineStore, skipHydrate } from 'pinia'
+import { v4 as uuid } from 'uuid'
 
-import { ConversationMap, getOtherMapKey } from '@/lib/collections';
-import { useUsersStore } from './users';
+import { ConversationMap, getOtherMapKey } from '@/lib/collections'
+import { useUsersStore } from './users'
 
 export type ConversationId = string
 export type MessageId = string
@@ -37,11 +37,10 @@ const conversation2message3: ConversationMessage = {
   updateTime: new Date('2020-1-4'),
 }
 
-
 const conversation2message4: ConversationMessage = {
   sender: 'u1',
   messageId: 'c2m4',
-  content: 'I\'m me. Don\'t you know me AGAIN?',
+  content: "I'm me. Don't you know me AGAIN?",
   status: 'pending',
   createTime: new Date('2020-1-4'),
   updateTime: new Date('2020-1-4'),
@@ -66,7 +65,10 @@ const conversation2message6: ConversationMessage = {
 }
 
 const conversation2: Conversation = {
-  members: new Map([['u1', { state: 'idle', lastRead: new Date('2000-1-1') }], ['u3', { state: 'idle', lastRead: new Date() }]]),
+  members: new Map([
+    ['u1', { state: 'idle', lastRead: new Date('2000-1-1') }],
+    ['u3', { state: 'idle', lastRead: new Date() }],
+  ]),
   conversationId: 'c2',
   messages: new Map([
     [conversation2message1.messageId, conversation2message1],
@@ -74,10 +76,9 @@ const conversation2: Conversation = {
     [conversation2message3.messageId, conversation2message3],
     [conversation2message4.messageId, conversation2message4],
     [conversation2message5.messageId, conversation2message5],
-    [conversation2message6.messageId, conversation2message6]
+    [conversation2message6.messageId, conversation2message6],
   ]),
 }
-
 
 const conversation1message1: ConversationMessage = {
   sender: 'u1',
@@ -106,11 +107,10 @@ const conversation1message3: ConversationMessage = {
   updateTime: new Date('2020-1-4'),
 }
 
-
 const conversation1message4: ConversationMessage = {
   sender: 'u1',
   messageId: 'c1m4',
-  content: 'I\'m me. Don\'t you know me?',
+  content: "I'm me. Don't you know me?",
   status: 'pending',
   createTime: new Date('2020-1-4'),
   updateTime: new Date('2020-1-4'),
@@ -135,7 +135,10 @@ const conversation1message6: ConversationMessage = {
 }
 
 const conversation1: Conversation = {
-  members: new Map([['u1', { state: 'idle', lastRead: new Date() }], ['u2', { state: 'idle', lastRead: new Date() }]]),
+  members: new Map([
+    ['u1', { state: 'idle', lastRead: new Date() }],
+    ['u2', { state: 'idle', lastRead: new Date() }],
+  ]),
   conversationId: 'c1',
   messages: new Map([
     [conversation1message1.messageId, conversation1message1],
@@ -143,14 +146,15 @@ const conversation1: Conversation = {
     [conversation1message3.messageId, conversation1message3],
     [conversation1message4.messageId, conversation1message4],
     [conversation1message5.messageId, conversation1message5],
-    [conversation1message6.messageId, conversation1message6]
+    [conversation1message6.messageId, conversation1message6],
   ]),
 }
 
 const PROP_CONVERSATIONS = new ConversationMap([conversation1, conversation2])
 
 export interface UserConversationState {
-  state: 'typing' | 'idle', lastRead: Date
+  state: 'typing' | 'idle'
+  lastRead: Date
 }
 
 // TODO: Figure out how the typing indicator will work
@@ -181,7 +185,7 @@ export type UserReadTimes = Record<UserId, Date>
 export const useMessageStore = defineStore('messages', () => {
   const conversations = ref(PROP_CONVERSATIONS)
   const filteredConversationIds = ref<ConversationId[] | null>(null)
-  const editedMessage = ref<{ conversationId: ConversationId, messageId: MessageId } | null>(null)
+  const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
   const userStore = useUsersStore()
 
@@ -267,7 +271,10 @@ export const useMessageStore = defineStore('messages', () => {
     const newConvo: Conversation = {
       conversationId,
       // TODO: Make this better
-      members: new Map([[message.sender, { state: 'idle', lastRead: new Date() }], [to, { state: 'idle', lastRead: new Date() }]]),
+      members: new Map([
+        [message.sender, { state: 'idle', lastRead: new Date() }],
+        [to, { state: 'idle', lastRead: new Date() }],
+      ]),
       messages: new Map([[message.messageId, message]]),
     }
 
@@ -339,7 +346,7 @@ export const useMessageStore = defineStore('messages', () => {
       content: message,
       status: 'pending',
       createTime: new Date(),
-      updateTime: new Date()
+      updateTime: new Date(),
     }
 
     addMessage(conversationId, convoMessage, to)

@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { ConversationMessage } from '@/stores/messages';
+import { ConversationMessage } from '@/stores/messages'
 
-const { status, content } = defineProps<{ status: ConversationMessage['status'], content: string }>()
+const { status, content } = defineProps<{ status: ConversationMessage['status']; content: string }>()
 </script>
 
 <template>
-  <div
-    class="content"
-    :class="{ errored: status === 'error', loading: status === 'pending' }"
-  >
+  <div class="content" :class="{ errored: status === 'error', loading: status === 'pending' }">
     <!-- TODO: Add parsing for code blocks/etc, also make sure html is escaped -->
     {{ content }}
   </div>

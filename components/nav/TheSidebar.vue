@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/stores/layout";
-import { useThemeStore } from "@/stores/theme";
+import { useLayoutStore } from '@/stores/layout'
+import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
 
@@ -10,17 +10,10 @@ const themeStore = useThemeStore()
 
 <template>
   <Transition name="backdrop-blur">
-    <button
-      v-if="layoutStore.sidebarOpen"
-      class="backdrop"
-      @click="layoutStore.setSidebarState(false)"
-    ></button>
+    <button v-if="layoutStore.sidebarOpen" class="backdrop" @click="layoutStore.setSidebarState(false)"></button>
   </Transition>
   <Transition name="slide-in">
-    <nav
-      id="nav"
-      v-if="layoutStore.sidebarOpen"
-    >
+    <nav id="nav" v-if="layoutStore.sidebarOpen">
       <NavTheSearchBar />
       <NavSection
         height="8rem"
@@ -29,10 +22,7 @@ const themeStore = useThemeStore()
         :z-index="5"
         :background-color="themeStore.activeTheme.bgColorAlt1"
       >
-        <NuxtLink
-          class="router-link"
-          to="/chat"
-        >All Chats</NuxtLink>
+        <NuxtLink class="router-link" to="/chat">All Chats</NuxtLink>
         <p>Recent Chat #1</p>
         <p>Recent Chat #2</p>
       </NavSection>
@@ -109,7 +99,7 @@ nav {
     flex-direction: column;
     gap: 1rem;
 
-    ul>li {
+    ul > li {
       &:not(:last-child) {
         margin-bottom: 0.5rem;
       }

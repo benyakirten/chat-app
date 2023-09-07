@@ -26,7 +26,7 @@ export class LRU {
     }
   }
 
-  constructor(private _size = 10) { }
+  constructor(private _size = 10) {}
 
   public get size() {
     return this._size

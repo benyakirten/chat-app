@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ConversationMessage, MessageId, UserReadTimes, useMessageStore } from '@/stores/messages';
-import { useUsersStore } from '@/stores/users';
+import { ConversationMessage, MessageId, UserReadTimes, useMessageStore } from '@/stores/messages'
+import { useUsersStore } from '@/stores/users'
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{
-  message: ConversationMessage,
-  readTimes: UserReadTimes,
-  isMine: boolean,
-  isFirst: boolean,
-  isLast: boolean,
+  message: ConversationMessage
+  readTimes: UserReadTimes
+  isMine: boolean
+  isFirst: boolean
+  isLast: boolean
   isPrivate: boolean
 }>()
-const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void, (e: 'edit', messageId: MessageId): void }>()
+const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void; (e: 'edit', messageId: MessageId): void }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
@@ -31,16 +31,13 @@ const readList = computed(() => {
   return readUsers
 })
 
-const justifyAuthor = computed(() => isMine ? 'flex-end' : 'flex-start')
-const textAlign = computed(() => isMine ? 'right' : 'left')
+const justifyAuthor = computed(() => (isMine ? 'flex-end' : 'flex-start'))
+const textAlign = computed(() => (isMine ? 'right' : 'left'))
 const isEditing = computed(() => message.messageId === messageStore.editedMessage?.messageId)
 </script>
 
 <template>
-  <li
-    class="message"
-    :class="{ first: isFirst, last: isLast }"
-  >
+  <li class="message" :class="{ first: isFirst, last: isLast }">
     <ChatMessageChunkItemButtons
       @delete="emits('delete', message.messageId)"
       @edit="emits('edit', message.messageId)"
@@ -52,11 +49,7 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
       :justify="justifyAuthor"
       :name="userStore.users.get(message.sender)?.name"
     />
-    <ChatMessageChunkItemContent
-      :is-editing="isEditing"
-      :content="message.content"
-      :status="message.status"
-    />
+    <ChatMessageChunkItemContent :is-editing="isEditing" :content="message.content" :status="message.status" />
     <ChatMessageChunkItemStatus
       @resend="messageStore.resendMessage(message)"
       :is-mine="isMine"
@@ -68,10 +61,7 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
       :status="message.status"
       :is-editing="isEditing"
     />
-    <ChatMessageChunkItemTail
-      v-if="isLast"
-      :is-mine="isMine"
-    />
+    <ChatMessageChunkItemTail v-if="isLast" :is-mine="isMine" />
   </li>
 </template>
 

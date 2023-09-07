@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export interface LayoutState {
   sidebarOpen: boolean
-  sidebarTabOpened: "chat" | "account" | "other" | null
+  sidebarTabOpened: 'chat' | 'account' | 'other' | null
 }
 
 export const useLayoutStore = defineStore('layout', () => {
@@ -17,16 +17,15 @@ export const useLayoutStore = defineStore('layout', () => {
     sidebarOpen.value = state
   }
 
-  function setTabOpened(tab: LayoutState["sidebarTabOpened"]) {
+  function setTabOpened(tab: LayoutState['sidebarTabOpened']) {
     sidebarTabOpened.value = tab
   }
 
-  function toggleTabOpened(tab: LayoutState["sidebarTabOpened"]) {
+  function toggleTabOpened(tab: LayoutState['sidebarTabOpened']) {
     sidebarTabOpened.value = sidebarTabOpened.value === tab ? null : tab
   }
 
-  const isOpen = computed(() => (tab: LayoutState["sidebarTabOpened"]) => sidebarTabOpened.value === tab)
+  const isOpen = computed(() => (tab: LayoutState['sidebarTabOpened']) => sidebarTabOpened.value === tab)
 
   return { sidebarOpen, sidebarTabOpened, toggleOpen, setSidebarState, setTabOpened, toggleTabOpened, isOpen }
 })
-

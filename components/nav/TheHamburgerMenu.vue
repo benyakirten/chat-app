@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/stores/layout";
+import { useLayoutStore } from '@/stores/layout'
 const layoutStore = useLayoutStore()
 const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} Sidebar`)
 </script>
@@ -57,7 +57,7 @@ button {
     transform-origin: bottom left;
   }
 
-  &[aria-expanded="true"] {
+  &[aria-expanded='true'] {
     div:nth-of-type(1) {
       rotate: 45deg;
       scale: 1.25 1;
@@ -72,6 +72,5 @@ button {
       scale: 1.25 1;
     }
   }
-
 }
 </style>

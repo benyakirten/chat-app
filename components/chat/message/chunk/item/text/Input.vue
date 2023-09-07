@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMessageStore } from '@/stores/messages';
+import { useMessageStore } from '@/stores/messages'
 
 const { content } = defineProps<{ content: string }>()
 const messageStore = useMessageStore()
@@ -12,6 +12,7 @@ const messageStore = useMessageStore()
     placeholder="Edit message..."
     label="Edit message"
     :value="content"
+    :autofocus="true"
     @cancel="messageStore.stopMessageEdit()"
     @submit="messageStore.editMessage($event)"
   />

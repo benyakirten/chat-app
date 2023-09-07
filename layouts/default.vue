@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useThemeStore } from '@/stores/theme';
-import { useTitleStore } from '@/stores/title';
+import { useThemeStore } from '@/stores/theme'
+import { useTitleStore } from '@/stores/title'
 
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
@@ -13,8 +13,8 @@ useHead({
   // Replace the content with an apt description
   meta: [{ name: 'description', content: title }],
   bodyAttrs: {
-    style: themeStore.activeThemeVariables
-  }
+    style: themeStore.activeThemeVariables,
+  },
 })
 </script>
 
@@ -22,10 +22,7 @@ useHead({
   <Head>
     <Title>{{ title }}</Title>
   </Head>
-  <div
-    class="container"
-    id="app-host"
-  >
+  <div class="container" id="app-host">
     <NavTheSidebar />
     <NavTheHamburgerMenu />
     <ToasterComponent />

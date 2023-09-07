@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid'
 
 const { direction, debounceTimeout, id, disableClick } = withDefaults(
-  defineProps<{ direction?: 'top' | 'bottom' | 'left' | 'right', debounceTimeout?: number, id?: string, disableClick?: boolean }>(),
+  defineProps<{
+    direction?: 'top' | 'bottom' | 'left' | 'right'
+    debounceTimeout?: number
+    id?: string
+    disableClick?: boolean
+  }>(),
   { direction: 'top', debounceTimeout: 800, id: uuid(), disableClick: false }
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
 
 const timeout = ref<NodeJS.Timeout | null>(null)
-const { clear, debouncer } = useDebounce(() => tooltipState.value = 'hovered', debounceTimeout)
+const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), debounceTimeout)
 
 function handleMouseLeave() {
   clear()
@@ -60,10 +65,7 @@ onMounted(() => {
         class="tooltip-content"
         :class="tooltipDirectionClass"
       >
-        <slot
-          :state="tooltipState"
-          name="content"
-        ></slot>
+        <slot :state="tooltipState" name="content"></slot>
       </div>
     </Transition>
     <span :aria-describedby="id">

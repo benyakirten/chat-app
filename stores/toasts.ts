@@ -1,7 +1,7 @@
 // Should toasts allow a string or template?
 
-import { defineStore } from "pinia"
-import { v4 as uuid } from "uuid"
+import { defineStore } from 'pinia'
+import { v4 as uuid } from 'uuid'
 
 const DEFAULT_TOAST_TIMEOUT = 3_000
 
@@ -23,7 +23,10 @@ export const useToastStore = defineStore('toasts', () => {
    * If timeout is null, the toast won't close on its own.
    * If closeable is false then the user cannot remove the toast.
    */
-  function add(content: string, { closeable = true, type = 'success', timeout = DEFAULT_TOAST_TIMEOUT }: ToastOptions = {}) {
+  function add(
+    content: string,
+    { closeable = true, type = 'success', timeout = DEFAULT_TOAST_TIMEOUT }: ToastOptions = {}
+  ) {
     const id = uuid()
     const toast: Toast = { id, content, closeable, type }
 

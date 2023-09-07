@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid'
 
-import { ConversationId, useMessageStore } from '@/stores/messages';
-import { useTitleStore } from '@/stores/title';
+import { ConversationId, useMessageStore } from '@/stores/messages'
+import { useTitleStore } from '@/stores/title'
 
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
@@ -10,7 +10,7 @@ const titleStore = useTitleStore()
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const conversation = messageStore.conversations.get(conversationId)
 
-const points = ref<Map<string, { x: number, y: number }>>(new Map())
+const points = ref<Map<string, { x: number; y: number }>>(new Map())
 
 async function viewConversation(e: MouseEvent) {
   await navigateTo(`/chat/${conversationId}`)
@@ -40,22 +40,10 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 <template>
   <li>
     <!-- TODO: Make everything here into its own component, improve CSS -->
-    <button
-      class="conversation"
-      @click="viewConversation"
-    >
-      <GeneralBlip
-        v-for="[id, { x, y }] of points"
-        :key="id"
-        :x="x"
-        :y="y"
-      />
+    <button class="conversation" @click="viewConversation">
+      <GeneralBlip v-for="[id, { x, y }] of points" :key="id" :x="x" :y="y" />
       <Transition name="unread">
-        <span
-          class="conversation-unread"
-          v-if="unreadMessages > 0"
-        >{{
-          unreadMessages }}</span>
+        <span class="conversation-unread" v-if="unreadMessages > 0">{{ unreadMessages }}</span>
       </Transition>
       <span class="conversation-participants">
         {{ titleStore.conversationSubtitle(conversation) }}
@@ -99,7 +87,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
     text-overflow: ellipsis;
   }
 }
-
 
 .unread-enter-from,
 .unread-leave-to {

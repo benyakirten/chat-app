@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ConversationId, useMessageStore } from '@/stores/messages';
+import { ConversationId, useMessageStore } from '@/stores/messages'
 
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
@@ -17,7 +17,7 @@ const { debouncer } = useDebounce((val: string) => {
     placeholder="Write a message..."
     label="New Message"
     @submit="messageStore.sendMessage(conversationId, $event)"
-    @keyup="debouncer"
+    @input="(_, val) => debouncer(val)"
     :value="conversation?.draft"
   />
 </template>

@@ -1,32 +1,24 @@
 <script lang="ts" setup>
-import {
-  useMessageStore,
-  type ConversationId,
-  type ConversationMessage,
-  type UserReadTimes
-} from '@/stores/messages';
-import { useUsersStore } from '@/stores/users';
+import { useMessageStore, type ConversationId, type ConversationMessage, type UserReadTimes } from '@/stores/messages'
+import { useUsersStore } from '@/stores/users'
 
 const userStore = useUsersStore()
-const {
-  chunk,
-  userReadTimes,
-  isPrivate,
-  conversationId
-} = defineProps<{ chunk: ConversationMessage[], userReadTimes: UserReadTimes, isPrivate: boolean, conversationId: ConversationId }>()
+const { chunk, userReadTimes, isPrivate, conversationId } = defineProps<{
+  chunk: ConversationMessage[]
+  userReadTimes: UserReadTimes
+  isPrivate: boolean
+  conversationId: ConversationId
+}>()
 
 const messageStore = useMessageStore()
 const userId = computed(() => chunk[0].sender)
 const isMine = computed(() => userStore.isMine(chunk[0]))
-const flexDirection = computed(() => isMine.value ? 'row' : 'row-reverse')
+const flexDirection = computed(() => (isMine.value ? 'row' : 'row-reverse'))
 const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'other'}`)
 </script>
 
 <template>
-  <li
-    class="message-group"
-    :class="{ right: isMine }"
-  >
+  <li class="message-group" :class="{ right: isMine }">
     <!-- TODO: Figure out why this transition group isn't working -->
     <ul class="messages">
       <TransitionGroup :name="transitionGroupName">

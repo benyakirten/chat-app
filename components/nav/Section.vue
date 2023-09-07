@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { LayoutState, useLayoutStore } from "@/stores/layout";
+import { LayoutState, useLayoutStore } from '@/stores/layout'
 
 const layoutStore = useLayoutStore()
 const { group, height, zIndex, backgroundColor, width } = defineProps<{
-  group: LayoutState["sidebarTabOpened"]
+  group: LayoutState['sidebarTabOpened']
   height: string
   zIndex: number
   backgroundColor: string
@@ -28,11 +28,7 @@ const id = computed(() => `${group}-expadable-content`)
         </h4>
       </button>
       <Transition name="section-expand">
-        <div
-          :id="id"
-          class="section-body"
-          v-if="isOpen"
-        >
+        <div :id="id" class="section-body" v-if="isOpen">
           <slot></slot>
         </div>
       </Transition>

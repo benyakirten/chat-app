@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-import { ConversationMessage, UserConversationState, UserId } from "./messages";
+import { ConversationMessage, UserConversationState, UserId } from './messages'
 
 const PROP_USERS = new Map<UserId, User>()
 PROP_USERS.set('u1', {
@@ -26,12 +26,12 @@ PROP_USERS.set('u4', {
 
 // TODO: Add details for a user
 export interface User {
-  userId: UserId,
-  name: string,
+  userId: UserId
+  name: string
   // TODO: Public keys for others, private key for current user
   // key: string
   // For optimistic updates
-  state: 'failed' | 'pending' | 'completed',
+  state: 'failed' | 'pending' | 'completed'
   // This may be a reach to add user images
   image?: string
 }
@@ -40,11 +40,11 @@ export interface User {
 // and will probably be batch added
 // after the user logs in
 export interface UsersStoreState {
-  users: Map<UserId, User>,
-  me: UserId | null,
+  users: Map<UserId, User>
+  me: UserId | null
 }
 
-export const useUsersStore = defineStore("users", () => {
+export const useUsersStore = defineStore('users', () => {
   const users = ref<UsersStoreState['users']>(PROP_USERS)
   const me = ref<UsersStoreState['me']>('u1')
 
@@ -54,7 +54,7 @@ export const useUsersStore = defineStore("users", () => {
 
   function batchAddUsers(users: User[]) {
     // TODO: Modify this when we have a backend
-    users.forEach(user => addUser(user))
+    users.forEach((user) => addUser(user))
   }
 
   function updateUser(userId: UserId, user: Partial<User>) {
@@ -66,9 +66,7 @@ export const useUsersStore = defineStore("users", () => {
     users.value.set(userId, { ...currentUser, ...user })
   }
 
-  const isMine = computed(() => (message: ConversationMessage) =>
-    me.value === message.sender
-  )
+  const isMine = computed(() => (message: ConversationMessage) => me.value === message.sender)
 
   const getOtherUsers = computed(() => (userStates: Map<UserId, UserConversationState>) => {
     const userList: User[] = []
@@ -85,8 +83,7 @@ export const useUsersStore = defineStore("users", () => {
     }
 
     return userList
-  }
-  )
+  })
 
   return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine }
 })

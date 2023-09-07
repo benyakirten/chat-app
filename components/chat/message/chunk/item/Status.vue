@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+import { ArrowPathIcon } from '@heroicons/vue/24/solid'
 
-import { formatMessageDate } from '@/lib/dates';
-import { ConversationMessage } from '@/stores/messages';
+import { formatMessageDate } from '@/lib/dates'
+import { ConversationMessage } from '@/stores/messages'
 
 const emits = defineEmits<{
   (e: 'resend', event: MouseEvent): void
 }>()
 const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEditing } = defineProps<{
-  isMine: boolean,
-  readList: string[],
-  isPrivate: boolean,
-  createTime: Date,
-  updateTime: Date,
-  status: ConversationMessage['status'],
-  align: 'right' | 'left',
+  isMine: boolean
+  readList: string[]
+  isPrivate: boolean
+  createTime: Date
+  updateTime: Date
+  status: ConversationMessage['status']
+  align: 'right' | 'left'
   isEditing: boolean
 }>()
 </script>
@@ -22,13 +22,8 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEd
 <template>
   <!-- TODO: Make this less 🍝 -->
   <div class="status">
-    <span v-if="isEditing">
-      Press escape to cancel or enter to commit the edited message.
-    </span>
-    <span
-      class="status-error"
-      v-else-if="isMine && status === 'error'"
-    >
+    <span v-if="isEditing"> Press escape to cancel or enter to commit the edited message. </span>
+    <span class="status-error" v-else-if="isMine && status === 'error'">
       <span>An error occurred</span>
       <GeneralIconButton
         :icon="ArrowPathIcon"
@@ -37,35 +32,22 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEd
         @click="emits('resend', $event)"
       />
     </span>
-    <span
-      v-else-if="isMine && status === 'pending'"
-      class="status-loading"
-    >
-      <span>
-        Loading
-      </span>
+    <span v-else-if="isMine && status === 'pending'" class="status-loading">
+      <span> Loading </span>
       <GeneralLoading size="0.8rem" />
     </span>
     <span v-else>
-      <span v-if="isMine && isPrivate && readList.length > 0">
-        Read
-      </span>
+      <span v-if="isMine && isPrivate && readList.length > 0"> Read </span>
       <span v-if="isMine && readList.length > 0">
         <GeneralTooltip>
-          <template #content>
-            By {{ readList.join(", ") }}
-          </template>
+          <template #content> By {{ readList.join(', ') }} </template>
           Read
         </GeneralTooltip>
       </span>
-      <span v-else>
-        Sent
-      </span>
+      <span v-else> Sent </span>
       {{ formatMessageDate(createTime) }}
       <GeneralTooltip v-if="createTime.valueOf() !== updateTime.valueOf()">
-        <template #content>
-          Edited at {{ formatMessageDate(updateTime) }}
-        </template>
+        <template #content> Edited at {{ formatMessageDate(updateTime) }} </template>
         (Edited)
       </GeneralTooltip>
     </span>

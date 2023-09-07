@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
-const { name, justify } = defineProps<{ name?: string, justify: 'flex-end' | 'flex-start' }>()
+const { name, justify } = defineProps<{ name?: string; justify: 'flex-end' | 'flex-start' }>()
 </script>
 
 <template>
-  <div class="author">{{ name ?? "Unknown User" }}</div>
+  <div class="author">{{ name ?? 'Unknown User' }}</div>
 </template>
 
 <style scoped>

@@ -1,6 +1,14 @@
 <script lang="ts" setup>
-import { Conversation, ConversationId, ConversationMessage, MessageId, UserId, UserReadTimes, useMessageStore } from '@/stores/messages';
-import { useUsersStore } from '@/stores/users';
+import {
+  Conversation,
+  ConversationId,
+  ConversationMessage,
+  MessageId,
+  UserId,
+  UserReadTimes,
+  useMessageStore,
+} from '@/stores/messages'
+import { useUsersStore } from '@/stores/users'
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
@@ -11,7 +19,7 @@ const lastMessageSize = ref(0)
 const conversation = computed(() => messageStore.conversations.get(conversationId))
 const messages = computed(() => conversation.value?.messages)
 
-const userReadTimes = computed(() => conversation.value ? getUserReadTimes(conversation.value) : {})
+const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value) : {}))
 function getUserReadTimes(conversation: Conversation): UserReadTimes {
   const readMap: Record<UserId, Date> = {}
   for (const [userId, conversationState] of conversation.members) {
@@ -63,7 +71,8 @@ async function scrollToListBottom() {
     return
   }
   list.value.scrollBy({
-    top: list.value.scrollHeight, behavior: 'smooth'
+    top: list.value.scrollHeight,
+    behavior: 'smooth',
   })
 }
 
@@ -80,23 +89,13 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
 
 <template>
   <div class="container">
-    <p
-      class="no-conversation"
-      v-if="!messageChunks || !conversationId"
-    >
+    <p class="no-conversation" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
-    <p
-      class="no-messages"
-      v-else-if="messageChunks.length === 0"
-    >
+    <p class="no-messages" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
     </p>
-    <ul
-      class="list"
-      ref="list"
-      v-else
-    >
+    <ul class="list" ref="list" v-else>
       <ChatMessageChunk
         v-for="chunk of messageChunks"
         :key="chunk[0].messageId"
@@ -106,10 +105,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
         :conversation-id="conversationId"
       />
     </ul>
-    <ChatMessageNew
-      v-if="conversationId"
-      :conversation-id="conversationId"
-    />
+    <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />
   </div>
 </template>
 

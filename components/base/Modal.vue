@@ -1,18 +1,20 @@
 <script setup lang="ts">
 const { open } = defineProps<{ open: boolean }>()
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
 </script>
 
 <template>
   <Teleport to="body">
-    <dialog
-      :open="open"
-      v-bind="$attrs"
-    >
+    <dialog class="dialog" :open="open" v-bind="$attrs">
       <slot></slot>
     </dialog>
   </Teleport>
 </template>
 
+<style scoped>
+.dialog {
+  /*  */
+}
+</style>

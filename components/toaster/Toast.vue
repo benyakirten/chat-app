@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Toast, useToastStore } from '@/stores/toasts';
-import { XCircleIcon } from '@heroicons/vue/24/solid';
+import { Toast, useToastStore } from '@/stores/toasts'
+import { XCircleIcon } from '@heroicons/vue/24/solid'
 
 const { toast } = defineProps<{ toast: Toast }>()
 
@@ -8,11 +8,7 @@ const toastStore = useToastStore()
 </script>
 
 <template>
-  <output
-    role="status"
-    class="toast"
-    :class="toast.type"
-  >
+  <output role="status" class="toast" :class="toast.type">
     <span class="toast-content">
       {{ toast.content }}
     </span>
@@ -57,4 +53,5 @@ const toastStore = useToastStore()
   &.info {
     background-color: blue;
   }
-}</style>
+}
+</style>

@@ -1,7 +1,15 @@
 <script setup lang="ts">
-const { value, placeholder, label } = withDefaults(defineProps<{ value?: string, placeholder: string, label: string }>(), { value: '' })
+const { value, placeholder, label, autofocus } = withDefaults(
+  defineProps<{ value?: string; placeholder: string; label: string; autofocus?: boolean }>(),
+  { value: '', autofocus: false }
+)
 
-const emits = defineEmits<{ (e: 'keydown', event: KeyboardEvent): void, (e: 'submit', value: string): void, (e: 'cancel'): void, (e: 'keyup', value: string): void }>()
+const emits = defineEmits<{
+  (e: 'keydown', event: KeyboardEvent): void
+  (e: 'submit', value: string): void
+  (e: 'cancel'): void
+  (e: 'input', event: Event, value: string): void
+}>()
 
 const text = ref(value)
 const itemHeight = ref('0px')
@@ -28,23 +36,26 @@ function handleKeydown(e: KeyboardEvent) {
 
   if (e.key === 'Enter' && !e.shiftKey && text.value !== '') {
     emits('submit', text.value)
-    requestAnimationFrame(() => text.value = '')
+    requestAnimationFrame(() => (text.value = ''))
     return
   }
 }
+
+onMounted(() => {
+  if (autofocus) {
+    textarea.value?.focus()
+  }
+})
 </script>
 
 <template>
   <div class="autosize">
-    <div
-      ref="hiddenDiv"
-      class="autosize-hidden"
-    >{{ text }}</div>
+    <div ref="hiddenDiv" class="autosize-hidden">{{ text }}</div>
     <textarea
       ref="textarea"
       :aria-label="label"
       @keydown="handleKeydown"
-      @keyup="emits('keyup', text)"
+      @input="emits('input', $event, text)"
       v-model="text"
       class="autosize-input"
       :placeholder="placeholder"
@@ -72,7 +83,7 @@ function handleKeydown(e: KeyboardEvent) {
     font-size: 1.2rem;
 
     /* TODO: Figure out why this has to be specified */
-    font-family: "Roboto";
+    font-family: 'Roboto';
     height: clamp(3.2rem, v-bind(itemHeight), 12.8rem);
   }
 

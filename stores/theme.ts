@@ -3,25 +3,25 @@ import { defineStore } from 'pinia'
 import { camelToKebabCase } from '@/lib/strings'
 
 export interface ColorTheme {
-  bgColorPrimary: string,
-  bgColorAlt1: string,
-  bgColorAlt2: string,
-  bgColorAlt3: string,
-  bgColorAlt4: string,
-  bgColorAlt5: string,
-  accent: string,
-  primaryText: string,
-  secondaryText: string,
-  highlight: string,
-  link: string,
-  neutral: string,
+  bgColorPrimary: string
+  bgColorAlt1: string
+  bgColorAlt2: string
+  bgColorAlt3: string
+  bgColorAlt4: string
+  bgColorAlt5: string
+  accent: string
+  primaryText: string
+  secondaryText: string
+  highlight: string
+  link: string
+  neutral: string
 }
 
 export interface ThemeStoreState {
   themes: {
-    day: ColorTheme,
+    day: ColorTheme
     night: ColorTheme
-  },
+  }
   active: 'day' | 'night'
 }
 
@@ -83,7 +83,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     highlight: '#f39c12',
     link: '#3498db',
     neutral: '#bdc3c7',
-  }
+  },
 }
 
 export const useThemeStore = defineStore('theme', () => {
@@ -95,9 +95,11 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   const activeTheme = computed(() => themes.value[active.value])
-  const activeThemeVariables = computed(() => Object.entries(themes.value[active.value]).reduce<string>((acc, [key, value]) => {
-    return `${acc} --${camelToKebabCase(key)}: ${value};`
-  }, ""))
+  const activeThemeVariables = computed(() =>
+    Object.entries(themes.value[active.value]).reduce<string>((acc, [key, value]) => {
+      return `${acc} --${camelToKebabCase(key)}: ${value};`
+    }, '')
+  )
 
   return { themes, active, setTheme, activeTheme, activeThemeVariables }
 })

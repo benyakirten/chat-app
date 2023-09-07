@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useMessageStore } from '@/stores/messages';
+import { useMessageStore } from '@/stores/messages'
 
 const store = useMessageStore()
 </script>
@@ -8,22 +8,21 @@ const store = useMessageStore()
   <div class="container">
     <!-- TODO (future): Add filters -->
     <div class="conversations">
-      <div v-if="store.visibleConversations.length === 0">
-        No Conversations. Click below to start a new one.
-      </div>
+      <div v-if="store.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
       <!--
         TODO: Virtualize the list - either hand rolled or use a library
         The backend will paginate the conversation list
         But this list will need to be virtualized on the frontend too
       -->
       <ul v-else>
-        <ChatConversationItem v-for="conversation in store.visibleConversations" :key="conversation.conversationId"
-          :conversation-id="conversation.conversationId" />
+        <ChatConversationItem
+          v-for="conversation in store.visibleConversations"
+          :key="conversation.conversationId"
+          :conversation-id="conversation.conversationId"
+        />
       </ul>
     </div>
-    <button class="new-conversation" disabled>
-      Start a new conversation
-    </button>
+    <button class="new-conversation" disabled>Start a new conversation</button>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest'
 
-import { LRU } from './recents';
+import { LRU } from './recents'
 
 describe('LRU Cache', () => {
   let lru: LRU
@@ -97,38 +97,38 @@ describe('LRU Cache', () => {
     })
 
     it('should maintain accuracy with repeated operations over many iterations', () => {
-      const tests: { toVisit: string, expected: string[] }[] = [
+      const tests: { toVisit: string; expected: string[] }[] = [
         {
           toVisit: 'page1',
-          expected: ['page1']
+          expected: ['page1'],
         },
         {
           toVisit: 'page2',
-          expected: ['page2', 'page1']
+          expected: ['page2', 'page1'],
         },
         {
           toVisit: 'page1',
-          expected: ['page1', 'page2']
+          expected: ['page1', 'page2'],
         },
         {
           toVisit: 'page3',
-          expected: ['page3', 'page1', 'page2']
+          expected: ['page3', 'page1', 'page2'],
         },
         {
           toVisit: 'page4',
-          expected: ['page4', 'page3', 'page1']
+          expected: ['page4', 'page3', 'page1'],
         },
         {
           toVisit: 'page3',
-          expected: ['page3', 'page4', 'page1']
+          expected: ['page3', 'page4', 'page1'],
         },
         {
           toVisit: 'page1',
-          expected: ['page1', 'page3', 'page4']
+          expected: ['page1', 'page3', 'page4'],
         },
         {
           toVisit: 'page2',
-          expected: ['page2', 'page1', 'page3']
+          expected: ['page2', 'page1', 'page3'],
         },
       ]
 

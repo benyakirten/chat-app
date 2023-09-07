@@ -1,6 +1,6 @@
-import { Conversation, ConversationId, ConversationMessage } from "@/stores/messages"
+import { Conversation, ConversationId, ConversationMessage } from '@/stores/messages'
 
-export const arrayify = <T>(item: T | T[]) => Array.isArray(item) ? item : [item]
+export const arrayify = <T>(item: T | T[]) => (Array.isArray(item) ? item : [item])
 export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
   for (const mapKey of map.keys()) {
     if (mapKey !== key) {
@@ -25,7 +25,7 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
-    const historyIndex = this._history.findIndex(convo => convo.conversationId === id)
+    const historyIndex = this._history.findIndex((convo) => convo.conversationId === id)
     if (!convo || historyIndex === -1) {
       return false
     }
@@ -47,7 +47,7 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
   }
 
   public batchAdd(conversations: Conversation[]) {
-    conversations.forEach(conversation => this.add(conversation))
+    conversations.forEach((conversation) => this.add(conversation))
     return this
   }
 }

@@ -1,7 +1,7 @@
-import { capitalize } from "@/lib/strings";
-import { defineStore } from "pinia";
-import { Conversation, useMessageStore } from "./messages";
-import { useUsersStore } from "./users";
+import { capitalize } from '@/lib/strings'
+import { defineStore } from 'pinia'
+import { Conversation, useMessageStore } from './messages'
+import { useUsersStore } from './users'
 
 export const useTitleStore = defineStore('title', () => {
   const userStore = useUsersStore()
@@ -38,11 +38,7 @@ export const useTitleStore = defineStore('title', () => {
 
     const pageTitle = capitalize(sections[0])
     title += ` ${pageTitle}`
-    if (
-      pageTitle !== 'Chat' ||
-      ((typeof id !== "string")) ||
-      !userStore.me
-    ) {
+    if (pageTitle !== 'Chat' || typeof id !== 'string' || !userStore.me) {
       return title
     }
 

@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid'
 </script>
 
 <template>
   <div class="search">
-    <input
-      class="search-input"
-      placeholder="Search..."
-      disabled
-    />
+    <input class="search-input" placeholder="Search..." disabled />
     <div class="search-icon">
       <MagnifyingGlassIcon aria-hidden="true" />
     </div>

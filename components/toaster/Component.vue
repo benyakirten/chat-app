@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import { useToastStore } from '@/stores/toasts';
+import { useToastStore } from '@/stores/toasts'
 
 const toastStore = useToastStore()
 </script>
@@ -8,11 +7,7 @@ const toastStore = useToastStore()
 <template>
   <section class="toaster">
     <TransitionGroup name="toast">
-      <ToasterToast
-        v-for="[id, toast] of toastStore.toasts"
-        :key="id"
-        :toast="toast"
-      />
+      <ToasterToast v-for="[id, toast] of toastStore.toasts" :key="id" :toast="toast" />
     </TransitionGroup>
   </section>
 </template>
@@ -47,4 +42,5 @@ const toastStore = useToastStore()
 .toast-leave-to,
 .toast-enter-from {
   transform: scaleX(0);
-}</style>
+}
+</style>

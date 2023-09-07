@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { x, y } = defineProps<{ x: number, y: number }>()
+const { x, y } = defineProps<{ x: number; y: number }>()
 const left = computed(() => `${x}px`)
 const top = computed(() => `${y}px`)
 </script>
