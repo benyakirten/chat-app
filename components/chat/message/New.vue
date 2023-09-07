@@ -4,14 +4,11 @@ import { ConversationId, useMessageStore } from '@/stores/messages';
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
 const conversation = computed(() => messageStore.conversations.get(conversationId))
-
-function updateConversationDraft(value: string) {
-  if (!conversation.value) {
-    return
+const debouncer = useDebounce((val: string) => {
+  if (conversation.value) {
+    conversation.value.draft = val
   }
-
-  conversation.value.draft = value
-}
+})
 </script>
 
 <template>
@@ -20,7 +17,7 @@ function updateConversationDraft(value: string) {
     placeholder="Write a message..."
     label="New Message"
     @submit="messageStore.sendMessage(conversationId, $event)"
-    @keyup="updateConversationDraft"
+    @keyup="debouncer"
     :value="conversation?.draft"
   />
 </template>

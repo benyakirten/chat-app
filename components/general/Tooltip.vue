@@ -10,11 +10,10 @@ const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
 
 const timeout = ref<NodeJS.Timeout | null>(null)
 
-// Should this be a hook?
+// TODO: Think about how to use the composable
 function handleMouseEnter() {
   timeout.value = setTimeout(() => {
     tooltipState.value = 'hovered'
-    timeout.value = null
   }, debounceTimeout)
 }
 
@@ -184,4 +183,5 @@ onMounted(() => {
   opacity: 0;
   filter: blur(1rem);
   scale: 0.5;
-}</style>
+}
+</style>

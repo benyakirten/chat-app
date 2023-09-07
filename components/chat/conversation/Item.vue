@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 
 import { ConversationId, useMessageStore } from '@/stores/messages';
-import { useUsersStore } from '@/stores/users';
+import { useTitleStore } from '@/stores/title';
 
 const messageStore = useMessageStore()
-const userStore = useUsersStore()
+const titleStore = useTitleStore()
 
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const conversation = messageStore.conversations.get(conversationId)
@@ -34,19 +34,6 @@ async function viewConversation(e: MouseEvent) {
   }, 400)
 }
 
-// TODO: Generalize this function
-const conversationName = computed(() => {
-  if (!conversation) {
-    return 'Unknown'
-  }
-
-  if (conversation.alias) {
-    return conversation.alias
-  }
-
-  return userStore.getOtherUsers(conversation.members).map(user => user.name).join(', ')
-})
-
 const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 </script>
 
@@ -71,7 +58,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
           unreadMessages }}</span>
       </Transition>
       <span class="conversation-participants">
-        {{ conversationName }}
+        {{ titleStore.conversationSubtitle(conversation) }}
       </span>
     </button>
   </li>
