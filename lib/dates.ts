@@ -1,5 +1,4 @@
 // TODO: Add hour/minute/second time customizers like Slack
-
 const MESSAGE_TIME_FORMATTER = new Intl.DateTimeFormat(undefined, {
   year: '2-digit',
   month: 'numeric',

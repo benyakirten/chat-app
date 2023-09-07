@@ -4,7 +4,7 @@ import { ArrowPathIcon } from '@heroicons/vue/24/solid'
 import { formatMessageDate } from '@/lib/dates'
 import { ConversationMessage } from '@/stores/messages'
 
-const emits = defineEmits<{
+const emit = defineEmits<{
   (e: 'resend', event: MouseEvent): void
 }>()
 const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEditing } = defineProps<{
@@ -29,7 +29,7 @@ const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEd
         :icon="ArrowPathIcon"
         size="0.8rem"
         title="Retry Sending Message"
-        @click="emits('resend', $event)"
+        @click="emit('resend', $event)"
       />
     </span>
     <span v-else-if="isMine && status === 'pending'" class="status-loading">

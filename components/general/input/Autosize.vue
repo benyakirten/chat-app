@@ -4,7 +4,7 @@ const { value, placeholder, label, autofocus } = withDefaults(
   { value: '', autofocus: false }
 )
 
-const emits = defineEmits<{
+const emit = defineEmits<{
   (e: 'keydown', event: KeyboardEvent): void
   (e: 'submit', value: string): void
   (e: 'cancel'): void
@@ -26,16 +26,16 @@ watch(text, () => {
 })
 
 function handleKeydown(e: KeyboardEvent) {
-  emits('keydown', e)
+  emit('keydown', e)
 
   if (e.key === 'Escape') {
     textarea.value?.blur()
-    emits('cancel')
+    emit('cancel')
     return
   }
 
   if (e.key === 'Enter' && !e.shiftKey && text.value !== '') {
-    emits('submit', text.value)
+    emit('submit', text.value)
     requestAnimationFrame(() => (text.value = ''))
     return
   }
@@ -55,7 +55,7 @@ onMounted(() => {
       ref="textarea"
       :aria-label="label"
       @keydown="handleKeydown"
-      @input="emits('input', $event, text)"
+      @input="emit('input', $event, text)"
       v-model="text"
       class="autosize-input"
       :placeholder="placeholder"

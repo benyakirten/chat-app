@@ -12,7 +12,7 @@ const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{
   isLast: boolean
   isPrivate: boolean
 }>()
-const emits = defineEmits<{ (e: 'delete', messageId: MessageId): void; (e: 'edit', messageId: MessageId): void }>()
+const emit = defineEmits<{ (e: 'delete', messageId: MessageId): void; (e: 'edit', messageId: MessageId): void }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
@@ -39,8 +39,8 @@ const isEditing = computed(() => message.messageId === messageStore.editedMessag
 <template>
   <li class="message" :class="{ first: isFirst, last: isLast }">
     <ChatMessageChunkItemButtons
-      @delete="emits('delete', message.messageId)"
-      @edit="emits('edit', message.messageId)"
+      @delete="emit('delete', message.messageId)"
+      @edit="emit('edit', message.messageId)"
       :showEditButton="!messageStore.editedMessage"
       v-if="isMine && message.status === 'complete'"
     />

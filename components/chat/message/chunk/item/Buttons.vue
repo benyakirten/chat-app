@@ -2,7 +2,7 @@
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 const { showEditButton } = defineProps<{ showEditButton: boolean }>()
-const emits = defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
+const emit = defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
 </script>
 
 <template>
@@ -13,10 +13,10 @@ const emits = defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
         title="Edit Message"
         :icon="PencilIcon"
         size="0.8rem"
-        @click="emits('edit')"
+        @click="emit('edit')"
       />
     </Transition>
-    <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="0.8rem" @click.stop="emits('delete')" />
+    <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="0.8rem" @click.stop="emit('delete')" />
   </div>
 </template>
 

@@ -2,6 +2,8 @@
 import { useMessageStore } from '@/stores/messages'
 
 const store = useMessageStore()
+
+const newConvoOpen = ref(false)
 </script>
 
 <template>
@@ -22,7 +24,8 @@ const store = useMessageStore()
         />
       </ul>
     </div>
-    <button class="new-conversation" disabled>Start a new conversation</button>
+    <button class="new-conversation" @click="newConvoOpen = true">Start a new conversation</button>
+    <ChatConversationNew @close="newConvoOpen = false" :open="newConvoOpen" />
   </div>
 </template>
 

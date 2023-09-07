@@ -1,11 +1,11 @@
 <template>
-  <BaseLayoutPage>
+  <BasePage>
     <h1>Chat</h1>
     <div class="messages">
       <ChatConversationList />
       <slot></slot>
     </div>
-  </BaseLayoutPage>
+  </BasePage>
 </template>
 
 <style scoped>
