@@ -1,27 +1,28 @@
 <script lang="ts" setup generic="T extends { id: string }">
 import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
-import { clearInterval } from 'timers'
 
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<{ (e: 'select', id: string): void; (e: 'deselect', id: string): void }>()
 
 const props = withDefaults(
   defineProps<{
-    id?: string
     title: string
+    id?: string
     options: T[]
     selected: Set<string>
     placeholder: string
-    size?: string
+    iconSize?: string
     maxHeight?: string
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
   }>(),
-  { id: uuid(), size: '0.8rem', maxHeight: '8rem' }
+  { iconSize: '0.8rem', maxHeight: '8rem', id: uuid() }
 )
 
 const isOpen = ref(false)
+const combobox = ref<HTMLElement | null>(null)
+const listbox = ref<HTMLElement | null>(null)
 const itemRefs = ref<HTMLLIElement[]>([])
 const text = ref('')
 const isSearching = ref(false)
@@ -30,7 +31,7 @@ const { clear, debouncer } = useDebounce(async (value) => {
   await props.searchCallback?.(value)
   isSearching.value = false
 })
-const withId = computed(() => (name: string) => `${props.id}-${name}`)
+const withId = (name: string) => `${props.id}-${name}`
 const shownOptions = computed(() =>
   text.value === '' ? props.options : props.options.filter((option) => props.search(option, text.value))
 )
@@ -40,6 +41,16 @@ const activeDescendant = computed(() =>
     ? undefined
     : shownOptions.value[focusIdx.value].id
 )
+
+function handleOptionClick(id: string) {
+  combobox.value?.focus()
+  toggleItem(id)
+}
+
+function close() {
+  isOpen.value = false
+  focusIdx.value = -1
+}
 
 function getNextIndex() {
   if (focusIdx.value === shownOptions.value.length - 1) {
@@ -73,7 +84,8 @@ function toggleItem(id?: string) {
 // If the text box is cleared, do not perform an async search
 watch(text, (val) => val === '' && clear())
 
-function handleKeydown(e: KeyboardEvent) {
+// TODO: Clean this up
+function handleComboboxKeydown(e: KeyboardEvent) {
   switch (e.key) {
     case 'ArrowDown':
       isOpen.value = true
@@ -96,21 +108,48 @@ function handleKeydown(e: KeyboardEvent) {
       return
     case 'Escape':
       if (isOpen.value) {
-        isOpen.value = false
+        close()
       } else {
         text.value = ''
       }
 
       return
     case 'Enter':
-      toggleItem(shownOptions.value[focusIdx.value]?.id)
+      if (focusIdx.value === -1) {
+        return
+      } else {
+        toggleItem(shownOptions.value[focusIdx.value]?.id)
+      }
       return
     default:
       return
   }
 }
 
-onMounted(() => {})
+function alternateOpen() {
+  if (isOpen.value) {
+    close()
+    return
+  }
+  isOpen.value = true
+}
+
+onMounted(() => {
+  const clickListener = (e: MouseEvent) => {
+    if (!(e.target instanceof HTMLElement)) {
+      return
+    }
+
+    if (listbox.value?.contains(e.target) || combobox.value?.contains(e.target)) {
+      return
+    }
+
+    isOpen.value = false
+  }
+
+  window.addEventListener('click', clickListener)
+  return () => window.removeEventListener('click', clickListener)
+})
 </script>
 
 <template>
@@ -120,22 +159,22 @@ onMounted(() => {})
     </slot>
   </label>
   <div class="combobox" v-bind="$attrs">
-    <div class="combobox-group" @click="isOpen = true">
+    <div class="combobox-group">
       <div class="combobox-group-input">
         <input
           type="text"
           role="combobox"
           v-model="text"
-          aria-autocomplete="both"
+          ref="combobox"
+          aria-autocomplete="list"
           :id="withId('input')"
           :placeholder="placeholder"
           :aria-expanded="isOpen"
           :aria-controls="withId('listbox')"
           :aria-activedescendant="activeDescendant"
-          @keydown="handleKeydown"
+          @keydown="handleComboboxKeydown"
           @focus="isOpen = true"
-          @blur="isOpen = false"
-          @input="props.searchCallback && text && debouncer(text)"
+          @input="props.searchCallback && text.trim() && debouncer(text)"
         />
         <div v-if="isSearching" class="combobox-group-input-loading">
           <GeneralLoading size="1.6rem" />
@@ -147,6 +186,7 @@ onMounted(() => {})
         :aria-label="title"
         :aria-expanded="isOpen"
         :aria-controls="withId('listbox')"
+        @click="alternateOpen"
         tabindex="-1"
       >
         <ChevronDownIcon aria-hidden="true" />
@@ -154,6 +194,7 @@ onMounted(() => {})
     </div>
     <ul
       class="listbox"
+      ref="listbox"
       :style="{ display: isOpen ? 'block' : 'none' }"
       :id="withId('listbox')"
       role="listbox"
@@ -170,7 +211,7 @@ onMounted(() => {})
           :id="option.id"
           :aria-selected="focusIdx === i"
           ref="itemRefs"
-          @click="emit('select', option.id)"
+          @click="handleOptionClick(option.id)"
         >
           <div class="listbox-item-left">
             <slot name="item" :item="option"></slot>
@@ -241,6 +282,7 @@ label {
       color: rgb(0 90 156);
 
       svg {
+        forced-color-adjust: auto;
         transition: rotate var(--time-200) ease;
       }
 
@@ -284,8 +326,8 @@ label {
       grid-column: 2 / -1;
       display: grid;
       place-items: center;
-      height: v-bind(size);
-      width: v-bind(size);
+      height: v-bind(iconSize);
+      width: v-bind(iconSize);
     }
   }
 }
