@@ -1,10 +1,13 @@
 <script lang="ts" setup generic="T extends { id: string }">
-import { ChevronDownIcon } from '@heroicons/vue/24/solid'
+import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 import { v4 as uuid } from 'uuid'
 
 defineOptions({ inheritAttrs: false })
 
-const { id, title, options } = withDefaults(defineProps<{ id?: string; title: string; options: T[] }>(), { id: uuid() })
+const { id, title, options, selected } = withDefaults(
+  defineProps<{ id?: string; title: string; options: T[]; selected: Set<string> }>(),
+  { id: uuid() }
+)
 const isOpen = ref(false)
 const withId = computed(() => (name: string) => `${id}-${name}`)
 </script>
@@ -15,7 +18,7 @@ const withId = computed(() => (name: string) => `${id}-${name}`)
       {{ title }}
     </slot>
   </label>
-  <div class="combobox combobox-list">
+  <div class="combobox" v-bind="$attrs">
     <div class="combobox-group">
       <input
         type="text"
@@ -37,9 +40,14 @@ const withId = computed(() => (name: string) => `${id}-${name}`)
         <ChevronDownIcon aria-hidden="true" />
       </button>
     </div>
-    <ul :id="withId('listbox')" role="listbox" :aria-label="title">
-      <li v-for="option of options" :key="option.id" :id="withId(option.id)" role="option">
-        <slot name="item" :item="option"></slot>
+    <ul class="listbox" :id="withId('listbox')" role="listbox" :aria-label="title">
+      <li class="listbox-item" v-for="option of options" :key="option.id" :id="withId(option.id)" role="option">
+        <div class="listbox-item-left">
+          <slot name="item" :item="option"></slot>
+        </div>
+        <div class="listbox-item-right" v-if="selected.has(option.id)">
+          <CheckIcon aria-hidden="true" />
+        </div>
       </li>
     </ul>
   </div>
@@ -47,8 +55,23 @@ const withId = computed(() => (name: string) => `${id}-${name}`)
 
 <style scoped>
 .combobox {
-  &-list {
-    position: relative;
+  position: relative;
+}
+
+.listbox {
+  &-item {
+    display: grid;
+    grid-auto-columns: 1fr 2rem;
+
+    &-left {
+      grid-column: 1 / 2;
+    }
+
+    &-right {
+      grid-column: 2 / -1;
+      display: grid;
+      place-items: center;
+    }
   }
 }
 </style>
