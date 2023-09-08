@@ -1,14 +1,41 @@
 <script setup lang="ts">
-import { useUsersStore } from '@/stores/users'
+import { User, useUsersStore } from '@/stores/users'
+import { waitFor } from '@/lib/misc'
 
 const userStore = useUsersStore()
 const selected = ref<Set<string>>(new Set(['u1']))
+
+function isUserVisible(user: User, search: string) {
+  return user.name.toLowerCase().includes(search.toLowerCase())
+}
+
+const newPersons = ref(0)
+async function searchCallback(val: string) {
+  await waitFor(2000)
+  const id = Math.random().toString()
+  const user: User = {
+    id,
+    name: `New Person${++newPersons.value}`,
+    state: 'completed',
+  }
+  userStore.users.set(id, user)
+}
 </script>
 
 <template>
   <div class="account">
     <h1>ACCOUNT PAGE</h1>
-    <BaseMultiSelect title="Users" :options="userStore.users" :selected="selected">
+    <BaseMultiSelect
+      placeholder="Choose who to talk to"
+      title="Users"
+      :options="[...userStore.users.values()]"
+      :selected="selected"
+      :has-focus="() => Math.random() > 0.5"
+      :search="isUserVisible"
+      :search-callback="searchCallback"
+      @select="selected.add($event)"
+      @deselect="selected.delete($event)"
+    >
       <template #item="{ item }">
         <div class="account-item">
           {{ item.name }}

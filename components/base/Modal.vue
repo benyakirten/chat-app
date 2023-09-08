@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/solid'
 
-import { isTextInputFocused } from '@/lib/dom'
-import { withinRange } from '@/lib/numbers'
+import { isClickWithinElement, isTextInputFocused } from '@/lib/dom'
 
 const props = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
 defineOptions({
@@ -20,26 +19,26 @@ function handleKeydown(e: KeyboardEvent) {
 }
 
 function detectBackdropClick(e: MouseEvent) {
-  if (!props.open || e.target instanceof HTMLButtonElement || !dialog.value || !dialog.value.open) {
+  if (e.target instanceof HTMLButtonElement || !dialog.value || !dialog.value.open) {
     return
   }
 
-  const { clientX, clientY } = e
-  const { x, y, width, height } = dialog.value.getBoundingClientRect()
-
-  if (!withinRange(clientX, x, x + width) || !withinRange(clientY, y, y + height)) {
+  if (!isClickWithinElement(e, dialog.value)) {
     emit('close')
   }
 }
 
-watchEffect(() => {
-  if (props.open) {
-    dialog.value?.showModal()
-    props.initialFocusCallback?.()
-    return
+watch(
+  () => props.open,
+  (val) => {
+    if (val) {
+      dialog.value?.showModal()
+      props.initialFocusCallback ? props.initialFocusCallback() : button.value?.focus()
+      return
+    }
+    dialog.value?.close()
   }
-  dialog.value?.close()
-})
+)
 
 onMounted(() => {
   window.addEventListener('click', detectBackdropClick)
@@ -71,7 +70,7 @@ onMounted(() => {
   &::backdrop {
     background-color: rgba(0, 0, 0, 0);
     backdrop-filter: blur(0px);
-    transition: all 400ms ease;
+    transition: all var(--time-300) ease;
   }
 
   &[open]::backdrop {
@@ -97,24 +96,5 @@ onMounted(() => {
       transform: scale(0.7);
     }
   }
-}
-
-.backdrop-enter-active,
-.backdrop-leave-active {
-  transition: backdrop-filter var(--time-400) ease, opacity var(--time-400) ease;
-  backdrop-filter: blur(4px);
-}
-
-.backdrop-enter-from,
-.backdrop-leave-to {
-  backdrop-filter: blur(0px);
-  opacity: 0;
-}
-.backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
 }
 </style>
