@@ -39,8 +39,6 @@
   "dependencies": {
     "@heroicons/vue": "^2.0.18",
     "@pinia/nuxt": "^0.4.11",
-    "focus-trap": "^7.5.2",
-    "focus-trap-vue": "^4.0.2",
     "pinia": "^2.1.6",
     "uuid": "^9.0.0"
   }

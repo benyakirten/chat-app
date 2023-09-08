@@ -1,11 +1,11 @@
 <script lang="ts" setup generic="T extends { id: string }">
-import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 import { v4 as uuid } from 'uuid'
+import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 
 defineOptions({ inheritAttrs: false })
 
 const { id, title, options, selected } = withDefaults(
-  defineProps<{ id?: string; title: string; options: T[]; selected: Set<string> }>(),
+  defineProps<{ id?: string; title: string; options: Map<T['id'], T>; selected: Set<string> }>(),
   { id: uuid() }
 )
 const isOpen = ref(false)
@@ -41,11 +41,11 @@ const withId = computed(() => (name: string) => `${id}-${name}`)
       </button>
     </div>
     <ul class="listbox" :id="withId('listbox')" role="listbox" :aria-label="title">
-      <li class="listbox-item" v-for="option of options" :key="option.id" :id="withId(option.id)" role="option">
+      <li class="listbox-item" v-for="[id, option] of options" :key="id" :id="withId(id)" role="option">
         <div class="listbox-item-left">
           <slot name="item" :item="option"></slot>
         </div>
-        <div class="listbox-item-right" v-if="selected.has(option.id)">
+        <div class="listbox-item-right" v-if="selected.has(id)">
           <CheckIcon aria-hidden="true" />
         </div>
       </li>
@@ -61,7 +61,7 @@ const withId = computed(() => (name: string) => `${id}-${name}`)
 .listbox {
   &-item {
     display: grid;
-    grid-auto-columns: 1fr 2rem;
+    grid-template-columns: 1fr 2rem;
 
     &-left {
       grid-column: 1 / 2;

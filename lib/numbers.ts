@@ -9,3 +9,5 @@ export const clamp = (min: number, max: number, value: number) => {
 
   return value
 }
+
+export const withinRange = (num: number, min: number, max: number) => num >= min && num <= max

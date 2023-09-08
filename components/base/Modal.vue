@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { FocusTrap } from 'focus-trap-vue'
 import { XMarkIcon } from '@heroicons/vue/24/solid'
 
 import { isTextInputFocused } from '@/lib/dom'
+import { withinRange } from '@/lib/numbers'
 
-const { open, initialFocusCallback } = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
+const props = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
 defineOptions({
   inheritAttrs: false,
 })
@@ -18,21 +18,43 @@ function handleKeydown(e: KeyboardEvent) {
     emit('close')
   }
 }
+
+function detectBackdropClick(e: MouseEvent) {
+  if (!props.open || e.target instanceof HTMLButtonElement || !dialog.value || !dialog.value.open) {
+    return
+  }
+
+  const { clientX, clientY } = e
+  const { x, y, width, height } = dialog.value.getBoundingClientRect()
+
+  if (!withinRange(clientX, x, x + width) || !withinRange(clientY, y, y + height)) {
+    emit('close')
+  }
+}
+
+watchEffect(() => {
+  if (props.open) {
+    dialog.value?.showModal()
+    props.initialFocusCallback?.()
+    return
+  }
+  dialog.value?.close()
+})
+
+onMounted(() => {
+  window.addEventListener('click', detectBackdropClick)
+  return () => window.removeEventListener('click', detectBackdropClick)
+})
 </script>
 
 <template>
   <Teleport to="body">
-    <Transition name="backdrop">
-      <div v-if="open" class="backdrop" @click="emit('close')"></div>
-    </Transition>
-    <FocusTrap :active="open" :initial-focus="() => initialFocusCallback?.() ?? button ?? false">
-      <dialog ref="dialog" :open="open" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
-        <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
-          <XMarkIcon />
-        </button>
-        <slot></slot>
-      </dialog>
-    </FocusTrap>
+    <dialog ref="dialog" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
+      <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
+        <XMarkIcon />
+      </button>
+      <slot></slot>
+    </dialog>
   </Teleport>
 </template>
 
@@ -47,8 +69,14 @@ function handleKeydown(e: KeyboardEvent) {
   min-width: 2rem;
 
   &::backdrop {
-    background-color: salmon;
-    /* Why is this not showing up? */
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    transition: all 400ms ease;
+  }
+
+  &[open]::backdrop {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
   }
 
   &-close {
@@ -86,11 +114,7 @@ function handleKeydown(e: KeyboardEvent) {
   position: absolute;
   top: 0;
   left: 0;
-
-  background-color: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(4px);
   height: 100vh;
   width: 100vw;
-  z-index: 99;
 }
 </style>
