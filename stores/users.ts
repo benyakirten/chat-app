@@ -85,5 +85,16 @@ export const useUsersStore = defineStore('users', () => {
     return userList
   })
 
-  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine }
+  const otherUsers = computed(() => {
+    const userList: User[] = []
+    for (const [id, user] of users.value) {
+      if (id !== me.value) {
+        userList.push(user)
+      }
+    }
+
+    return userList
+  })
+
+  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers }
 })

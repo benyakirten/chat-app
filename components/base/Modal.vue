@@ -2,6 +2,8 @@
 import { FocusTrap } from 'focus-trap-vue'
 import { XMarkIcon } from '@heroicons/vue/24/solid'
 
+import { isTextInputFocused } from '@/lib/dom'
+
 const { open, initialFocusCallback } = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
 defineOptions({
   inheritAttrs: false,
@@ -12,14 +14,10 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const dialog = ref<HTMLDialogElement | null>(null)
 const button = ref<HTMLButtonElement | null>(null)
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') {
+  if (e.key === 'Escape' && !isTextInputFocused()) {
     emit('close')
   }
 }
-
-watchEffect(() => {
-  open ? dialog.value?.showModal() : dialog.value?.close()
-})
 </script>
 
 <template>
@@ -27,8 +25,8 @@ watchEffect(() => {
     <Transition name="backdrop">
       <div v-if="open" class="backdrop" @click="emit('close')"></div>
     </Transition>
-    <FocusTrap :active="open" :initial-focus="initialFocusCallback ?? button ?? false">
-      <dialog ref="dialog" class="dialog" @keydown="handleKeydown" :open="open" v-bind="$attrs">
+    <FocusTrap :active="open" :initial-focus="() => initialFocusCallback?.() ?? button ?? false">
+      <dialog ref="dialog" :open="open" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
         <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
           <XMarkIcon />
         </button>

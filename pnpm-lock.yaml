@@ -23,9 +23,6 @@ dependencies:
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
-  vue-multiselect:
-    specifier: ^2.1.7
-    version: 2.1.7
 
 devDependencies:
   '@nuxt/devtools':
@@ -12007,11 +12004,6 @@ packages:
     dependencies:
       vue: 3.3.4
     dev: true
-
-  /vue-multiselect@2.1.7:
-    resolution: {integrity: sha512-KIegcN+Ntwg3cbkY/jhw2s/+XJUM0Lpi/LcKFYCS8PrZHcWBl2iKCVze7ZCnRj3w8H7/lUJ9v7rj9KQiNxApBw==}
-    engines: {node: '>= 4.0.0', npm: '>= 3.0.0'}
-    dev: false
 
   /vue-router@4.2.4(vue@3.3.4):
     resolution: {integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==}
