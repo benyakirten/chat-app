@@ -5,7 +5,9 @@ import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 const { open } = defineProps<{ open: boolean }>()
 const userStore = useUsersStore()
 
-function handleSubmit() {}
+function handleSubmit() {
+  //
+}
 </script>
 
 <template>

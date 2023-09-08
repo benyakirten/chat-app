@@ -22,11 +22,11 @@ const messages = computed(() => conversation.value?.messages)
 const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value) : {}))
 function getUserReadTimes(conversation: Conversation): UserReadTimes {
   const readMap: Record<UserId, Date> = {}
-  for (const [userId, conversationState] of conversation.members) {
-    if (userId === userStore.me) {
+  for (const [id, conversationState] of conversation.members) {
+    if (id === userStore.me) {
       continue
     }
-    readMap[userId] = conversationState.lastRead
+    readMap[id] = conversationState.lastRead
   }
   return readMap
 }
@@ -98,7 +98,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
     <ul class="list" ref="list" v-else>
       <ChatMessageChunk
         v-for="chunk of messageChunks"
-        :key="chunk[0].messageId"
+        :key="chunk[0].id"
         :chunk="chunk"
         :user-read-times="userReadTimes"
         :is-private="(conversation?.members.size ?? 0) > 2"

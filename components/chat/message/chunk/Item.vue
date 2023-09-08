@@ -12,16 +12,16 @@ const { message, isMine, readTimes, isFirst, isLast, isPrivate } = defineProps<{
   isLast: boolean
   isPrivate: boolean
 }>()
-const emit = defineEmits<{ (e: 'delete', messageId: MessageId): void; (e: 'edit', messageId: MessageId): void }>()
+const emit = defineEmits<{ (e: 'delete', id: MessageId): void; (e: 'edit', id: MessageId): void }>()
 
 const readList = computed(() => {
   const readUsers: string[] = []
 
   // TODO: Flatten this
-  for (const userId in readTimes) {
-    const readTime = readTimes[userId]
+  for (const id in readTimes) {
+    const readTime = readTimes[id]
     if (readTime.valueOf() > message.createTime.valueOf()) {
-      const user = userStore.users.get(userId)
+      const user = userStore.users.get(id)
       if (user) {
         readUsers.push(user.name)
       }
@@ -33,14 +33,14 @@ const readList = computed(() => {
 
 const justifyAuthor = computed(() => (isMine ? 'flex-end' : 'flex-start'))
 const textAlign = computed(() => (isMine ? 'right' : 'left'))
-const isEditing = computed(() => message.messageId === messageStore.editedMessage?.messageId)
+const isEditing = computed(() => message.id === messageStore.editedMessage?.id)
 </script>
 
 <template>
   <li class="message" :class="{ first: isFirst, last: isLast }">
     <ChatMessageChunkItemButtons
-      @delete="emit('delete', message.messageId)"
-      @edit="emit('edit', message.messageId)"
+      @delete="emit('delete', message.id)"
+      @edit="emit('edit', message.id)"
       :showEditButton="!messageStore.editedMessage"
       v-if="isMine && message.status === 'complete'"
     />

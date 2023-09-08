@@ -24,7 +24,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
       <TransitionGroup :name="transitionGroupName">
         <ChatMessageChunkItem
           v-for="(message, i) in chunk"
-          @delete="messageStore.deleteMessage(conversationId, message.messageId)"
+          @delete="messageStore.deleteMessage(conversationId, message.id)"
           @edit="messageStore.startMessageEdit(conversationId, message)"
           :read-times="userReadTimes"
           :message="message"
@@ -32,7 +32,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
           :is-first="i === 0"
           :is-last="i === chunk.length - 1"
           :is-private="isPrivate"
-          :key="message.messageId"
+          :key="message.id"
         />
       </TransitionGroup>
     </ul>

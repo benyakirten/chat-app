@@ -5,28 +5,28 @@ import { ConversationMessage, UserConversationState, UserId } from './messages'
 const PROP_USERS = new Map<UserId, User>()
 PROP_USERS.set('u1', {
   name: 'Cool Person',
-  userId: 'u1',
+  id: 'u1',
   state: 'completed',
 })
 PROP_USERS.set('u2', {
   name: 'Completed User',
-  userId: 'u2',
+  id: 'u2',
   state: 'completed',
 })
 PROP_USERS.set('u3', {
   name: 'Pending User',
-  userId: 'u3',
+  id: 'u3',
   state: 'pending',
 })
 PROP_USERS.set('u4', {
   name: 'Failed User',
-  userId: 'u4',
+  id: 'u4',
   state: 'failed',
 })
 
 // TODO: Add details for a user
 export interface User {
-  userId: UserId
+  id: UserId
   name: string
   // TODO: Public keys for others, private key for current user
   // key: string
@@ -49,7 +49,7 @@ export const useUsersStore = defineStore('users', () => {
   const me = ref<UsersStoreState['me']>('u1')
 
   function addUser(user: User) {
-    users.value.set(user.userId, user)
+    users.value.set(user.id, user)
   }
 
   function batchAddUsers(users: User[]) {
@@ -57,25 +57,25 @@ export const useUsersStore = defineStore('users', () => {
     users.forEach((user) => addUser(user))
   }
 
-  function updateUser(userId: UserId, user: Partial<User>) {
-    const currentUser = users.value.get(userId)
+  function updateUser(id: UserId, user: Partial<User>) {
+    const currentUser = users.value.get(id)
     if (!currentUser) {
       // TODO: Error handling
       return
     }
-    users.value.set(userId, { ...currentUser, ...user })
+    users.value.set(id, { ...currentUser, ...user })
   }
 
   const isMine = computed(() => (message: ConversationMessage) => me.value === message.sender)
 
   const getOtherUsers = computed(() => (userStates: Map<UserId, UserConversationState>) => {
     const userList: User[] = []
-    for (const userId of userStates.keys()) {
-      if (userId === me.value) {
+    for (const id of userStates.keys()) {
+      if (id === me.value) {
         continue
       }
 
-      const user = users.value.get(userId)
+      const user = users.value.get(id)
       if (!user) {
         continue
       }

@@ -8,9 +8,9 @@ definePageMeta({
 const route = useRoute()
 const messageStore = useMessageStore()
 // TODO: Work on types here
-const conversationId = computed(() => route.params['id'] as string)
+const id = computed(() => route.params['id'] as string)
 onMounted(() => {
-  messageStore.viewConversation(conversationId.value)
+  messageStore.viewConversation(id.value)
 })
 </script>
 
@@ -18,7 +18,7 @@ onMounted(() => {
   <div>
     <!-- TODO: Figure out why this has to be wrapped in a div -->
     <ChatLayout>
-      <ChatMessageList :conversation-id="conversationId" />
+      <ChatMessageList :conversation-id="id" />
     </ChatLayout>
   </div>
 </template>

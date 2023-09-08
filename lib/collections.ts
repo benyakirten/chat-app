@@ -25,12 +25,12 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
-    const historyIndex = this._history.findIndex((convo) => convo.conversationId === id)
+    const historyIndex = this._history.findIndex((convo) => convo.id === id)
     if (!convo || historyIndex === -1) {
       return false
     }
 
-    convo.messages.set(message.messageId, message)
+    convo.messages.set(message.id, message)
     if (historyIndex === 0) {
       return true
     }
@@ -43,7 +43,7 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public add(conversation: Conversation) {
     this._history.push(conversation)
-    return this.set(conversation.conversationId, conversation)
+    return this.set(conversation.id, conversation)
   }
 
   public batchAdd(conversations: Conversation[]) {

@@ -12,7 +12,7 @@ export const TYPING_TIMEOUT = 2_000
 
 const conversation2message1: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c2m1',
+  id: 'c2m1',
   content: 'HI AGAIN!',
   status: 'complete',
   createTime: new Date('2020-1-1'),
@@ -21,7 +21,7 @@ const conversation2message1: ConversationMessage = {
 
 const conversation2message2: ConversationMessage = {
   sender: 'u3',
-  messageId: 'c2m2',
+  id: 'c2m2',
   content: 'Hi to you too. Who are you AGAIN?',
   status: 'complete',
   createTime: new Date('2020-1-2'),
@@ -30,7 +30,7 @@ const conversation2message2: ConversationMessage = {
 
 const conversation2message3: ConversationMessage = {
   sender: 'u3',
-  messageId: 'c2m3',
+  id: 'c2m3',
   content: 'Interested in knowing?',
   status: 'complete',
   createTime: new Date('2020-1-2'),
@@ -39,7 +39,7 @@ const conversation2message3: ConversationMessage = {
 
 const conversation2message4: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c2m4',
+  id: 'c2m4',
   content: "I'm me. Don't you know me AGAIN?",
   status: 'pending',
   createTime: new Date('2020-1-4'),
@@ -48,7 +48,7 @@ const conversation2message4: ConversationMessage = {
 
 const conversation2message5: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c2m5',
+  id: 'c2m5',
   content: 'Everyone knows me AGAIN.',
   status: 'error',
   createTime: new Date('2020-1-4'),
@@ -57,7 +57,7 @@ const conversation2message5: ConversationMessage = {
 
 const conversation2message6: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c2m6',
+  id: 'c2m6',
   content: 'I can assure you AGAIN.',
   status: 'complete',
   createTime: new Date('2020-1-5'),
@@ -69,20 +69,20 @@ const conversation2: Conversation = {
     ['u1', { state: 'idle', lastRead: new Date('2000-1-1') }],
     ['u3', { state: 'idle', lastRead: new Date() }],
   ]),
-  conversationId: 'c2',
+  id: 'c2',
   messages: new Map([
-    [conversation2message1.messageId, conversation2message1],
-    [conversation2message2.messageId, conversation2message2],
-    [conversation2message3.messageId, conversation2message3],
-    [conversation2message4.messageId, conversation2message4],
-    [conversation2message5.messageId, conversation2message5],
-    [conversation2message6.messageId, conversation2message6],
+    [conversation2message1.id, conversation2message1],
+    [conversation2message2.id, conversation2message2],
+    [conversation2message3.id, conversation2message3],
+    [conversation2message4.id, conversation2message4],
+    [conversation2message5.id, conversation2message5],
+    [conversation2message6.id, conversation2message6],
   ]),
 }
 
 const conversation1message1: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c1m1',
+  id: 'c1m1',
   content: 'HI!',
   status: 'complete',
   createTime: new Date('2020-1-1'),
@@ -91,7 +91,7 @@ const conversation1message1: ConversationMessage = {
 
 const conversation1message2: ConversationMessage = {
   sender: 'u2',
-  messageId: 'c1m2',
+  id: 'c1m2',
   content: 'Hi to you too. Who are you?',
   status: 'complete',
   createTime: new Date('2020-1-2'),
@@ -100,7 +100,7 @@ const conversation1message2: ConversationMessage = {
 
 const conversation1message3: ConversationMessage = {
   sender: 'u2',
-  messageId: 'c1m3',
+  id: 'c1m3',
   content: 'Interested in knowing?',
   status: 'complete',
   createTime: new Date('2020-1-2'),
@@ -109,7 +109,7 @@ const conversation1message3: ConversationMessage = {
 
 const conversation1message4: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c1m4',
+  id: 'c1m4',
   content: "I'm me. Don't you know me?",
   status: 'pending',
   createTime: new Date('2020-1-4'),
@@ -118,7 +118,7 @@ const conversation1message4: ConversationMessage = {
 
 const conversation1message5: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c1m5',
+  id: 'c1m5',
   content: 'Everyone knows me.',
   status: 'error',
   createTime: new Date('2020-1-4'),
@@ -127,7 +127,7 @@ const conversation1message5: ConversationMessage = {
 
 const conversation1message6: ConversationMessage = {
   sender: 'u1',
-  messageId: 'c1m6',
+  id: 'c1m6',
   content: 'I can assure you.',
   status: 'complete',
   createTime: new Date('2020-1-5'),
@@ -139,14 +139,14 @@ const conversation1: Conversation = {
     ['u1', { state: 'idle', lastRead: new Date() }],
     ['u2', { state: 'idle', lastRead: new Date() }],
   ]),
-  conversationId: 'c1',
+  id: 'c1',
   messages: new Map([
-    [conversation1message1.messageId, conversation1message1],
-    [conversation1message2.messageId, conversation1message2],
-    [conversation1message3.messageId, conversation1message3],
-    [conversation1message4.messageId, conversation1message4],
-    [conversation1message5.messageId, conversation1message5],
-    [conversation1message6.messageId, conversation1message6],
+    [conversation1message1.id, conversation1message1],
+    [conversation1message2.id, conversation1message2],
+    [conversation1message3.id, conversation1message3],
+    [conversation1message4.id, conversation1message4],
+    [conversation1message5.id, conversation1message5],
+    [conversation1message6.id, conversation1message6],
   ]),
 }
 
@@ -162,7 +162,7 @@ export interface UserConversationState {
 // WhatsApp shows only 1 writing indicator in a group conversation but shows
 // who is writing - 1:1 conversation doesn't matter
 export interface Conversation {
-  conversationId: ConversationId
+  id: ConversationId
   members: Map<UserId, UserConversationState>
   messages: Map<MessageId, ConversationMessage>
   timeout?: NodeJS.Timeout
@@ -173,7 +173,7 @@ export interface Conversation {
 // TODO: Determine how to handle deleted messages
 export interface ConversationMessage {
   sender: UserId
-  messageId: MessageId
+  id: MessageId
   content: string
   status: 'pending' | 'error' | 'complete'
   createTime: Date
@@ -269,21 +269,21 @@ export const useMessageStore = defineStore('messages', () => {
 
     // TODO: API call here
     const newConvo: Conversation = {
-      conversationId,
+      id: conversationId,
       // TODO: Make this better
       members: new Map([
         [message.sender, { state: 'idle', lastRead: new Date() }],
         [to, { state: 'idle', lastRead: new Date() }],
       ]),
-      messages: new Map([[message.messageId, message]]),
+      messages: new Map([[message.id, message]]),
     }
 
     conversations.value.add(newConvo)
   }
 
-  function startTyping(conversationId: ConversationId) {
+  function startTyping(id: ConversationId) {
     // Users should only be able to type in their active conversation
-    const convo = conversations.value.get(conversationId)
+    const convo = conversations.value.get(id)
     // TODO: Analyze: can this situation arise? How? Do we need to handle it?
     // Presumably it will be an error state
     if (!convo) {
@@ -303,7 +303,7 @@ export const useMessageStore = defineStore('messages', () => {
     }, TYPING_TIMEOUT)
   }
 
-  function sendMessage(conversationId: ConversationId, message: string) {
+  function sendMessage(id: ConversationId, message: string) {
     // Conversation ID is in case we want to programmatically send messages
     // outside of the active conversation
     if (!userStore.me) {
@@ -312,7 +312,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const convo = conversations.value.get(conversationId)
+    const convo = conversations.value.get(id)
     if (!convo) {
       // TODO: Error handling - must have an active conversation to send a message
       return
@@ -342,14 +342,14 @@ export const useMessageStore = defineStore('messages', () => {
     const newId = uuid()
     const convoMessage: ConversationMessage = {
       sender: userStore.me,
-      messageId: newId,
+      id: newId,
       content: message,
       status: 'pending',
       createTime: new Date(),
       updateTime: new Date(),
     }
 
-    addMessage(conversationId, convoMessage, to)
+    addMessage(id, convoMessage, to)
 
     // TODO: Transmit message to the channel then use the api to update the data
     // i.e. call synchronizeMessage
@@ -431,7 +431,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    editedMessage.value = { conversationId, messageId: message.messageId }
+    editedMessage.value = { conversationId, messageId: message.id }
   }
 
   function editMessage(content: string) {

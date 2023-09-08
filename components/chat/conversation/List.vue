@@ -19,8 +19,8 @@ const newConvoOpen = ref(false)
       <ul v-else>
         <ChatConversationItem
           v-for="conversation in store.visibleConversations"
-          :key="conversation.conversationId"
-          :conversation-id="conversation.conversationId"
+          :key="conversation.id"
+          :conversation-id="conversation.id"
         />
       </ul>
     </div>
