@@ -469,6 +469,10 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
+  function startConversation(users: Set<UserId>, message: string) {
+    //
+  }
+
   return {
     conversations: skipHydrate(conversations),
     visibleConversations,
@@ -484,5 +488,6 @@ export const useMessageStore = defineStore('messages', () => {
     editMessage,
     stopMessageEdit,
     unreadMessages,
+    startConversation,
   }
 })

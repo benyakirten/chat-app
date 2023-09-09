@@ -30,8 +30,8 @@ function detectBackdropClick(e: MouseEvent) {
 
 watch(
   () => props.open,
-  (val) => {
-    if (val) {
+  (open) => {
+    if (open) {
       dialog.value?.showModal()
       props.initialFocusCallback ? props.initialFocusCallback() : button.value?.focus()
       return

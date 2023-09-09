@@ -31,8 +31,12 @@ const isSearching = ref(false)
 const text = ref('')
 
 const { clear, debouncer } = useDebounce(async (value) => {
+  if (!props.searchCallback) {
+    return
+  }
+
   isSearching.value = true
-  await props.searchCallback?.(value)
+  await props.searchCallback(value)
   isSearching.value = false
 })
 
@@ -57,22 +61,6 @@ function handleOptionClick(id: string) {
 function close() {
   isOpen.value = false
   focusIdx.value = -1
-}
-
-function getNextIndex() {
-  if (focusIdx.value === shownOptions.value.length - 1) {
-    return 0
-  }
-
-  return focusIdx.value + 1
-}
-
-function getLastIndex() {
-  if (focusIdx.value === 0) {
-    return shownOptions.value.length - 1
-  }
-
-  return focusIdx.value - 1
 }
 
 function toggleItem(id?: string) {
