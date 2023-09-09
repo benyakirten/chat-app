@@ -11,3 +11,7 @@ export const clamp = (min: number, max: number, value: number) => {
 }
 
 export const withinRange = (num: number, min: number, max: number) => num >= min && num <= max
+/**
+ * True modulus - handles negative numers
+ */
+export const mod = (n: number, m: number) => ((n % m) + m) % m

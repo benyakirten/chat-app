@@ -1,7 +1,9 @@
 <script lang="ts" setup generic="T extends { id: string }">
 import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
+import { mod } from '@/lib/numbers'
 
+// TODO: Make this work for either single select or multiselect
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<{ (e: 'select', id: string): void; (e: 'deselect', id: string): void }>()
 
@@ -20,21 +22,26 @@ const props = withDefaults(
   { iconSize: '0.8rem', maxHeight: '8rem', id: uuid() }
 )
 
-const isOpen = ref(false)
 const combobox = ref<HTMLElement | null>(null)
 const listbox = ref<HTMLElement | null>(null)
 const itemRefs = ref<HTMLLIElement[]>([])
-const text = ref('')
+
+const isOpen = ref(false)
 const isSearching = ref(false)
+const text = ref('')
+
 const { clear, debouncer } = useDebounce(async (value) => {
   isSearching.value = true
   await props.searchCallback?.(value)
   isSearching.value = false
 })
+
 const withId = (name: string) => `${props.id}-${name}`
+
 const shownOptions = computed(() =>
   text.value === '' ? props.options : props.options.filter((option) => props.search(option, text.value))
 )
+
 const focusIdx = ref(-1)
 const activeDescendant = computed(() =>
   focusIdx.value === -1 || focusIdx.value > shownOptions.value.length - 1
@@ -73,12 +80,22 @@ function toggleItem(id?: string) {
     return
   }
 
-  if (props.selected.has(id)) {
-    emit('deselect', id)
+  props.selected.has(id) ? emit('deselect', id) : emit('select', id)
+
+  text.value = ''
+  close()
+}
+
+function handleArrow(direction: 1 | -1, altKey: boolean) {
+  isOpen.value = true
+
+  if (altKey) {
     return
   }
 
-  emit('select', id)
+  const idx = mod(focusIdx.value + direction, shownOptions.value.length)
+  focusIdx.value = idx
+  itemRefs.value[idx].scrollIntoView({ behavior: 'smooth' })
 }
 
 // If the text box is cleared, do not perform an async search
@@ -88,50 +105,39 @@ watch(text, (val) => val === '' && clear())
 function handleComboboxKeydown(e: KeyboardEvent) {
   switch (e.key) {
     case 'ArrowDown':
-      isOpen.value = true
-
-      if (!e.altKey) {
-        const idx = getNextIndex()
-        focusIdx.value = idx
-        itemRefs.value[idx]?.scrollIntoView({ behavior: 'smooth' })
-      }
-
+      handleArrow(1, e.altKey)
       return
     case 'ArrowUp':
-      isOpen.value = true
-
-      if (!e.altKey) {
-        const idx = getLastIndex()
-        focusIdx.value = idx
-        itemRefs.value[idx]?.scrollIntoView({ behavior: 'smooth' })
-      }
+      handleArrow(-1, e.altKey)
       return
     case 'Escape':
       if (isOpen.value) {
         close()
-      } else {
-        text.value = ''
+        return
       }
+      text.value = ''
 
       return
     case 'Enter':
       if (focusIdx.value === -1) {
         return
-      } else {
-        toggleItem(shownOptions.value[focusIdx.value]?.id)
       }
+      toggleItem(shownOptions.value[focusIdx.value]?.id)
+
       return
     default:
       return
   }
 }
 
-function alternateOpen() {
+const alternateOpen = () => {
   if (isOpen.value) {
     close()
     return
   }
+
   isOpen.value = true
+  combobox.value?.focus()
 }
 
 onMounted(() => {
