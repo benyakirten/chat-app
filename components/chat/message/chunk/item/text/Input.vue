@@ -3,6 +3,7 @@ import { useMessageStore } from '@/stores/messages'
 
 const { content } = defineProps<{ content: string }>()
 const messageStore = useMessageStore()
+const message = ref(content)
 </script>
 
 <template>
@@ -11,7 +12,7 @@ const messageStore = useMessageStore()
   <GeneralInputAutosize
     placeholder="Edit message..."
     label="Edit message"
-    :value="content"
+    v-model="message"
     :autofocus="true"
     @cancel="messageStore.stopMessageEdit()"
     @submit="messageStore.editMessage($event)"

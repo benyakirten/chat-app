@@ -16,6 +16,7 @@ const { status, content } = defineProps<{ status: ConversationMessage['status'];
   text-align: left;
   width: 100%;
   transition: all var(--time-250) ease-in;
+  word-break: break-all;
 
   &.errored {
     text-decoration: line-through;

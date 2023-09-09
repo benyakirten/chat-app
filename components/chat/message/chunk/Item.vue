@@ -33,7 +33,7 @@ const readList = computed(() => {
 
 const justifyAuthor = computed(() => (isMine ? 'flex-end' : 'flex-start'))
 const textAlign = computed(() => (isMine ? 'right' : 'left'))
-const isEditing = computed(() => message.id === messageStore.editedMessage?.id)
+const isEditing = computed(() => message.id === messageStore.editedMessage?.messageId)
 </script>
 
 <template>

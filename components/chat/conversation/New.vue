@@ -53,7 +53,7 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
           </div>
         </template>
       </BaseMultiSelect>
-      <GeneralInputAutosize placeholder="Write a message..." label="New Message" @input="(_, val) => (message = val)" />
+      <GeneralInputAutosize placeholder="Write a message..." label="New Message" v-model="message" />
       <GeneralIconButton title="Send message" :icon="PaperAirplaneIcon" size="0.8rem" type="submit" />
     </form>
   </BaseModal>

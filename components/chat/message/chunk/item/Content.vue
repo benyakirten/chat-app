@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ConversationMessage } from '@/stores/messages'
 
-const { content, status } = defineProps<{
+defineProps<{
   content: string
   status: ConversationMessage['status']
   isEditing: boolean

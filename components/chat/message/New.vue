@@ -9,15 +9,21 @@ const { debouncer } = useDebounce((val: string) => {
     conversation.value.draft = val
   }
 })
+const value = ref(conversation.value?.draft ?? '')
+watch(value, (val) => debouncer(val))
+
+function sendMessage(conversationId: string, val: string) {
+  messageStore.sendMessage(conversationId, val)
+  // Some reason await next tick doesn't wait for value to be replaced with \n
+  requestAnimationFrame(() => (value.value = ''))
+}
 </script>
 
 <template>
-  <!-- TODO: Should we maintain a partially completed message per conversation? -->
   <GeneralInputAutosize
     placeholder="Write a message..."
     label="New Message"
-    @submit="messageStore.sendMessage(conversationId, $event)"
-    @input="(_, val) => debouncer(val)"
-    :value="conversation?.draft"
+    @submit="sendMessage(conversationId, $event)"
+    v-model="value"
   />
 </template>

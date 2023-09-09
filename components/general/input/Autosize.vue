@@ -1,32 +1,37 @@
 <script setup lang="ts">
-const { value, placeholder, label, autofocus } = withDefaults(
-  defineProps<{ value?: string; placeholder: string; label: string; autofocus?: boolean }>(),
-  { value: '', autofocus: false }
+const props = withDefaults(
+  defineProps<{ modelValue: string; placeholder: string; label: string; autofocus?: boolean }>(),
+  { autofocus: false }
 )
 
 const emit = defineEmits<{
   (e: 'keydown', event: KeyboardEvent): void
   (e: 'submit', value: string): void
   (e: 'cancel'): void
-  (e: 'input', event: Event, value: string): void
+  (e: 'update:modelValue', value: string): void
 }>()
 
-const text = ref(value)
 const itemHeight = ref('0px')
 const textarea = ref<HTMLTextAreaElement | null>(null)
 const hiddenDiv = ref<HTMLDivElement | null>(null)
 
-watch(text, () => {
-  requestAnimationFrame(() => {
+watch(
+  () => props.modelValue,
+  async () => {
+    await nextTick()
     if (!hiddenDiv.value) {
       return
     }
     itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
-  })
-})
+  }
+)
 
 function handleKeydown(e: KeyboardEvent) {
   emit('keydown', e)
+
+  if (hiddenDiv.value) {
+    itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
+  }
 
   if (e.key === 'Escape') {
     textarea.value?.blur()
@@ -34,15 +39,22 @@ function handleKeydown(e: KeyboardEvent) {
     return
   }
 
-  if (e.key === 'Enter' && !e.shiftKey && text.value !== '') {
-    emit('submit', text.value)
-    requestAnimationFrame(() => (text.value = ''))
+  if (e.key === 'Enter' && !e.shiftKey && props.modelValue !== '') {
+    emit('submit', props.modelValue)
     return
   }
 }
 
+function handleUpdateValue(e: Event) {
+  if (!(e.target instanceof HTMLTextAreaElement)) {
+    return
+  }
+
+  emit('update:modelValue', e.target.value)
+}
+
 onMounted(() => {
-  if (autofocus) {
+  if (props.autofocus) {
     textarea.value?.focus()
   }
 })
@@ -50,16 +62,17 @@ onMounted(() => {
 
 <template>
   <div class="autosize">
-    <div ref="hiddenDiv" class="autosize-hidden">{{ text }}</div>
+    <div ref="hiddenDiv" aria-hidden="true" class="autosize-hidden">{{ props.modelValue }}</div>
     <textarea
       ref="textarea"
       :aria-label="label"
       @keydown="handleKeydown"
-      @input="emit('input', $event, text)"
-      v-model="text"
+      @input="handleUpdateValue"
+      :value="props.modelValue"
       class="autosize-input"
       :placeholder="placeholder"
-    ></textarea>
+    >
+    </textarea>
   </div>
 </template>
 
@@ -75,8 +88,10 @@ onMounted(() => {
   justify-content: stretch;
 
   /* TODO: Make CSS less horrid */
+
   &-input,
   &-hidden {
+    word-break: break-all;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     resize: none;
@@ -89,10 +104,13 @@ onMounted(() => {
 
   &-hidden {
     position: absolute;
-    word-break: break-all;
     height: min-content;
+    margin: 0 1.2rem;
+    font-size: 1.2rem;
     z-index: -100;
+    visibility: hidden;
     pointer-events: none;
+    white-space: pre-wrap;
   }
 }
 </style>
