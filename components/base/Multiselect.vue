@@ -5,14 +5,14 @@ import { mod } from '@/lib/numbers'
 
 // TODO: Make this work for either single select or multiselect
 defineOptions({ inheritAttrs: false })
-const emit = defineEmits<{ (e: 'select', id: string): void; (e: 'deselect', id: string): void }>()
+const emit = defineEmits<{ (e: 'update:modelValue', value: Set<string>): void }>()
 
 const props = withDefaults(
   defineProps<{
     title: string
     id?: string
     options: T[]
-    selected: Set<string>
+    modelValue: Set<string>
     placeholder: string
     iconSize?: string
     maxHeight?: string
@@ -68,7 +68,8 @@ function toggleItem(id?: string) {
     return
   }
 
-  props.selected.has(id) ? emit('deselect', id) : emit('select', id)
+  props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
+  emit('update:modelValue', props.modelValue)
 
   text.value = ''
   close()
@@ -210,7 +211,7 @@ onMounted(() => {
           <div class="listbox-item-left">
             <slot name="item" :item="option"></slot>
           </div>
-          <div class="listbox-item-right" v-if="selected.has(option.id)">
+          <div class="listbox-item-right" v-if="modelValue.has(option.id)">
             <CheckIcon aria-hidden="true" />
           </div>
         </li>
@@ -226,6 +227,8 @@ label {
 }
 .combobox {
   position: relative;
+  isolation: isolate;
+  z-index: 2;
   /* TODO: Revisit this */
   width: min-content;
 
@@ -288,6 +291,7 @@ label {
 }
 
 .listbox {
+  z-index: 2;
   position: absolute;
   width: 100%;
   top: calc(100% + 0.2rem);

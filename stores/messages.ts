@@ -470,7 +470,9 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   function startConversation(users: Set<UserId>, message: string) {
-    //
+    // TODO:
+    // 1. If a conversation with the participants already exists: add a message to it then navigate to it
+    // 2. If it doesn't, create a new conversation
   }
 
   return {
