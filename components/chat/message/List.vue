@@ -74,6 +74,7 @@ async function scrollToListBottom() {
   })
 }
 
+// TODO: Add the ability to scroll to a particular message - may require completely different approach
 onMounted(() => {
   scrollToListBottom()
 })

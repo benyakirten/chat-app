@@ -1,4 +1,4 @@
-export const useDebounce = <T extends (...args: any[]) => void | Promise<void>>(fn: T, timer: number = 800) => {
+export const useDebounce = <T extends (...args: any[]) => any | Promise<any>>(fn: T, timer: number = 800) => {
   const timeout = ref<NodeJS.Timeout | null>(null)
 
   const clear = () => {

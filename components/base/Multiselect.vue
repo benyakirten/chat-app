@@ -128,22 +128,19 @@ const alternateOpen = () => {
   combobox.value?.focus()
 }
 
-onMounted(() => {
-  const clickListener = (e: MouseEvent) => {
-    if (!(e.target instanceof HTMLElement)) {
-      return
-    }
-
-    if (listbox.value?.contains(e.target) || combobox.value?.contains(e.target)) {
-      return
-    }
-
-    isOpen.value = false
+const backdropClickDetector = (e: MouseEvent) => {
+  if (!(e.target instanceof HTMLElement)) {
+    return
   }
 
-  window.addEventListener('click', clickListener)
-  return () => window.removeEventListener('click', clickListener)
-})
+  if (listbox.value?.contains(e.target) || combobox.value?.contains(e.target)) {
+    return
+  }
+
+  isOpen.value = false
+}
+
+useAddMountedEventCallback('click', backdropClickDetector)
 </script>
 
 <template>

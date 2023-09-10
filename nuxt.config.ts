@@ -19,7 +19,4 @@ export default defineNuxtConfig({
       'postcss-nested': {},
     },
   },
-  pinia: {
-    autoImports: ['defineImports', 'skipHydrate'],
-  },
 })

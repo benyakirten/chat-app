@@ -15,11 +15,9 @@ function handleVisibilityChange() {
   }
 }
 
-// TODO: Make this into a composable - adding event listeners and removing them
+useAddMountedEventCallback('visibilitychange', handleVisibilityChange)
 onMounted(() => {
   messageStore.viewConversation(id.value)
-  document.addEventListener('visibilitychange', handleVisibilityChange)
-  return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 

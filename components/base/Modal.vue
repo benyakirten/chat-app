@@ -5,9 +5,9 @@ const props = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElem
 defineOptions({
   inheritAttrs: false,
 })
+useAddMountedEventCallback('click', detectBackdropClick)
 
 const emit = defineEmits<{ (e: 'close'): void }>()
-
 const dialog = ref<HTMLDialogElement | null>(null)
 const button = ref<HTMLButtonElement | null>(null)
 function handleKeydown(e: KeyboardEvent) {
@@ -37,11 +37,6 @@ watch(
     dialog.value?.close()
   }
 )
-
-onMounted(() => {
-  window.addEventListener('click', detectBackdropClick)
-  return () => window.removeEventListener('click', detectBackdropClick)
-})
 </script>
 
 <template>

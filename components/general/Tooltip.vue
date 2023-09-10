@@ -37,15 +37,13 @@ function handleClick(e: Event) {
 
 const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
 
-onMounted(() => {
-  const listener = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      tooltipState.value = 'hidden'
-    }
+const tooltipListener = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    tooltipState.value = 'hidden'
   }
-  window.addEventListener('keydown', listener)
-  return () => window.removeEventListener('keydown', listener)
-})
+}
+
+useAddMountedEventCallback('keydown', tooltipListener)
 </script>
 
 <template>
