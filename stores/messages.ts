@@ -1,8 +1,9 @@
 import { defineStore, skipHydrate } from 'pinia'
 import { v4 as uuid } from 'uuid'
 
-import { ConversationMap, getOtherMapKey } from '@/lib/collections'
+import { ConversationMap } from '@/lib/collections'
 import { useUsersStore } from './users'
+import { useToastStore } from './toasts'
 
 export type ConversationId = string
 export type MessageId = string
@@ -78,6 +79,7 @@ const conversation2: Conversation = {
     [conversation2message5.id, conversation2message5],
     [conversation2message6.id, conversation2message6],
   ]),
+  isPrivate: false,
 }
 
 const conversation1message1: ConversationMessage = {
@@ -148,6 +150,7 @@ const conversation1: Conversation = {
     [conversation1message5.id, conversation1message5],
     [conversation1message6.id, conversation1message6],
   ]),
+  isPrivate: true,
 }
 
 const PROP_CONVERSATIONS = new ConversationMap([conversation1, conversation2])
@@ -165,7 +168,8 @@ export interface Conversation {
   id: ConversationId
   members: Map<UserId, UserConversationState>
   messages: Map<MessageId, ConversationMessage>
-  timeout?: NodeJS.Timeout
+  isPrivate: boolean
+  typingTimeout?: NodeJS.Timeout
   alias?: string
   draft?: string
 }
@@ -188,6 +192,8 @@ export const useMessageStore = defineStore('messages', () => {
   const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
   const userStore = useUsersStore()
+  const toastStore = useToastStore()
+  const route = useRoute()
 
   const unreadMessages = computed(() => (conversation?: Conversation) => {
     if (!conversation || !userStore.me) {
@@ -246,39 +252,33 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    // TODO: transmit that user has read the conversation
     member.lastRead = new Date()
+
+    if (userStore.me && userStore.me === userId) {
+      // TODO: transmit that the user has read the conversation
+    }
   }
 
-  function addMessage(conversationId: ConversationId, message: ConversationMessage, to?: UserId) {
-    // Defaults are a private message from another user
-    if (!to) {
-      const me = userStore.me
-      if (!me) {
-        // TODO: Error handling, but this might be something that should never happen
-        return
-      }
-      to = me
+  function addMessage(conversationId: ConversationId, message: ConversationMessage) {
+    if (!userStore.me) {
+      toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
 
-    const convo = conversations.value.get(conversationId)
-    if (convo) {
-      conversations.value.addMessage(conversationId, message)
+    const result = conversations.value.addMessage(conversationId, message)
+    if (!result) {
+      toastStore.add('Unable to add message', { type: 'error' })
       return
     }
 
-    // TODO: API call here
-    const newConvo: Conversation = {
-      id: conversationId,
-      // TODO: Make this better
-      members: new Map([
-        [message.sender, { state: 'idle', lastRead: new Date() }],
-        [to, { state: 'idle', lastRead: new Date() }],
-      ]),
-      messages: new Map([[message.id, message]]),
+    const conversation = conversations.value.get(conversationId)
+    if (!conversation) {
+      return
     }
 
-    conversations.value.add(newConvo)
+    // TODO: Make this better
+    if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me) {
+      viewConversation(conversationId)
+    }
   }
 
   function startTyping(id: ConversationId) {
@@ -291,16 +291,18 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    if (convo.timeout) {
-      clearTimeout(convo.timeout)
+    if (convo.typingTimeout) {
+      clearTimeout(convo.typingTimeout)
     } else {
       // TODO: Transmit that typing has started
     }
 
     const timeout = setTimeout(() => {
       // TODO: Transmit that typing has ended
-      convo.timeout = timeout
+      convo.typingTimeout = undefined
     }, TYPING_TIMEOUT)
+
+    convo.typingTimeout = timeout
   }
 
   function sendMessage(id: ConversationId, message: string) {
@@ -320,23 +322,11 @@ export const useMessageStore = defineStore('messages', () => {
 
     // TODO: Consider if this should be null
     convo.draft = undefined
-
-    if (convo.members.size > 2) {
-      // TODO: Send group conversation message
-      return
-    }
-
-    const { timeout } = convo
-    if (timeout) {
-      clearTimeout(timeout)
+    const { typingTimeout } = convo
+    if (typingTimeout) {
+      clearTimeout(typingTimeout)
+      convo.typingTimeout = undefined
       // TODO: Transmit that typing has ended
-    }
-
-    // In a private conversation
-    const to = getOtherMapKey(convo.members, userStore.me)
-    if (!to) {
-      // TODO: Error handling
-      return
     }
 
     const newId = uuid()
@@ -349,9 +339,9 @@ export const useMessageStore = defineStore('messages', () => {
       updateTime: new Date(),
     }
 
-    addMessage(id, convoMessage, to)
+    addMessage(id, convoMessage)
 
-    // TODO: Transmit message to the channel then use the api to update the data
+    // TODO: Encrypt/transmit the message then use the api to update the data
     // i.e. call synchronizeMessage
   }
 
@@ -469,10 +459,27 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  function startConversation(users: Set<UserId>, message: string) {
+  function startConversation(isPrivate: boolean, otherUsers: Set<string>, message: string) {
     // TODO:
     // 1. If a conversation with the participants already exists: add a message to it then navigate to it
     // 2. If it doesn't, create a new conversation
+
+    if (otherUsers.size === 0) {
+      toastStore.add('A conversation must have at least 1 other person in it', { type: 'error' })
+      return
+    }
+
+    if (isPrivate === true) {
+      if (otherUsers.size > 1) {
+        // TODO: Error handling
+        return
+      }
+
+      // TODO: Check if a private conversation with the other user already exists
+      return
+    }
+
+    // TODO: start a new conversation if it's a group conversation
   }
 
   return {
