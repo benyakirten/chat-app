@@ -44,9 +44,13 @@ function getTitle(route: string) {
         :background-color="themeStore.activeTheme.bgColorAlt1"
       >
         <NuxtLink class="router-link" to="/chat">All Chats</NuxtLink>
-        <p v-for="recentChat of recentsStore.chatLRU.cache" :key="recentChat">
-          {{ getConversationFromRoute(recentChat) }}
-        </p>
+
+        <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed pages.</div>
+        <ul v-else>
+          <li v-for="recentChat of recentsStore.chatLRU.cache" :key="recentChat">
+            {{ getConversationFromRoute(recentChat) }}
+          </li>
+        </ul>
       </NavSection>
       <NavSection
         height="4rem"
@@ -73,7 +77,8 @@ function getTitle(route: string) {
       <div class="recent">
         <!-- TODO: Get font sizes correct -->
         <h4>Recently Viewed</h4>
-        <ul>
+        <div v-if="recentsStore.allLRU.cache.length === 0">No recently viewed pages.</div>
+        <ul v-else>
           <li v-for="recent of recentsStore.allLRU.cache" :key="recent">
             {{ getTitle(recent) }}
           </li>
