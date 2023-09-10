@@ -43,12 +43,13 @@ function getTitle(route: string) {
         :z-index="5"
         :background-color="themeStore.activeTheme.bgColorAlt1"
       >
-        <NuxtLink class="router-link" to="/chat">All Chats</NuxtLink>
-
+        <BaseLink class="router-link" to="/chat">All Chats</BaseLink>
         <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed pages.</div>
         <ul v-else>
           <li v-for="recentChat of recentsStore.chatLRU.cache" :key="recentChat">
-            {{ getConversationFromRoute(recentChat) }}
+            <BaseLink :to="recentChat">
+              {{ getConversationFromRoute(recentChat) }}
+            </BaseLink>
           </li>
         </ul>
       </NavSection>
@@ -80,7 +81,9 @@ function getTitle(route: string) {
         <div v-if="recentsStore.allLRU.cache.length === 0">No recently viewed pages.</div>
         <ul v-else>
           <li v-for="recent of recentsStore.allLRU.cache" :key="recent">
-            {{ getTitle(recent) }}
+            <BaseLink :to="recent">
+              {{ getTitle(recent) }}
+            </BaseLink>
           </li>
         </ul>
       </div>
@@ -181,9 +184,5 @@ nav {
     transition: transform var(--time-250) ease;
     border: 1px solid var(--accent);
   }
-}
-
-.router-link-active {
-  color: var(--secondary-text);
 }
 </style>
