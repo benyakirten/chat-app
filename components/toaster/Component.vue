@@ -13,7 +13,7 @@ const toastStore = useToastStore()
 <style scoped>
 .toaster {
   position: fixed;
-  z-index: 10;
+  z-index: 101;
   inset-block-start: 0;
   inset-inline: 0;
   padding-block-start: 2vh;

@@ -10,7 +10,7 @@ const userStore = useUsersStore()
 
 <template>
   <div class="current-users">
-    <span>Current users:</span>
+    <h4 class="current-users-title">Current users:</h4>
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
         <span class="current-users-user-name">{{ userStore.users.get(userId)?.name ?? 'Unknown User' }}</span>
@@ -24,16 +24,39 @@ const userStore = useUsersStore()
 
 <style scoped>
 .current-users {
+  &-title {
+    padding: 0.5rem 1rem;
+  }
+
+  /* TODO: Make this better */
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  overflow: auto;
+  height: 2.5rem;
+  gap: 0.5rem;
 
   &-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-color-alt3);
+
     &-name {
       /*  */
     }
     &-remove {
-      /*  */
+      color: var(--highlight);
+      width: 1.2rem;
+      height: 1.2rem;
+      opacity: 0.9;
+      transition: scale var(--time-100) ease var(--time-100), opacity var(--time-200) ease;
+
+      &:hover,
+      &:focus {
+        scale: 1.1;
+        opacity: 1;
+      }
     }
   }
 }

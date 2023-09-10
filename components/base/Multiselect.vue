@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 
 // TODO: Make this work for either single select or multiselect
-defineOptions({ inheritAttrs: false })
 const emit = defineEmits<{ (e: 'update:modelValue', value: Set<string>): void }>()
 
 const props = withDefaults(
@@ -144,75 +143,79 @@ useAddMountedEventCallback('click', backdropClickDetector)
 </script>
 
 <template>
-  <label class="label" :for="withId('input')">
-    <slot name="label">
-      {{ title }}
-    </slot>
-  </label>
-  <div class="combobox" v-bind="$attrs">
-    <div class="combobox-group">
-      <div class="combobox-group-input">
-        <input
-          type="text"
-          role="combobox"
-          v-model="text"
-          ref="combobox"
-          aria-autocomplete="list"
-          :id="withId('input')"
-          :placeholder="placeholder"
+  <div>
+    <label class="label" :for="withId('input')">
+      <slot name="label">
+        {{ title }}
+      </slot>
+    </label>
+    <div class="combobox">
+      <div class="combobox-group">
+        <div class="combobox-group-input">
+          <input
+            type="text"
+            role="combobox"
+            v-model="text"
+            ref="combobox"
+            aria-autocomplete="list"
+            :id="withId('input')"
+            :placeholder="placeholder"
+            :aria-expanded="isOpen"
+            :aria-controls="withId('listbox')"
+            :aria-activedescendant="activeDescendant"
+            @keydown="handleComboboxKeydown"
+            @focus="isOpen = true"
+            @input="props.searchCallback && text.trim() && debouncer(text)"
+          />
+          <div v-if="isSearching" class="combobox-group-input-loading">
+            <GeneralLoading size="1.6rem" />
+          </div>
+        </div>
+        <button
+          class="combobox-group-button"
+          :id="withId('button')"
+          :aria-label="title"
           :aria-expanded="isOpen"
           :aria-controls="withId('listbox')"
-          :aria-activedescendant="activeDescendant"
-          @keydown="handleComboboxKeydown"
-          @focus="isOpen = true"
-          @input="props.searchCallback && text.trim() && debouncer(text)"
-        />
-        <div v-if="isSearching" class="combobox-group-input-loading">
-          <GeneralLoading size="1.6rem" />
-        </div>
-      </div>
-      <button
-        class="combobox-group-button"
-        :id="withId('button')"
-        :aria-label="title"
-        :aria-expanded="isOpen"
-        :aria-controls="withId('listbox')"
-        @click="alternateOpen"
-        tabindex="-1"
-      >
-        <ChevronDownIcon aria-hidden="true" />
-      </button>
-    </div>
-    <ul
-      class="listbox"
-      ref="listbox"
-      :style="{ display: isOpen ? 'block' : 'none' }"
-      :id="withId('listbox')"
-      role="listbox"
-      :aria-label="title"
-      aria-multiselectable="true"
-    >
-      <li v-if="shownOptions.length === 0">No available options</li>
-      <TransitionGroup v-else name="item-list">
-        <li
-          v-for="(option, i) of shownOptions"
-          :key="option.id"
-          class="listbox-item"
-          role="option"
-          :id="option.id"
-          :aria-selected="focusIdx === i"
-          ref="itemRefs"
-          @click="handleOptionClick(option.id)"
+          @click="alternateOpen"
+          tabindex="-1"
         >
-          <div class="listbox-item-left">
-            <slot name="item" :item="option"></slot>
-          </div>
-          <div class="listbox-item-right" v-if="modelValue.has(option.id)">
-            <CheckIcon aria-hidden="true" />
-          </div>
-        </li>
-      </TransitionGroup>
-    </ul>
+          <ChevronDownIcon aria-hidden="true" />
+        </button>
+      </div>
+      <ul
+        class="listbox"
+        ref="listbox"
+        :style="{ display: isOpen ? 'block' : 'none' }"
+        :id="withId('listbox')"
+        role="listbox"
+        :aria-label="title"
+        aria-multiselectable="true"
+      >
+        <li v-if="shownOptions.length === 0">No available options</li>
+        <TransitionGroup v-else name="item-list">
+          <li
+            v-for="(option, i) of shownOptions"
+            :key="option.id"
+            class="listbox-item"
+            role="option"
+            :id="option.id"
+            :aria-selected="focusIdx === i"
+            ref="itemRefs"
+            @click="handleOptionClick(option.id)"
+          >
+            <div class="listbox-item-left">
+              <slot name="item" :item="option"></slot>
+            </div>
+            <div class="listbox-item-right" v-if="modelValue.has(option.id)">
+              <div class="listbox-item-right-icon">
+                <CheckIcon aria-hidden="true" />
+              </div>
+            </div>
+          </li>
+        </TransitionGroup>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -287,6 +290,7 @@ label {
 }
 
 .listbox {
+  /* TODO: Customize scrollbar */
   z-index: 2;
   position: absolute;
   width: 100%;
@@ -305,7 +309,7 @@ label {
     cursor: pointer;
 
     display: grid;
-    grid-template-columns: 1fr 2rem;
+    grid-template-columns: 1fr 4rem;
 
     &[aria-selected='true'],
     &:hover {
@@ -317,11 +321,16 @@ label {
     }
 
     &-right {
+      width: 100%;
+      height: 100%;
       grid-column: 2 / -1;
       display: grid;
       place-items: center;
-      height: v-bind(iconSize);
-      width: v-bind(iconSize);
+
+      &-icon {
+        height: v-bind(iconSize);
+        width: v-bind(iconSize);
+      }
     }
   }
 }

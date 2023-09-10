@@ -458,27 +458,32 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  function startConversation(isPrivate: boolean, otherUsers: Set<string>, message: string) {
+  async function startConversation(
+    isPrivate: boolean,
+    otherUsers: Set<string>,
+    message: string
+  ): Promise<null | string> {
+    console.log(isPrivate, otherUsers, message)
     // TODO:
     // 1. If a conversation with the participants already exists: add a message to it then navigate to it
     // 2. If it doesn't, create a new conversation
 
-    if (otherUsers.size === 0) {
-      toastStore.add('A conversation must have at least 1 other person in it', { type: 'error' })
-      return
+    if (!otherUsers || otherUsers.size === 0) {
+      return 'A conversation must have at least 1 other person in it'
     }
 
     if (isPrivate === true) {
       if (otherUsers.size > 1) {
         // TODO: Error handling
-        return
+        return 'A private conversation can only have 1 other participant'
       }
 
       // TODO: Check if a private conversation with the other user already exists
-      return
+      return null
     }
 
-    // TODO: start a new conversation if it's a group conversation
+    // TODO: always start a new conversation if it's a group conversation
+    return null
   }
 
   return {

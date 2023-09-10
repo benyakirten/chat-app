@@ -4,21 +4,29 @@ import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 import type { User } from '@/stores/users'
 
 const { open } = defineProps<{ open: boolean }>()
+const emit = defineEmits<{ (e: 'close'): void }>()
+const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) =>
+  messageStore.startConversation(isPrivate, selected, message)
+)
+
 const userStore = useUsersStore()
 const messageStore = useMessageStore()
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
 
-function handleSubmit() {
-  messageStore.startConversation(isPrivate.value, selected.value, message.value)
+async function handleSubmit() {
+  const res = await invoke(isPrivate.value, selected.value, message.value)
+  if (!(res instanceof Error)) {
+    // emit('close')
+  }
 }
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
 </script>
 
 <template>
-  <BaseModal @close="$emit('close')" :open="open">
+  <BaseModal @close="emit('close')" :open="open">
     <form @submit.prevent="handleSubmit" class="new">
       <BaseMultiSelect
         :options="[...userStore.users.values()]"
@@ -34,8 +42,15 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
           <ChatConversationModalUserItem :user="item" />
         </template>
       </BaseMultiSelect>
+      <GeneralInputCheckbox v-model="isPrivate"> Private Conversation </GeneralInputCheckbox>
       <GeneralInputAutosize placeholder="Write a message..." label="New Message" v-model="message" />
-      <GeneralIconButton title="Send message" :icon="PaperAirplaneIcon" size="1.5rem" type="submit" />
+      <GeneralIconButton
+        title="Send message"
+        :icon="PaperAirplaneIcon"
+        color="var(--highlight)"
+        size="1.5rem"
+        type="submit"
+      />
     </form>
   </BaseModal>
 </template>
@@ -43,10 +58,10 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
 <style scoped>
 .new {
   padding: 2rem;
+  width: 50vw;
 
   display: grid;
   row-gap: 4rem;
-  place-items: center;
 
   &-item {
     display: grid;
