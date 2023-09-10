@@ -10,10 +10,16 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
   },
+  imports: {
+    dirs: ['stores'],
+  },
   modules: ['@pinia/nuxt'],
   postcss: {
     plugins: {
       'postcss-nested': {},
     },
+  },
+  pinia: {
+    autoImports: ['defineImports', 'skipHydrate'],
   },
 })

@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 
-import { camelToKebabCase } from '@/lib/strings'
-
 export interface ColorTheme {
   bgColorPrimary: string
   bgColorAlt1: string

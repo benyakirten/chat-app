@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useLayoutStore } from '@/stores/layout'
 const layoutStore = useLayoutStore()
 const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} Sidebar`)
 </script>

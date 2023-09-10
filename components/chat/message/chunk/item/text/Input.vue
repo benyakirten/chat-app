@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useMessageStore } from '@/stores/messages'
-
 const { content } = defineProps<{ content: string }>()
 const messageStore = useMessageStore()
 const message = ref(content)

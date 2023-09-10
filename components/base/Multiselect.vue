@@ -1,7 +1,6 @@
 <script lang="ts" setup generic="T extends { id: string }">
 import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
-import { mod } from '@/lib/numbers'
 
 // TODO: Make this work for either single select or multiselect
 defineOptions({ inheritAttrs: false })

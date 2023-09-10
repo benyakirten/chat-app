@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useToastStore } from '@/stores/toasts'
-
 const toastStore = useToastStore()
 </script>
 

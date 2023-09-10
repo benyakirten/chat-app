@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useMessageStore } from '@/stores/messages'
-
 definePageMeta({
   pageTransition: false,
 })

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { User, useUsersStore } from '@/stores/users'
-import { waitFor } from '@/lib/misc'
+import type { User } from '@/stores/users'
 
 const userStore = useUsersStore()
 const selected = ref<Set<string>>(new Set(['u1']))
@@ -15,7 +14,7 @@ async function searchCallback(val: string) {
   const id = Math.random().toString()
   const user: User = {
     id,
-    name: `New Person${++newPersons.value}`,
+    name: `New Person${++newPersons.value} - ${val}`,
     state: 'completed',
   }
   userStore.users.set(id, user)
@@ -29,12 +28,10 @@ async function searchCallback(val: string) {
       placeholder="Choose who to talk to"
       title="Users"
       :options="[...userStore.users.values()]"
-      :selected="selected"
       :has-focus="() => Math.random() > 0.5"
       :search="isUserVisible"
       :search-callback="searchCallback"
-      @select="selected.add($event)"
-      @deselect="selected.delete($event)"
+      v-model="selected"
     >
       <template #item="{ item }">
         <div class="account-item">

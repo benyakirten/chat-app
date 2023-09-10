@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useThemeStore } from '@/stores/theme'
-import { useTitleStore } from '@/stores/title'
-
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
 const route = useRoute()

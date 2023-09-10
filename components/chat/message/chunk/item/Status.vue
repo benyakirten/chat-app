@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ArrowPathIcon } from '@heroicons/vue/24/solid'
 
-import { formatMessageDate } from '@/lib/dates'
-import { ConversationMessage } from '@/stores/messages'
+import type { ConversationMessage } from '@/stores/messages'
 
 const emit = defineEmits<{
   (e: 'resend', event: MouseEvent): void

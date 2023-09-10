@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { useMessageStore, type ConversationId, type ConversationMessage, type UserReadTimes } from '@/stores/messages'
-import { useUsersStore } from '@/stores/users'
+import type { ConversationId, ConversationMessage, UserReadTimes } from '@/stores/messages'
 
 const userStore = useUsersStore()
 const { chunk, userReadTimes, isPrivate, conversationId } = defineProps<{

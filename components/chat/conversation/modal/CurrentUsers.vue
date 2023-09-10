@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/outline'
 
-import { useUsersStore } from '@/stores/users'
-import { UserId } from '@/stores/messages'
+import type { UserId } from '@/stores/messages'
 
 defineProps<{ selected: Set<string> }>()
 defineEmits<{ (e: 'delete', id: UserId): void }>()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ConversationMessage } from '@/stores/messages'
+import type { ConversationMessage } from '@/stores/messages'
 
 const { status, content } = defineProps<{ status: ConversationMessage['status']; content: string }>()
 </script>

@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { useLayoutStore } from '@/stores/layout'
-import { useThemeStore } from '@/stores/theme'
-import { useRecentsStore } from '@/stores/recents'
-import { useTitleStore } from '@/stores/title'
-import { useMessageStore } from '@/stores/messages'
-
 const recentsStore = useRecentsStore()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()

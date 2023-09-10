@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 
-import { User, useUsersStore } from '@/stores/users'
-import { useMessageStore } from '@/stores/messages'
+import type { User } from '@/stores/users'
 
 const { open } = defineProps<{ open: boolean }>()
 const userStore = useUsersStore()
 const messageStore = useMessageStore()
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
+const isPrivate = ref(true)
 
 function handleSubmit() {
-  messageStore.startConversation(selected.value, message.value)
+  messageStore.startConversation(isPrivate.value, selected.value, message.value)
 }
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())

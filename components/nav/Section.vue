@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LayoutState, useLayoutStore } from '@/stores/layout'
+import type { LayoutState } from '@/stores/layout'
 
 const layoutStore = useLayoutStore()
 const { group, height, zIndex, backgroundColor, width } = defineProps<{

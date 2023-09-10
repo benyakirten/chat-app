@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '@/stores/users'
+import type { User } from '@/stores/users'
 
 defineProps<{ user: User }>()
 </script>

@@ -1,14 +1,12 @@
 <script lang="ts" setup>
-import {
+import type {
   Conversation,
   ConversationId,
   ConversationMessage,
   MessageId,
   UserId,
   UserReadTimes,
-  useMessageStore,
 } from '@/stores/messages'
-import { useUsersStore } from '@/stores/users'
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()

@@ -1,7 +1,6 @@
 import { defineStore, skipHydrate } from 'pinia'
 import { v4 as uuid } from 'uuid'
 
-import { ConversationMap } from '@/lib/collections'
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
 

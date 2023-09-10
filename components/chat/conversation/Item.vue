@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { v4 as uuid } from 'uuid'
 
-import { ConversationId, useMessageStore } from '@/stores/messages'
-import { useTitleStore } from '@/stores/title'
+import type { ConversationId } from '@/stores/messages'
 
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()

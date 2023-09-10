@@ -1,4 +1,3 @@
-import { capitalize } from '@/lib/strings'
 import { defineStore } from 'pinia'
 import { Conversation, useMessageStore } from './messages'
 import { useUsersStore } from './users'

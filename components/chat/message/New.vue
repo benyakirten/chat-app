@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ConversationId, useMessageStore } from '@/stores/messages'
+import type { ConversationId } from '@/stores/messages'
 
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()

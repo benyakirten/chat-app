@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useMessageStore } from '@/stores/messages'
-
 const store = useMessageStore()
 
 const newConvoOpen = ref(false)

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/solid'
 
-import { isClickWithinElement, isTextInputFocused } from '@/lib/dom'
-
 const props = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
 defineOptions({
   inheritAttrs: false,

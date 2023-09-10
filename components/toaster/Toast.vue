@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Toast, useToastStore } from '@/stores/toasts'
 import { XCircleIcon } from '@heroicons/vue/24/solid'
+
+import type { Toast } from '@/stores/toasts'
 
 const { toast } = defineProps<{ toast: Toast }>()
 
