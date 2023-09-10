@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export interface LayoutState {
   sidebarOpen: boolean
-  sidebarTabOpened: 'chat' | 'account' | 'other' | null
+  sidebarTabOpened: 'chat' | 'account' | 'about' | null
 }
 
 export const useLayoutStore = defineStore('layout', () => {

@@ -1,11 +1,32 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useThemeStore } from '@/stores/theme'
+import { useRecentsStore } from '@/stores/recents'
+import { useTitleStore } from '@/stores/title'
+import { useMessageStore } from '@/stores/messages'
 
-const route = useRoute()
-
+const recentsStore = useRecentsStore()
+const messageStore = useMessageStore()
+const titleStore = useTitleStore()
 const layoutStore = useLayoutStore()
 const themeStore = useThemeStore()
+
+function getConversationFromRoute(route: string) {
+  const segments = route.split('/')
+  if (segments.length < 3) {
+    return titleStore.conversationSubtitle()
+  }
+
+  const id = segments[segments.length - 1]
+  const conversation = messageStore.conversations.get(id)
+  return titleStore.conversationSubtitle(conversation)
+}
+
+function getTitle(route: string) {
+  const segments = route.split('/')
+  const id = segments.at(segments.length - 1)
+  return titleStore.title(route, id)
+}
 </script>
 
 <template>
@@ -23,13 +44,14 @@ const themeStore = useThemeStore()
         :background-color="themeStore.activeTheme.bgColorAlt1"
       >
         <NuxtLink class="router-link" to="/chat">All Chats</NuxtLink>
-        <p>Recent Chat #1</p>
-        <p>Recent Chat #2</p>
+        <p v-for="recentChat of recentsStore.chatLRU.cache" :key="recentChat">
+          {{ getConversationFromRoute(recentChat) }}
+        </p>
       </NavSection>
       <NavSection
         height="4rem"
         width="90%"
-        group="other"
+        group="about"
         :z-index="4"
         :background-color="themeStore.activeTheme.bgColorAlt2"
       >
@@ -52,9 +74,9 @@ const themeStore = useThemeStore()
         <!-- TODO: Get font sizes correct -->
         <h4>Recently Viewed</h4>
         <ul>
-          <li>Viewed Page</li>
-          <li>Viewed Page</li>
-          <li>Viewed Page</li>
+          <li v-for="recent of recentsStore.allLRU.cache" :key="recent">
+            {{ getTitle(recent) }}
+          </li>
         </ul>
       </div>
     </nav>
