@@ -26,6 +26,10 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
     const historyIndex = this._history.findIndex((convo) => convo.id === id)
+    if (convo && historyIndex === -1) {
+      throw new Error('Make sure you are not setting a conversation directly but calling the .add method')
+    }
+
     if (!convo || historyIndex === -1) {
       return false
     }

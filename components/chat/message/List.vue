@@ -68,6 +68,7 @@ async function scrollToListBottom() {
   if (!list.value) {
     return
   }
+
   list.value.scrollBy({
     top: list.value.scrollHeight,
     behavior: 'smooth',

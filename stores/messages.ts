@@ -514,7 +514,7 @@ export const useMessageStore = defineStore('messages', () => {
           ]),
           messages: new Map(),
         }
-        conversations.value.set(newConvo.id, newConvo)
+        conversations.value.add(newConvo)
         addMessage(newConvo.id, {
           sender: userStore.me,
           id: uuid(),
@@ -544,7 +544,7 @@ export const useMessageStore = defineStore('messages', () => {
       members,
       messages: new Map(),
     }
-    conversations.value.set(newConvo.id, newConvo)
+    conversations.value.add(newConvo)
     addMessage(newConvo.id, {
       sender: userStore.me,
       id: uuid(),
