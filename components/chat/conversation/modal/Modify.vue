@@ -9,7 +9,7 @@ const props = defineProps<{ conversationId: ConversationId | null }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const conversation = computed(() => messageStore.conversations.get(props.conversationId ?? ''))
-const canSend = computed(() => otherUsersSet.value.size === 0)
+const canSend = computed(() => otherUsersSet.value.size !== 0)
 const alias = ref('')
 const { loading, invoke } = useLoading((conversation: Conversation, users: Set<string>, alias: string) =>
   messageStore.modifyConversation(conversation, users, alias)
@@ -19,7 +19,7 @@ const otherUsersSet = computed(() => {
   const otherUsers = new Set<string>()
   if (conversation.value) {
     const otherUsersMap = userStore.getOtherUsers(conversation.value.members)
-    for (const id in otherUsersMap.keys()) {
+    for (let { id } of otherUsersMap) {
       otherUsers.add(id)
     }
   }
@@ -41,6 +41,7 @@ async function handleSubmit() {
     // TODO: Error handling
     return
   }
+
   const res = await invoke(conversation.value, mutableOtherUsersSet.value, alias.value)
   emit('close')
   // TODO: Error handling
@@ -92,10 +93,10 @@ async function handleSubmit() {
   &-form {
     display: grid;
     row-gap: 4rem;
-  }
 
-  &-submit {
-    justify-self: end;
+    &-submit {
+      justify-self: end;
+    }
   }
 }
 </style>

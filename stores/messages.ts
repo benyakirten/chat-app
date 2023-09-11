@@ -561,14 +561,13 @@ export const useMessageStore = defineStore('messages', () => {
   async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
     const memberMap = new Map<UserId, UserConversationState>()
     members.forEach((id) => {
-      if (conversation.members.has(id)) {
-        return
-      }
-
-      memberMap.set(id, {
-        state: 'idle',
-        lastRead: new Date(0),
-      })
+      memberMap.set(
+        id,
+        conversation.members.get(id) ?? {
+          state: 'idle',
+          lastRead: new Date(0),
+        }
+      )
     })
 
     conversation.members = memberMap
