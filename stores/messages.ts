@@ -557,6 +557,27 @@ export const useMessageStore = defineStore('messages', () => {
     return newConvo.id
   }
 
+  // TODO: This will be completely modified when we have a backend
+  async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
+    const memberMap = new Map<UserId, UserConversationState>()
+    members.forEach((id) => {
+      if (conversation.members.has(id)) {
+        return
+      }
+
+      memberMap.set(id, {
+        state: 'idle',
+        lastRead: new Date(0),
+      })
+    })
+
+    conversation.members = memberMap
+
+    if (alias) {
+      conversation.alias = alias
+    }
+  }
+
   return {
     conversations: skipHydrate(conversations),
     visibleConversations,
@@ -573,5 +594,6 @@ export const useMessageStore = defineStore('messages', () => {
     stopMessageEdit,
     unreadMessages,
     startConversation,
+    modifyConversation,
   }
 })

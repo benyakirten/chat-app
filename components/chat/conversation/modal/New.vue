@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 
-import type { User } from '@/stores/users'
-
 const emit = defineEmits<{ (e: 'close'): void }>()
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) =>
   messageStore.startConversation(isPrivate, selected, message)
 )
 
-const userStore = useUsersStore()
 const messageStore = useMessageStore()
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
@@ -50,25 +47,12 @@ async function handleSubmit() {
 
   errorMessage.value = res.message
 }
-const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit" class="new">
-    <BaseMultiSelect
-      :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me)"
-      title="Participants"
-      v-model="selected"
-      :search="handleSearch"
-      placeholder="Choose the participants"
-    >
-      <template #label>
-        <ChatConversationModalNewCurrentUsers :selected="selected" @delete="selected.delete($event)" />
-      </template>
-      <template #item="{ item }">
-        <ChatConversationModalNewUserItem :user="item" />
-      </template>
-    </BaseMultiSelect>
+    <!-- TODO: Make this into a generalizable component -->
+    <ChatConversationModalUserMultiSelect :selected="selected" @setSelected="selected = $event" />
     <GeneralInputCheckbox v-model="isPrivate">
       <GeneralTooltip>
         <template #content>Once made, conversations cannot be converted between group and private. </template>
@@ -86,6 +70,7 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
         :disabled="loading || !canSend"
       />
     </div>
+    <!-- If we use a tooltip, it has to be big and obnoxious -->
     <div class="new-error" v-if="displayedErrorMessage">
       {{ displayedErrorMessage }}
     </div>
