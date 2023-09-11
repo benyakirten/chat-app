@@ -7,6 +7,8 @@ const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string
 )
 
 const messageStore = useMessageStore()
+const userStore = useUsersStore()
+
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
@@ -52,7 +54,11 @@ async function handleSubmit() {
 <template>
   <form @submit.prevent="handleSubmit" class="new">
     <!-- TODO: Make this into a generalizable component -->
-    <ChatConversationModalUserMultiSelect :selected="selected" @setSelected="selected = $event" />
+    <ChatConversationModalUserMultiSelect
+      :selected="selected"
+      @setSelected="selected = $event"
+      :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me)"
+    />
     <GeneralInputCheckbox v-model="isPrivate">
       <GeneralTooltip>
         <template #content>Once made, conversations cannot be converted between group and private. </template>

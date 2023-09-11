@@ -559,22 +559,18 @@ export const useMessageStore = defineStore('messages', () => {
 
   // TODO: This will be completely modified when we have a backend
   async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
-    const memberMap = new Map<UserId, UserConversationState>()
-    members.forEach((id) => {
-      memberMap.set(
-        id,
-        conversation.members.get(id) ?? {
-          state: 'idle',
-          lastRead: new Date(0),
-        }
-      )
-    })
-
-    conversation.members = memberMap
+    members.forEach(
+      (id) => !conversation.members.has(id) && conversation.members.set(id, { state: 'idle', lastRead: new Date(0) })
+    )
 
     if (alias) {
       conversation.alias = alias
     }
+  }
+
+  async function leaveConversation(conversation: Conversation) {
+    conversations.value.remove(conversation)
+    // TODO: Transmit that we have left the conversation
   }
 
   return {
@@ -594,5 +590,6 @@ export const useMessageStore = defineStore('messages', () => {
     unreadMessages,
     startConversation,
     modifyConversation,
+    leaveConversation,
   }
 })

@@ -50,6 +50,13 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
     return this
   }
 
+  public remove(conversation: Conversation) {
+    this.history = this.history.filter((convo) => convo.id !== conversation.id)
+    this.delete(conversation.id)
+
+    return this
+  }
+
   public batchAdd(conversations: Conversation[]) {
     conversations.forEach((conversation) => this.add(conversation))
     return this

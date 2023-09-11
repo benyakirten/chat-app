@@ -3,7 +3,7 @@ import { XCircleIcon } from '@heroicons/vue/24/outline'
 
 import type { UserId } from '@/stores/messages'
 
-defineProps<{ selected: Set<string> }>()
+defineProps<{ selected: Set<string>; canDelete: boolean }>()
 defineEmits<{ (e: 'delete', id: UserId): void }>()
 const userStore = useUsersStore()
 </script>
@@ -14,7 +14,7 @@ const userStore = useUsersStore()
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
         <span class="current-users-user-name">{{ userStore.users.get(userId)?.name ?? 'Unknown User' }}</span>
-        <button class="current-users-user-remove" @click="$emit('delete', userId)" type="button">
+        <button v-if="canDelete" class="current-users-user-remove" @click="$emit('delete', userId)" type="button">
           <XCircleIcon />
         </button>
       </span>

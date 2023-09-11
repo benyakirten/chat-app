@@ -1,8 +1,9 @@
 <script setup lang="ts">
-const props = defineProps<{ selected: Set<string> }>()
+const props = withDefaults(defineProps<{ selected: Set<string>; options: User[]; canDelete?: boolean }>(), {
+  canDelete: true,
+})
 const emit = defineEmits<{ (e: 'setSelected', val: Set<string>): void }>()
 
-const userStore = useUsersStore()
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
 
 function handleDelete(value: string) {
@@ -13,7 +14,7 @@ function handleDelete(value: string) {
 
 <template>
   <BaseMultiSelect
-    :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me)"
+    :options="options"
     title="Participants"
     :model-value="selected"
     @update:modelValue="emit('setSelected', $event)"
@@ -21,7 +22,7 @@ function handleDelete(value: string) {
     placeholder="Choose the participants"
   >
     <template #label>
-      <ChatConversationModalNewCurrentUsers :selected="selected" @delete="handleDelete" />
+      <ChatConversationModalNewCurrentUsers :can-delete="canDelete" :selected="selected" @delete="handleDelete" />
     </template>
     <template #item="{ item }">
       <ChatConversationModalNewUserItem :user="item" />
