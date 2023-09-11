@@ -40,7 +40,7 @@ watch(
 </script>
 
 <template>
-  <Teleport to="#app-host">
+  <Teleport to="body">
     <dialog ref="dialog" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
       <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
         <XMarkIcon />
