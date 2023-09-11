@@ -14,6 +14,8 @@ const messageStore = useMessageStore()
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
+// TODO: Create composable for form validation/errors
+const canSend = computed(() => (isPrivate.value ? selected.value.size === 1 : selected.value.size >= 1))
 
 async function handleSubmit() {
   const res = await invoke(isPrivate.value, selected.value, message.value)
@@ -42,15 +44,23 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
           <ChatConversationModalUserItem :user="item" />
         </template>
       </BaseMultiSelect>
-      <GeneralInputCheckbox v-model="isPrivate"> Private Conversation </GeneralInputCheckbox>
+      <GeneralInputCheckbox v-model="isPrivate">
+        <GeneralTooltip>
+          <template #content>Once made, conversations cannot be converted between group and private. </template>
+          Private Conversation
+        </GeneralTooltip>
+      </GeneralInputCheckbox>
       <GeneralInputAutosize placeholder="Write a message..." label="New Message" v-model="message" />
-      <GeneralIconButton
-        title="Send message"
-        :icon="PaperAirplaneIcon"
-        color="var(--highlight)"
-        size="1.5rem"
-        type="submit"
-      />
+      <div class="new-submit">
+        <GeneralIconButton
+          title="Send message"
+          :icon="PaperAirplaneIcon"
+          color="var(--highlight)"
+          size="1.5rem"
+          type="submit"
+          :disabled="loading || !canSend"
+        />
+      </div>
     </form>
   </BaseModal>
 </template>
@@ -63,23 +73,8 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
   display: grid;
   row-gap: 4rem;
 
-  &-item {
-    display: grid;
-    grid-template-columns: 4rem 1fr;
-    column-gap: 2rem;
-
-    min-height: 2rem;
-    width: 100%;
-
-    padding: 1rem 0;
-
-    &-avatar {
-      grid-column: 1 / 2;
-    }
-
-    &-name {
-      grid-column: 2 / -1;
-    }
+  &-submit {
+    justify-self: end;
   }
 }
 </style>

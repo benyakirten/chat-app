@@ -12,8 +12,6 @@ const { direction, debounceTimeout, id, disableClick } = withDefaults(
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
-
-const timeout = ref<NodeJS.Timeout | null>(null)
 const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), debounceTimeout)
 
 function handleMouseLeave() {
@@ -47,7 +45,6 @@ useAddMountedEventCallback('keydown', tooltipListener)
 </script>
 
 <template>
-  <!-- Not sure why these events are not triggering -->
   <span
     class="tooltip"
     @mouseover="debouncer"
@@ -73,6 +70,7 @@ useAddMountedEventCallback('keydown', tooltipListener)
 </template>
 
 <style scoped>
+/* TODO: This is a mess and will drastically need to be changed */
 .tooltip {
   /* TODO: Get tooltip positioning to work correctly for all items */
   position: relative;
