@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { v4 as uuid } from 'uuid'
+import { ChevronRightIcon } from '@heroicons/vue/24/outline'
 
 import type { ConversationId } from '@/stores/messages'
 
+const route = useRoute()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 
@@ -47,6 +49,11 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
       <span class="conversation-participants">
         {{ titleStore.conversationSubtitle(conversation) }}
       </span>
+      <Transition name="active">
+        <span v-if="route.params['id'] === conversationId" class="conversation-active">
+          <ChevronRightIcon />
+        </span>
+      </Transition>
     </button>
   </li>
 </template>
@@ -59,7 +66,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   overflow: hidden;
 
   display: grid;
-  grid-template-columns: 4rem 1fr;
+  grid-template-columns: 4rem 1fr 2rem;
   column-gap: 2rem;
 
   min-height: 2rem;
@@ -81,9 +88,18 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   &-participants {
     display: flex;
     align-items: center;
-    justify-items: center;
-    grid-column: 2 / -1;
+    justify-content: center;
+    grid-column: 2 / 3;
     text-overflow: ellipsis;
+  }
+
+  &-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+    width: 100%;
   }
 }
 
@@ -95,6 +111,18 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
 .unread-enter-active,
 .unread-leave-active {
+  transition: opacity var(--time-200) ease-in, scale var(--time-250) ease;
+}
+
+/* TODO: Figure out why this transition isn't working */
+.active-enter-from,
+.active-leave-to {
+  opacity: 0;
+  scale: 0.5;
+}
+
+.active-enter-active,
+.active-leave-active {
   transition: opacity var(--time-200) ease-in, scale var(--time-250) ease;
 }
 </style>

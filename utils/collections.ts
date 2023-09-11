@@ -13,10 +13,7 @@ export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
 
 // Is this worthwhile over just using a Conversaiton[]?
 export class ConversationMap extends Map<ConversationId, Conversation> {
-  private _history: Conversation[] = []
-  public get history() {
-    return this._history.slice()
-  }
+  public history: Conversation[] = []
 
   constructor(conversations: Conversation | Conversation[]) {
     super()
@@ -25,7 +22,7 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
-    const historyIndex = this._history.findIndex((convo) => convo.id === id)
+    const historyIndex = this.history.findIndex((convo) => convo.id === id)
 
     if (convo && historyIndex === -1) {
       throw new Error('Make sure you are not setting a conversation directly but calling the .add method')
@@ -40,14 +37,14 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
       return true
     }
 
-    this._history.splice(historyIndex, 1)
-    this._history.push(convo)
+    this.history.splice(historyIndex, 1)
+    this.history.push(convo)
 
     return true
   }
 
   public add(conversation: Conversation) {
-    this._history.push(conversation)
+    this.history.push(conversation)
     this.set(conversation.id, conversation)
 
     return this

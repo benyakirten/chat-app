@@ -15,22 +15,24 @@ const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
 const errorMessage = ref<string | null>(null)
-
-// TODO: Create composable for form validation/errors
-watch([message, isPrivate, selected], ([message, isPrivate, selected]) => {
-  console.log('FIRED', message, isPrivate, selected)
-  if (message === '') {
-    errorMessage.value = 'New messages must not be empty.'
-    return
+const canSend = computed(
+  () => message.value !== '' && (isPrivate.value ? selected.value.size === 1 : selected.value.size >= 1)
+)
+const displayedErrorMessage = computed(() => {
+  if (errorMessage.value) {
+    return errorMessage.value
   }
 
-  if (isPrivate && selected.size !== 1) {
-    errorMessage.value = 'Private conversations can only have one other participant.'
-    return
+  if (message.value === '') {
+    return 'Messages must not be empty.'
   }
 
-  if (!isPrivate && selected.size < 1) {
-    errorMessage.value = 'Conversations must have at least one other participant.'
+  if (selected.value.size === 0) {
+    return 'There must be at least one conversant'
+  }
+
+  if (isPrivate && selected.value.size > 1) {
+    return 'A private conversation can only have one other conversant'
   }
 
   return null
@@ -55,7 +57,7 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
   <BaseModal @close="emit('close')" :open="open">
     <form @submit.prevent="handleSubmit" class="new">
       <BaseMultiSelect
-        :options="[...userStore.users.values()]"
+        :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me)"
         title="Participants"
         v-model="selected"
         :search="handleSearch"
@@ -82,11 +84,11 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
           color="var(--highlight)"
           size="1.5rem"
           type="submit"
-          :disabled="loading || errorMessage !== null"
+          :disabled="loading || !canSend"
         />
       </div>
-      <div class="new-error" v-if="errorMessage">
-        {{ errorMessage }}
+      <div class="new-error" v-if="displayedErrorMessage">
+        {{ displayedErrorMessage }}
       </div>
     </form>
   </BaseModal>

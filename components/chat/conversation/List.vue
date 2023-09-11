@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const store = useMessageStore()
+const messageStore = useMessageStore()
 
 const newConvoOpen = ref(false)
 </script>
@@ -8,7 +8,7 @@ const newConvoOpen = ref(false)
   <div class="container">
     <!-- TODO (future): Add filters -->
     <div class="conversations">
-      <div v-if="store.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
+      <div v-if="messageStore.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
       <!--
         TODO: Virtualize the list - either hand rolled or use a library
         The backend will paginate the conversation list
@@ -16,7 +16,7 @@ const newConvoOpen = ref(false)
       -->
       <ul v-else>
         <ChatConversationItem
-          v-for="conversation in store.visibleConversations"
+          v-for="conversation in messageStore.visibleConversations"
           :key="conversation.id"
           :conversation-id="conversation.id"
         />
