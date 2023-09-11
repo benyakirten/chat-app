@@ -172,6 +172,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
           </div>
         </div>
         <button
+          type="button"
           class="combobox-group-button"
           :id="withId('button')"
           :aria-label="title"

@@ -14,7 +14,7 @@ const userStore = useUsersStore()
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
         <span class="current-users-user-name">{{ userStore.users.get(userId)?.name ?? 'Unknown User' }}</span>
-        <button class="current-users-user-remove" @click="$emit('delete', userId)">
+        <button class="current-users-user-remove" @click="$emit('delete', userId)" type="button">
           <XCircleIcon />
         </button>
       </span>
@@ -24,16 +24,18 @@ const userStore = useUsersStore()
 
 <style scoped>
 .current-users {
-  &-title {
-    padding: 0.5rem 1rem;
-  }
-
-  /* TODO: Make this better */
   display: flex;
   flex-wrap: wrap;
   overflow: auto;
   height: 2.5rem;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  &-title {
+    padding: 0.5rem 1rem;
+  }
+
+  /* TODO: Make this better */
 
   &-user {
     display: flex;
@@ -41,6 +43,7 @@ const userStore = useUsersStore()
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     background-color: var(--bg-color-alt3);
+    border-radius: 2px;
 
     &-name {
       /*  */

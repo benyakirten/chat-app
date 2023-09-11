@@ -3,7 +3,7 @@ export const useLoading = <T extends (...args: any[]) => Promise<any>>(callback:
   const invoke = async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>> | Error> => {
     try {
       loading.value = true
-      const val = await callback(args)
+      const val = await callback(...args)
       return val
     } catch (e) {
       return e as Error

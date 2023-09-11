@@ -395,18 +395,18 @@ export const useMessageStore = defineStore('messages', () => {
   function deleteMessage(conversationId: ConversationId, messageId: MessageId) {
     const conversation = conversations.value.get(conversationId)
     if (!conversation) {
-      // TODO: Error handling
+      toastStore.add('Error deleting message', { type: 'error' })
       return
     }
 
     const message = conversation.messages.get(messageId)
     if (!message) {
-      // TODO: Error handling
+      toastStore.add('Error deleting message', { type: 'error' })
       return
     }
 
     if (!userStore.me || message.sender !== userStore.me) {
-      // TODO: Error handling
+      toastStore.add("You cannot delete a message you didn't write", { type: 'error' })
       return
     }
 
@@ -458,32 +458,102 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  async function startConversation(
-    isPrivate: boolean,
-    otherUsers: Set<string>,
-    message: string
-  ): Promise<null | string> {
-    console.log(isPrivate, otherUsers, message)
-    // TODO:
-    // 1. If a conversation with the participants already exists: add a message to it then navigate to it
-    // 2. If it doesn't, create a new conversation
+  // Should we use TS results?
+  async function startConversation(isPrivate: boolean, otherUsers: Set<string>, message: string): Promise<string> {
+    // TODO: Clean this up
+
+    if (!userStore.me) {
+      throw new Error('You must be logged in to start a conversation')
+    }
 
     if (!otherUsers || otherUsers.size === 0) {
-      return 'A conversation must have at least 1 other person in it'
+      throw new Error('A conversation must have at least 1 other person in it')
     }
 
     if (isPrivate === true) {
-      if (otherUsers.size > 1) {
+      if (otherUsers.size !== 1) {
         // TODO: Error handling
-        return 'A private conversation can only have 1 other participant'
+        throw new Error('A private conversation can only have 1 other participant')
       }
 
+      // Get the other user from the set
+      let otherUser: string = ''
+      for (const user of otherUsers) {
+        otherUser = user
+      }
+
+      let convoId: string | null = null
+
       // TODO: Check if a private conversation with the other user already exists
-      return null
+      for (const [id, conversation] of conversations.value) {
+        if (conversation.members.size !== 1) {
+          continue
+        }
+
+        if (conversation.members.get(otherUser)) {
+          // TODO: When we have the backend, it will create the uuid
+          addMessage(id, {
+            sender: userStore.me,
+            id: uuid(),
+            content: message,
+            status: 'pending',
+            createTime: new Date(),
+            updateTime: new Date(),
+          })
+          return id
+        }
+      }
+
+      if (!convoId) {
+        const newConvo: Conversation = {
+          isPrivate: true,
+          id: uuid(),
+          members: new Map([
+            [userStore.me, { state: 'idle', lastRead: new Date() }],
+            [otherUser, { state: 'idle', lastRead: new Date(0) }],
+          ]),
+          messages: new Map(),
+        }
+        conversations.value.set(newConvo.id, newConvo)
+        addMessage(newConvo.id, {
+          sender: userStore.me,
+          id: uuid(),
+          content: message,
+          status: 'pending',
+          createTime: new Date(),
+          updateTime: new Date(),
+        })
+        return newConvo.id
+      }
+
+      return convoId
     }
 
-    // TODO: always start a new conversation if it's a group conversation
-    return null
+    let members: Map<UserId, UserConversationState> = new Map()
+    for (const userId of otherUsers) {
+      const user: UserConversationState = {
+        state: 'idle',
+        lastRead: userId === userStore.me ? new Date() : new Date(0),
+      }
+      members.set(userId, user)
+    }
+
+    const newConvo: Conversation = {
+      isPrivate: true,
+      id: uuid(),
+      members,
+      messages: new Map(),
+    }
+    conversations.value.set(newConvo.id, newConvo)
+    addMessage(newConvo.id, {
+      sender: userStore.me,
+      id: uuid(),
+      content: message,
+      status: 'pending',
+      createTime: new Date(),
+      updateTime: new Date(),
+    })
+    return newConvo.id
   }
 
   return {

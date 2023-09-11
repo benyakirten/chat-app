@@ -14,14 +14,35 @@ const messageStore = useMessageStore()
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
+const errorMessage = ref<string | null>(null)
+
 // TODO: Create composable for form validation/errors
-const canSend = computed(() => (isPrivate.value ? selected.value.size === 1 : selected.value.size >= 1))
+watch([message, isPrivate, selected], ([message, isPrivate, selected]) => {
+  if (!message) {
+    errorMessage.value = 'New messages must not be empty.'
+    return
+  }
+
+  if (isPrivate && selected.size !== 1) {
+    errorMessage.value = 'Private conversations can only have one other participant.'
+    return
+  }
+
+  if (!isPrivate && selected.size < 1) {
+    errorMessage.value = 'Conversations must have at least one other participant.'
+  }
+})
 
 async function handleSubmit() {
+  errorMessage.value = null
   const res = await invoke(isPrivate.value, selected.value, message.value)
-  if (!(res instanceof Error)) {
-    // emit('close')
+  if (typeof res === 'string') {
+    emit('close')
+    navigateTo(`/chat/${res}`)
+    return
   }
+
+  errorMessage.value = res.message
 }
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
@@ -58,8 +79,11 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
           color="var(--highlight)"
           size="1.5rem"
           type="submit"
-          :disabled="loading || !canSend"
+          :disabled="loading || errorMessage !== null"
         />
+      </div>
+      <div class="new-error" v-if="errorMessage">
+        {{ errorMessage }}
       </div>
     </form>
   </BaseModal>
@@ -75,6 +99,10 @@ const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase
 
   &-submit {
     justify-self: end;
+  }
+
+  &-error {
+    color: red;
   }
 }
 </style>
