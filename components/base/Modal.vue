@@ -41,7 +41,6 @@ watch(
 
 <template>
   <Teleport to="#app-host">
-    <!-- TODO: Make modal not cover toasts -->
     <dialog ref="dialog" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
       <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
         <XMarkIcon />

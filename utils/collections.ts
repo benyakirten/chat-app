@@ -26,6 +26,7 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
     const historyIndex = this._history.findIndex((convo) => convo.id === id)
+
     if (convo && historyIndex === -1) {
       throw new Error('Make sure you are not setting a conversation directly but calling the .add method')
     }
@@ -47,7 +48,9 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public add(conversation: Conversation) {
     this._history.push(conversation)
-    return this.set(conversation.id, conversation)
+    this.set(conversation.id, conversation)
+
+    return this
   }
 
   public batchAdd(conversations: Conversation[]) {

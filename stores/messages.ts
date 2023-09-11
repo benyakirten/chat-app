@@ -490,7 +490,9 @@ export const useMessageStore = defineStore('messages', () => {
           continue
         }
 
+        console.log(conversation.members)
         if (conversation.members.get(otherUser)) {
+          console.log("WE'VE GOT A CONVERSATION ALREADY")
           // TODO: When we have the backend, it will create the uuid
           addMessage(id, {
             sender: userStore.me,

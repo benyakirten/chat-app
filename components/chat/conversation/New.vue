@@ -18,7 +18,8 @@ const errorMessage = ref<string | null>(null)
 
 // TODO: Create composable for form validation/errors
 watch([message, isPrivate, selected], ([message, isPrivate, selected]) => {
-  if (!message) {
+  console.log('FIRED', message, isPrivate, selected)
+  if (message === '') {
     errorMessage.value = 'New messages must not be empty.'
     return
   }
@@ -31,6 +32,8 @@ watch([message, isPrivate, selected], ([message, isPrivate, selected]) => {
   if (!isPrivate && selected.size < 1) {
     errorMessage.value = 'Conversations must have at least one other participant.'
   }
+
+  return null
 })
 
 async function handleSubmit() {

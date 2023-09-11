@@ -193,28 +193,28 @@ useAddMountedEventCallback('click', backdropClickDetector)
         :aria-label="title"
         aria-multiselectable="true"
       >
-        <li v-if="shownOptions.length === 0">No available options</li>
-        <TransitionGroup v-else name="item-list">
-          <li
-            v-for="(option, i) of shownOptions"
-            :key="option.id"
-            class="listbox-item"
-            role="option"
-            :id="option.id"
-            :aria-selected="focusIdx === i"
-            ref="itemRefs"
-            @click="handleOptionClick(option.id)"
-          >
-            <div class="listbox-item-left">
-              <slot name="item" :item="option"></slot>
+        <li class="listbox-item" v-if="shownOptions.length === 0">
+          <slot name="no-options"> No available options </slot>
+        </li>
+        <li
+          v-for="(option, i) of shownOptions"
+          :key="option.id"
+          class="listbox-item"
+          role="option"
+          :id="option.id"
+          :aria-selected="focusIdx === i"
+          ref="itemRefs"
+          @click="handleOptionClick(option.id)"
+        >
+          <div class="listbox-item-left">
+            <slot name="item" :item="option"></slot>
+          </div>
+          <div class="listbox-item-right" v-if="modelValue.has(option.id)">
+            <div class="listbox-item-right-icon">
+              <CheckIcon aria-hidden="true" />
             </div>
-            <div class="listbox-item-right" v-if="modelValue.has(option.id)">
-              <div class="listbox-item-right-icon">
-                <CheckIcon aria-hidden="true" />
-              </div>
-            </div>
-          </li>
-        </TransitionGroup>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
