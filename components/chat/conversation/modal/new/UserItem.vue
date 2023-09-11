@@ -19,12 +19,5 @@ defineProps<{ user: User }>()
   align-items: center;
   gap: 0.5rem;
   margin: 0.5rem;
-  &-avatar {
-    /*  */
-  }
-
-  &-name {
-    /*  */
-  }
 }
 </style>

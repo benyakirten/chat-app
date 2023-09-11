@@ -20,6 +20,7 @@ const { title, size, type, icon } = withDefaults(
       <template #content>
         {{ title }}
       </template>
+      <!-- TODO: Make these styles standardized according to theme -->
       <component :is="icon" :style="{ color: disabled ? 'gray' : color, width: size, height: size }" />
     </GeneralTooltip>
   </button>

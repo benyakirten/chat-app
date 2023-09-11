@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { v4 as uuid } from 'uuid'
-import { ChevronRightIcon } from '@heroicons/vue/24/outline'
+import { ChevronRightIcon, CogIcon } from '@heroicons/vue/24/outline'
 
 import type { ConversationId } from '@/stores/messages'
 
@@ -8,13 +8,14 @@ const route = useRoute()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 
-const { conversationId } = defineProps<{ conversationId: ConversationId }>()
-const conversation = messageStore.conversations.get(conversationId)
+const props = defineProps<{ conversationId: ConversationId }>()
+const emit = defineEmits<{ (e: 'modify'): void }>()
+const conversation = messageStore.conversations.get(props.conversationId)
 
 const points = ref<Map<string, { x: number; y: number }>>(new Map())
 
 async function viewConversation(e: MouseEvent) {
-  await navigateTo(`/chat/${conversationId}`)
+  await navigateTo(`/chat/${props.conversationId}`)
 
   // TODO: Make this into a hook/component/reusable instead of magic numbers
   // TODO: Figure out the best way to tie the timeout with the animation length
@@ -49,6 +50,15 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
       <span class="conversation-participants">
         {{ titleStore.conversationSubtitle(conversation) }}
       </span>
+      <button class="conversation-settings" v-if="!conversation?.isPrivate">
+        <GeneralIconButton
+          :icon="CogIcon"
+          title="Settings"
+          color="var(--highlight)"
+          size="1.5rem"
+          @click.stop="emit('modify')"
+        />
+      </button>
       <Transition name="active">
         <span v-if="route.params['id'] === conversationId" class="conversation-active">
           <ChevronRightIcon />
@@ -66,8 +76,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   overflow: hidden;
 
   display: grid;
-  grid-template-columns: 4rem 1fr 2rem;
-  column-gap: 2rem;
+  grid-template-columns: 1rem 2rem 1fr 2rem 2rem;
 
   min-height: 2rem;
   width: 100%;
@@ -78,22 +87,33 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   color: var(--primary-text);
 
   &-unread {
-    font-size: 1.4rem;
-    justify-self: center;
+    font-size: 1rem;
     align-self: center;
+    justify-content: center;
     color: var(--highlight);
-    grid-column: 1 / 2;
+    grid-column: 2 / 3;
   }
 
   &-participants {
     display: flex;
     align-items: center;
-    justify-content: center;
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
+    overflow: hidden;
     text-overflow: ellipsis;
   }
 
+  &-settings {
+    grid-column: 4 / 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+    width: 100%;
+  }
+
   &-active {
+    grid-column: 5 / -1;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -24,7 +24,7 @@ export const useTitleStore = defineStore('title', () => {
       return otherUsers[0].name
     }
 
-    return `${otherUsers[0].name} and ${otherUsers.length - 1} others`
+    return `${otherUsers[0].name} and ${otherUsers.length - 1} other${otherUsers.length === 2 ? '' : 's'}`
   })
 
   // TODO: Clean this the F up

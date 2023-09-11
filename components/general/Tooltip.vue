@@ -71,6 +71,7 @@ useAddMountedEventCallback('keydown', tooltipListener)
 
 <style scoped>
 /* TODO: This is a mess and will drastically need to be changed */
+/* Tooltips should be able to host elements/components */
 .tooltip {
   /* TODO: Get tooltip positioning to work correctly for all items */
   position: relative;

@@ -45,9 +45,6 @@ const userStore = useUsersStore()
     background-color: var(--bg-color-alt3);
     border-radius: 2px;
 
-    &-name {
-      /*  */
-    }
     &-remove {
       color: var(--highlight);
       width: 1.2rem;

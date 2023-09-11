@@ -1,7 +1,18 @@
 <script lang="ts" setup>
 const messageStore = useMessageStore()
 
-const newConvoOpen = ref(false)
+const modalOpen = ref<'new' | 'modify' | null>(null)
+const conversationToModify = ref<ConversationId | null>(null)
+
+function modifyConversation(id: ConversationId) {
+  modalOpen.value = 'modify'
+  conversationToModify.value = id
+}
+
+function closeModal() {
+  modalOpen.value = null
+  conversationToModify.value = null
+}
 </script>
 
 <template>
@@ -19,11 +30,12 @@ const newConvoOpen = ref(false)
           v-for="conversation in messageStore.visibleConversations"
           :key="conversation.id"
           :conversation-id="conversation.id"
+          @modify="modifyConversation(conversation.id)"
         />
       </ul>
     </div>
-    <button class="new-conversation" @click="newConvoOpen = true">Start a new conversation</button>
-    <ChatConversationNew @close="newConvoOpen = false" :open="newConvoOpen" />
+    <button class="new-conversation" @click="modalOpen = 'new'">Start a new conversation</button>
+    <ChatConversationModal :modal-open="modalOpen" :conversation-id="conversationToModify" @close="closeModal" />
   </div>
 </template>
 

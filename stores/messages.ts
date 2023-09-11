@@ -461,7 +461,6 @@ export const useMessageStore = defineStore('messages', () => {
   // Should we use TS results?
   async function startConversation(isPrivate: boolean, otherUsers: Set<string>, message: string): Promise<string> {
     // TODO: Clean this up
-
     if (!userStore.me) {
       throw new Error('You must be logged in to start a conversation')
     }
@@ -477,6 +476,8 @@ export const useMessageStore = defineStore('messages', () => {
       }
 
       // Get the other user from the set
+      // TODO: Figure out a less verbose way of doing this
+      // Some reason otherUser.values().next().value isn't typed as string
       let otherUser: string = ''
       for (const user of otherUsers) {
         otherUser = user
@@ -486,13 +487,11 @@ export const useMessageStore = defineStore('messages', () => {
 
       // TODO: Check if a private conversation with the other user already exists
       for (const [id, conversation] of conversations.value) {
-        if (conversation.members.size !== 1) {
+        if (conversation.members.size !== 2) {
           continue
         }
 
-        console.log(conversation.members)
         if (conversation.members.get(otherUser)) {
-          console.log("WE'VE GOT A CONVERSATION ALREADY")
           // TODO: When we have the backend, it will create the uuid
           addMessage(id, {
             sender: userStore.me,
@@ -541,7 +540,7 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     const newConvo: Conversation = {
-      isPrivate: true,
+      isPrivate: false,
       id: uuid(),
       members,
       messages: new Map(),
