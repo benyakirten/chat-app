@@ -23,34 +23,6 @@ export interface ThemeStoreState {
   active: 'day' | 'night'
 }
 
-// .day {
-//   --accent-color: #27ae60;
-//   /* --accent-color-2: #3498db; */
-//   --highlight-color: #f39c12;
-//   /* --highlight-color-2: #e74c3c; */
-
-//   --neutral-color: #dcdcdc;
-//   /* --neutral-color-2: #e0e0e0; */
-// }
-
-// .night {
-//   --accent-color: #00b894;
-//   /* --accent-color-2: #3498db; */
-//   /* --acount-color-3: #e74c3c; */
-
-//   --primary-text-color: #f4f4f4;
-//   /* --primary-text-color-2: #ffffff; */
-//   --secondary-text-color: #bdc3c7;
-
-//   --highlight-color: #f39c12;
-//   /* --highlight-color-2: #e74c3c; */
-
-//   --link-color: #3498db;
-
-//   --neutral-color: #bdc3c7;
-//   /* --neutral-color-2: #e0e0e0; */
-// }
-
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
     // Bg alts suck
@@ -80,7 +52,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     secondaryText: '#c1c1c1',
     highlight: '#f39c12',
     link: '#3498db',
-    neutral: '#bdc3c7',
+    neutral: '#495555',
   },
 }
 

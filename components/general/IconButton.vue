@@ -45,9 +45,10 @@ const { title, size, type, icon } = withDefaults(
 
     &.disabled {
       color: var(--neutral);
+      animation: none;
 
       &:hover {
-        color: currentColor;
+        color: var(--neutral);
       }
     }
   }
