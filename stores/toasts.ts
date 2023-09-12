@@ -17,14 +17,7 @@ export interface Toast {
 type ToastOptions = Partial<Omit<Toast, 'id' | 'content'> & { timeout: number | null }>
 
 export const useToastStore = defineStore('toasts', () => {
-  const toasts = ref<Map<ToastId, Toast>>(
-    new Map([
-      ['t1', { id: 't1', content: 'SUCCESS', closeable: true, type: 'success' }],
-      ['t2', { id: 't2', content: 'ERROR', closeable: true, type: 'error' }],
-      ['t3', { id: 't3', content: 'INFO', closeable: true, type: 'info' }],
-      ['t4', { id: 't4', content: 'WARNING', closeable: true, type: 'warning' }],
-    ])
-  )
+  const toasts = ref<Map<ToastId, Toast>>(new Map())
 
   /**
    * If timeout is null, the toast won't close on its own.

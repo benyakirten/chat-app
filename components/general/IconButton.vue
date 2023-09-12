@@ -9,27 +9,57 @@ const { title, size, type, icon } = withDefaults(
     type?: 'submit' | 'button'
     disabled?: boolean
     color?: string
+    hoverColor?: string
   }>(),
-  { type: 'button', disabled: false, color: 'var(--primary-text)' }
+  { type: 'button', disabled: false, color: 'var(--highlight)', hoverColor: 'var(--bg-color-primary)' }
 )
 </script>
 
 <template>
-  <button :type="type" class="icon-button" :aria-label="title" :disabled="disabled">
+  <button :type="type" class="button" :aria-label="title" :disabled="disabled">
     <GeneralTooltip :disable-click="true">
       <template #content>
         {{ title }}
       </template>
       <!-- TODO: Make these styles standardized according to theme -->
-      <component :is="icon" :style="{ color: disabled ? 'gray' : color, width: size, height: size }" />
+      <component :is="icon" :class="{ disabled: disabled }" class="button-icon" />
     </GeneralTooltip>
   </button>
 </template>
 
 <style scoped>
-.icon-button {
+.button {
   display: inline-block;
   width: v-bind(size);
   height: v-bind(size);
+
+  &-icon {
+    color: v-bind(color);
+
+    transition: all 400ms ease;
+
+    &:hover {
+      color: v-bind(hoverColor);
+      animation: twitch 3000ms ease infinite alternate;
+    }
+
+    &.disabled {
+      color: var(--neutral);
+
+      &:hover {
+        color: currentColor;
+      }
+    }
+  }
+}
+
+@keyframes twitch {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.1;
+  }
 }
 </style>

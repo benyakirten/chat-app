@@ -12,6 +12,13 @@ html {
   --z-base: 0;
   --z-low: -1;
 
+  --info-bg: #3abff8;
+  --success-bg: #36d399;
+  --warning-bg: #fbbd23;
+  --error-bg: #f87272;
+  --white: #fff;
+  --black: #000;
+
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/solid'
 
-import type { Toast } from '@/stores/toasts'
-
 const { toast } = defineProps<{ toast: Toast }>()
 
 const toastStore = useToastStore()
@@ -19,6 +17,8 @@ const toastStore = useToastStore()
       :disabled="!toast.closeable"
       @click="toastStore.dismiss(toast.id)"
       :icon="XCircleIcon"
+      color="var(--black)"
+      hover-color="var(--white)"
     />
   </output>
 </template>
@@ -34,25 +34,27 @@ const toastStore = useToastStore()
   justify-content: space-between;
   align-items: center;
 
+  color: var(--black);
+
   &-content {
     flex: 1;
   }
 
   /* TODO: Use good colors/styles */
   &.success {
-    background-color: green;
+    background-color: var(--success-bg);
   }
 
   &.warning {
-    background-color: orange;
+    background-color: var(--warning-bg);
   }
 
   &.error {
-    background-color: red;
+    background-color: var(--error-bg);
   }
 
   &.info {
-    background-color: blue;
+    background-color: var(--info-bg);
   }
 }
 </style>
