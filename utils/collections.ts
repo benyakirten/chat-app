@@ -51,7 +51,8 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
   }
 
   public remove(conversation: Conversation) {
-    this.history = this.history.filter((convo) => convo.id !== conversation.id)
+    const convoIdx = this.history.findIndex((convo) => convo.id === conversation.id)
+    this.history.splice(convoIdx, 1)
     this.delete(conversation.id)
 
     return this
