@@ -68,7 +68,7 @@ watch(
   &::backdrop {
     background-color: rgba(0, 0, 0, 0);
     backdrop-filter: blur(0px);
-    transition: all var(--time-300) ease;
+    transition: all 300ms ease;
     z-index: 99;
   }
 
@@ -78,7 +78,7 @@ watch(
   }
 
   &-close {
-    transition: transform var(--time-200) ease;
+    transition: transform 200ms ease;
     color: var(--highlight);
 
     position: absolute;

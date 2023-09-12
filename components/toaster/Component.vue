@@ -12,8 +12,8 @@ const toastStore = useToastStore()
 
 <style scoped>
 .toaster {
+  z-index: var(--z-top);
   position: fixed;
-  z-index: 101;
   inset-block-start: 0;
   inset-inline: 0;
   padding-block-start: 2vh;
@@ -26,19 +26,19 @@ const toastStore = useToastStore()
 
 .toast-enter-active,
 .toast-leave-active {
-  transition: transform var(--time-400) ease;
+  transition: transform 400ms ease, opacity 300ms ease-out;
 }
 
-.toast-enter-active {
-  transform-origin: left;
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0.2;
 }
 
-.toast-leave-active {
-  transform-origin: right;
-}
-
-.toast-leave-to,
 .toast-enter-from {
-  transform: scaleX(0);
+  transform: translateX(-100%);
+}
+
+.toast-leave-to {
+  transform: translateX(100%);
 }
 </style>

@@ -6,7 +6,7 @@ import type { ConversationMessage } from '@/stores/messages'
 const emit = defineEmits<{
   (e: 'resend', event: MouseEvent): void
 }>()
-const { isMine, isPrivate, createTime, updateTime, status, align, readList, isEditing } = defineProps<{
+defineProps<{
   isMine: boolean
   readList: string[]
   isPrivate: boolean

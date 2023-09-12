@@ -133,7 +133,7 @@ nav {
 
 .slide-in-enter-active,
 .slide-in-leave-active {
-  transition: translate var(--time-400) ease-in-out;
+  transition: translate 400ms ease-in-out;
 }
 
 .slide-in-enter-from,
@@ -143,7 +143,7 @@ nav {
 
 .backdrop-blur-enter-active,
 .backdrop-blur-leave-active {
-  transition: backdrop-filter var(--time-250) ease-in-out var(--time-100);
+  transition: backdrop-filter 250ms ease-in-out 100ms;
   backdrop-filter: blur(3px);
 }
 
@@ -175,7 +175,7 @@ nav {
     width: 100%;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform var(--time-250) ease;
+    transition: transform 250ms ease;
     border: 1px solid var(--accent);
   }
 }

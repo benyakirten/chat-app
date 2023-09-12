@@ -280,7 +280,7 @@ label {
 
       svg {
         forced-color-adjust: auto;
-        transition: rotate var(--time-200) ease;
+        transition: rotate 200ms ease;
       }
 
       &[aria-expanded='true'] > svg {

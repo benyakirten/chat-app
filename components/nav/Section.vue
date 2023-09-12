@@ -42,7 +42,7 @@ const id = computed(() => `${group}-expadable-content`)
   background-color: v-bind(backgroundColor);
   --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
   box-shadow: -7px 8px 6px -3px var(--box-shadow);
-  transition: width var(--time-250) ease-in;
+  transition: width 250ms ease-in;
   z-index: v-bind(zIndex);
   padding: 1rem;
 
@@ -69,7 +69,7 @@ const id = computed(() => `${group}-expadable-content`)
   }
 
   &-contents {
-    transition: transform var(--time-250) ease-in;
+    transition: transform 250ms ease-in;
   }
 
   &:hover {
@@ -78,13 +78,13 @@ const id = computed(() => `${group}-expadable-content`)
 }
 
 .section-expand-enter-active {
-  transition: height var(--time-400) ease-in-out, opacity var(--time-100) ease-in-out var(--time-150);
+  transition: height 400ms ease-in-out, opacity 100ms ease-in-out 150ms;
   height: v-bind(height);
   opacity: 1;
 }
 
 .section-expand-leave-active {
-  transition: height var(--time-250) ease-in-out;
+  transition: height 250ms ease-in-out;
   height: v-bind(height);
   opacity: 1;
 }

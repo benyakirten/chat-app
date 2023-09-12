@@ -131,7 +131,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
 .unread-enter-active,
 .unread-leave-active {
-  transition: opacity var(--time-200) ease-in, scale var(--time-250) ease;
+  transition: opacity 200ms ease-in, scale 250ms ease;
 }
 
 /* TODO: Figure out why this transition isn't working */
@@ -143,6 +143,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
 .active-enter-active,
 .active-leave-active {
-  transition: opacity var(--time-200) ease-in, scale var(--time-250) ease;
+  transition: opacity 200ms ease-in, scale 250ms ease;
 }
 </style>

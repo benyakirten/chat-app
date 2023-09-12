@@ -33,7 +33,7 @@ const { open } = defineProps<{ open: boolean }>()
 
   .arrow-enter-active,
   .arrow-leave-active {
-    transition: scale var(--time-50) ease-in;
+    transition: scale 50ms ease-in;
     scale: 1;
   }
 

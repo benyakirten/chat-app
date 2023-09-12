@@ -24,7 +24,7 @@ div {
   width: 0.5rem;
 
   /* TODO: Make timing function */
-  animation: expand-out var(--time-400) ease-in;
+  animation: expand-out 400ms ease-in;
 }
 
 @keyframes expand-out {

@@ -1,33 +1,18 @@
 <script lang="ts" setup>
-import type {
-  Conversation,
-  ConversationId,
-  ConversationMessage,
-  MessageId,
-  UserId,
-  UserReadTimes,
-} from '@/stores/messages'
+import { getUserReadTimes } from '@/utils/messages'
 
+const route = useRoute()
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 
-const { conversationId } = defineProps<{ conversationId: ConversationId }>()
+const props = defineProps<{ conversationId: ConversationId }>()
 const list = ref<HTMLUListElement | null>(null)
+const viewedMessageId = ref<MessageId | false>(typeof route.query['view'] === 'string' && route.query['view'])
 const lastMessageSize = ref(0)
-const conversation = computed(() => messageStore.conversations.get(conversationId))
+const conversation = computed(() => messageStore.conversations.get(props.conversationId))
 const messages = computed(() => conversation.value?.messages)
-
-const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value) : {}))
-function getUserReadTimes(conversation: Conversation): UserReadTimes {
-  const readMap: Record<UserId, Date> = {}
-  for (const [id, conversationState] of conversation.members) {
-    if (id === userStore.me) {
-      continue
-    }
-    readMap[id] = conversationState.lastRead
-  }
-  return readMap
-}
+const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
+const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value, userStore.me?.id) : {}))
 
 watchEffect(() => {
   if (!messages.value) {
@@ -36,32 +21,10 @@ watchEffect(() => {
 
   if (messages.value.size > lastMessageSize.value) {
     lastMessageSize.value = messages.value.size
+    // TODO: Add a way to scroll to an individual message
     scrollToListBottom()
   }
 })
-
-function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>) {
-  const messageChunks: ConversationMessage[][] = []
-
-  let lastAuthor: UserId | null = null
-  let currentChunk: ConversationMessage[] = []
-  for (const message of messages.values()) {
-    if (lastAuthor && lastAuthor !== message.sender) {
-      messageChunks.push(currentChunk)
-      currentChunk = []
-    }
-
-    lastAuthor = message.sender
-    currentChunk.push(message)
-  }
-
-  // TODO: Figure out how to make sure last chunk is
-  if (currentChunk.length > 0) {
-    messageChunks.push(currentChunk)
-  }
-
-  return messageChunks
-}
 
 async function scrollToListBottom() {
   await nextTick()
@@ -77,14 +40,14 @@ async function scrollToListBottom() {
 
 // TODO: Add the ability to scroll to a particular message - may require completely different approach
 onMounted(() => {
-  scrollToListBottom()
+  if (typeof route.query['view'] !== 'string') {
+    scrollToListBottom()
+  }
 })
 
 onUnmounted(() => {
   messageStore.stopMessageEdit()
 })
-
-const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 </script>
 
 <template>
@@ -103,6 +66,7 @@ const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(mes
         :user-read-times="userReadTimes"
         :is-private="(conversation?.members.size ?? 0) > 2"
         :conversation-id="conversationId"
+        :viewed-message-id="viewedMessageId"
       />
     </ul>
     <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />

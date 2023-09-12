@@ -2,16 +2,17 @@
 import type { ConversationId, ConversationMessage, UserReadTimes } from '@/stores/messages'
 
 const userStore = useUsersStore()
-const { chunk, userReadTimes, isPrivate, conversationId } = defineProps<{
+const props = defineProps<{
   chunk: ConversationMessage[]
   userReadTimes: UserReadTimes
   isPrivate: boolean
   conversationId: ConversationId
+  viewedMessageId: MessageId | false
 }>()
 
 const messageStore = useMessageStore()
-const userId = computed(() => chunk[0].sender)
-const isMine = computed(() => userStore.isMine(chunk[0]))
+const userId = computed(() => props.chunk[0].sender)
+const isMine = computed(() => userStore.isMine(props.chunk[0]))
 const flexDirection = computed(() => (isMine.value ? 'row' : 'row-reverse'))
 const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'other'}`)
 </script>
@@ -32,6 +33,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
           :is-last="i === chunk.length - 1"
           :is-private="isPrivate"
           :key="message.id"
+          :auto-view="message.id === viewedMessageId"
         />
       </TransitionGroup>
     </ul>
@@ -70,7 +72,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 .message-mine-leave-active,
 .message-other-enter-active,
 .message-other-leave-active {
-  transition: all var(--time-300) ease;
+  transition: all 300ms ease;
 }
 
 .message-mine-enter-from,

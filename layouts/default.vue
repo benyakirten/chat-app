@@ -36,13 +36,13 @@ useHead({
   max-width: 100vw;
 
   main {
-    min-height: 100vh;
+    height: 100vh;
   }
 }
 
 .page-leave-active,
 .page-enter-active {
-  transition: all var(--time-300) ease;
+  transition: all 300ms ease;
 }
 
 .page-enter-from,

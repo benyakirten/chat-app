@@ -158,12 +158,12 @@ useAddMountedEventCallback('keydown', tooltipListener)
 }
 
 .tooltip-enter-active {
-  transition: all var(--time-300) ease;
+  transition: all 300ms ease;
   transform-origin: center;
 }
 
 .tooltip-leave-active {
-  transition: all var(--time-300) ease var(--time-100);
+  transition: all 300ms ease 100ms;
   transform-origin: center;
 }
 

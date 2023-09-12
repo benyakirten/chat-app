@@ -1,6 +1,13 @@
+<script setup lang="ts">
+useHead({
+  bodyAttrs: {
+    style: 'max-height: 100vh; overflow: hidden;',
+  },
+})
+</script>
+
 <template>
   <BasePage>
-    <h1>Chat</h1>
     <div class="messages">
       <ChatConversationList />
       <slot></slot>
@@ -9,18 +16,10 @@
 </template>
 
 <style scoped>
-h1 {
-  text-align: center;
-  padding-bottom: 1rem;
-}
-
 .messages {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  height: 80vh;
-  margin: 1rem 0.5rem 0;
+  height: 100vh;
   margin-right: 2rem;
-  border: 1px solid var(--accent);
-  border-left: none;
 }
 </style>

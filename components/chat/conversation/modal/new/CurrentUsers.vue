@@ -50,7 +50,7 @@ const userStore = useUsersStore()
       width: 1.2rem;
       height: 1.2rem;
       opacity: 0.9;
-      transition: scale var(--time-100) ease var(--time-100), opacity var(--time-200) ease;
+      transition: scale 100ms ease 100ms, opacity 200ms ease;
 
       &:hover,
       &:focus {

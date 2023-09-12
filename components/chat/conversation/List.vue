@@ -58,7 +58,7 @@ function closeModal() {
     padding: 0.5rem 0;
     text-align: center;
 
-    transition: background-color var(--time-150) ease-in, color var(--time-150) ease-out;
+    transition: background-color 150ms ease-in, color 150ms ease-out;
 
     border-top: 1px solid var(--accent);
 

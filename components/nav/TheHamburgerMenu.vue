@@ -39,7 +39,7 @@ button {
     width: 1rem;
     height: 2px;
     background-color: var(--bg-color-primary);
-    transition: rotate var(--time-200) ease-in, scale var(--time-200) ease-in var(--time-100);
+    transition: rotate 200ms ease-in, scale 200ms ease-in 100ms;
   }
 
   div:nth-of-type(1) {
@@ -47,7 +47,7 @@ button {
   }
 
   div:nth-of-type(2) {
-    transition-delay: var(--time-150);
+    transition-delay: 150ms;
     transform-origin: center;
     transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
