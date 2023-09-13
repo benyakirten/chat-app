@@ -34,13 +34,13 @@ body {
   --bg-alt3: color-mix(in srgb, var(--bg-primary) 87%, var(--mix));
   --bg-alt4: color-mix(in srgb, var(--bg-primary) 83%, var(--mix));
   --bg-alt5: color-mix(in srgb, var(--bg-primary) 79%, var(--mix));
-  --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
+  --box-shadow-color: color-mix(in srgb, var(--accent) 25%, transparent);
+
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-alt5) 75%, var(--bg-alt5) 100%);
+  color: var(--text);
 }
 
 #app-host {
-  color: var(--text, '#f4f4f4');
-  background-color: var(--bg-primary, '#000');
-
   position: relative;
   max-width: 100vw;
 

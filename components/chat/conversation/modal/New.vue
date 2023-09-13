@@ -57,7 +57,7 @@ async function handleSubmit() {
     <ChatConversationModalUserMultiSelect
       :selected="selected"
       @setSelected="selected = $event"
-      :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me)"
+      :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me?.id)"
     />
     <GeneralInputCheckbox v-model="isPrivate">
       <GeneralTooltip>

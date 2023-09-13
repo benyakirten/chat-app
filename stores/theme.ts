@@ -21,7 +21,6 @@ export interface ThemeStoreState {
 
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
-    // Bg alts suck
     bgPrimary: '#f4f4f4',
     accent: '#27ae60',
     text: '#333333',
@@ -32,7 +31,6 @@ const defaultThemes: ThemeStoreState['themes'] = {
     opposite: '#000',
   },
   night: {
-    // Alt 4-5 aren't good
     bgPrimary: '#0a192f',
     accent: '#00b894',
     text: '#f4f4f4',

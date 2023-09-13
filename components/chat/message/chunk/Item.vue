@@ -71,14 +71,14 @@ onMounted(() => {
   row-gap: 0.5rem;
   place-items: center;
 
-  background-color: var(--bg-alt1);
+  background-color: var(--bg-alt3);
 
   padding: 0.75rem;
 
   transition: transform 200ms ease, background-color 300ms ease;
 
   &.highlighted {
-    background-color: var(--bg-alt4);
+    background-color: var(--bg-alt5);
     transform: scale(1.1);
   }
 

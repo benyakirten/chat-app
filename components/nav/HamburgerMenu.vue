@@ -9,6 +9,7 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
     :aria-label="ariaLabel"
     :aria-expanded="layoutStore.sidebarOpen"
     aria-controls="nav"
+    class="menu"
   >
     <div aria-hidden="true"></div>
     <div aria-hidden="true"></div>
@@ -17,11 +18,9 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
 </template>
 
 <style scoped>
-button {
+.menu {
   cursor: pointer;
   z-index: 2;
-  bottom: 2rem;
-  right: 2rem;
 
   padding: 1rem;
   height: 1rem;
@@ -32,7 +31,6 @@ button {
 
   border-radius: 4px;
   background-color: var(--accent);
-  border: none;
 
   div {
     width: 1rem;

@@ -82,7 +82,7 @@ async function leaveConversation() {
       <ChatConversationModalUserMultiSelect
         :options="
           [...userStore.users.values()].filter(
-            (user) => user.id !== userStore.me && !conversation?.members.has(user.id)
+            (user) => user.id !== userStore.me?.id && !conversation?.members.has(user.id)
           )
         "
         :selected="mutableOtherUsersSet"

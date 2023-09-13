@@ -41,7 +41,6 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
   font-family: var(--font-sans-serif);
 }
 

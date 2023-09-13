@@ -34,7 +34,7 @@ function closeModal() {
         />
       </ul>
     </div>
-    <BaseButton @click="modalOpen = 'new'">Start a new conversation</BaseButton>
+    <BaseButton class="container-new" @click="modalOpen = 'new'">Start a new conversation</BaseButton>
     <ChatConversationModal :modal-open="modalOpen" :conversation-id="conversationToModify" @close="closeModal" />
   </div>
 </template>
@@ -50,6 +50,11 @@ function closeModal() {
 
   &-conversations {
     flex-grow: 1;
+  }
+
+  &-new {
+    text-align: center;
+    padding: 1.5rem;
   }
 }
 </style>

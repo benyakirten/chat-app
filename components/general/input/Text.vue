@@ -33,7 +33,7 @@ function handleInput(e: Event) {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem var(--padding-x-container);
+  padding: 0 var(--padding-x-container);
 
   &-input {
     height: calc(var(--icon) + 0.5rem);

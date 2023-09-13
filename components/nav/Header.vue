@@ -11,13 +11,16 @@
 
 <style scoped>
 .header {
+  position: relative;
+  z-index: var(--z-high);
+
   width: 100%;
   height: 6rem;
 
   align-items: center;
   display: grid;
   grid-template-columns: 30% 50% 1fr;
-  background-color: var(--bg-alt5);
+  box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
 
   &-search {
     grid-column: 2 / 3;

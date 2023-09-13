@@ -16,7 +16,6 @@ defineProps<{ title?: string }>()
   h1 {
     text-transform: capitalize;
     text-align: center;
-    padding: 1rem 0;
   }
 }
 </style>

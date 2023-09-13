@@ -36,7 +36,7 @@ const id = computed(() => `${props.group}-expadable-content`)
 .section {
   width: v-bind(width);
   background-color: v-bind(backgroundColor);
-  box-shadow: -7px 8px 6px -3px var(--box-shadow);
+  box-shadow: -7px 8px 6px -3px var(--box-shadow-color);
   transition: width 250ms ease-in;
   z-index: v-bind(zIndex);
   padding: 1rem;
