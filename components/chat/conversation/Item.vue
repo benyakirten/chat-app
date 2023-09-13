@@ -69,9 +69,16 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   width: 100%;
 
   padding: 1rem 0;
+  background: linear-gradient(to right, transparent 50%, var(--bg-primary), var(--base));
+  background-position: left;
+  background-size: 200%;
+  transition: all 600ms ease-out;
 
-  background-color: var(--bg-primary);
   color: var(--text);
+
+  &:hover {
+    background-position: right;
+  }
 
   &-unread {
     font-size: 1rem;
