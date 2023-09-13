@@ -493,7 +493,7 @@ export const useMessageStore = defineStore('messages', () => {
       sender: userStore.me.id,
       id: newId,
       content: message,
-      status: 'pending',
+      status: 'complete',
       createTime: new Date(),
       updateTime: new Date(),
     }

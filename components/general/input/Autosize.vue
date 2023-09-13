@@ -3,11 +3,9 @@ const props = withDefaults(
   defineProps<{ modelValue: string; placeholder: string; label: string; autofocus?: boolean }>(),
   { autofocus: false }
 )
+defineOptions({ inheritAttrs: false })
 
 const emit = defineEmits<{
-  (e: 'keydown', event: KeyboardEvent): void
-  (e: 'submit', value: string): void
-  (e: 'cancel'): void
   (e: 'update:modelValue', value: string): void
 }>()
 
@@ -25,25 +23,6 @@ watch(
     itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
   }
 )
-
-function handleKeydown(e: KeyboardEvent) {
-  emit('keydown', e)
-
-  if (hiddenDiv.value) {
-    itemHeight.value = `${hiddenDiv.value.scrollHeight + 4}px`
-  }
-
-  if (e.key === 'Escape') {
-    textarea.value?.blur()
-    emit('cancel')
-    return
-  }
-
-  if (e.key === 'Enter' && !e.shiftKey && props.modelValue !== '') {
-    emit('submit', props.modelValue)
-    return
-  }
-}
 
 function handleUpdateValue(e: Event) {
   if (!(e.target instanceof HTMLTextAreaElement)) {
@@ -66,8 +45,8 @@ onMounted(() => {
     <textarea
       ref="textarea"
       :aria-label="label"
-      @keydown="handleKeydown"
       @input="handleUpdateValue"
+      v-bind="$attrs"
       :value="props.modelValue"
       class="autosize-input"
       :placeholder="placeholder"
@@ -95,7 +74,6 @@ onMounted(() => {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     resize: none;
-    font-size: 1.2rem;
 
     /* TODO: Figure out why this has to be specified */
     font-family: 'Roboto';
@@ -106,7 +84,6 @@ onMounted(() => {
     position: absolute;
     height: min-content;
     margin: 0 1.2rem;
-    font-size: 1.2rem;
     z-index: -100;
     visibility: hidden;
     pointer-events: none;

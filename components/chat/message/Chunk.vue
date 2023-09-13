@@ -57,7 +57,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
 }
 
 .right {

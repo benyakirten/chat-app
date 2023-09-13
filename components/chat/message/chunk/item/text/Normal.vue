@@ -4,7 +4,7 @@ const { status, content } = defineProps<{ status: ConversationMessage['status'];
 
 <template>
   <div class="content" :class="{ errored: status === 'error', loading: status === 'pending' }">
-    <!-- TODO: Add parsing for code blocks/etc, also make sure html is escaped -->
+    <!-- TODO: Add parsing for code blocks/etc, also make sure html is escaped inside -->
     {{ content }}
   </div>
 </template>
