@@ -19,6 +19,11 @@ html {
   --white: #fff;
   --black: #000;
 
+  --text-xl: 1.4rem;
+  --text-lg: 1.2rem;
+  --text-md: 1rem;
+  --text-sm: 0.8rem;
+
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,

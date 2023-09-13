@@ -44,7 +44,7 @@ defineProps<{
       <span v-else> Sent </span>
       {{ formatMessageDate(createTime) }}
       <GeneralTooltip v-if="createTime.valueOf() !== updateTime.valueOf()">
-        <template #content> Edited at {{ formatMessageDate(updateTime) }} </template>
+        <template #content> Latest edit at {{ formatMessageDate(updateTime) }} </template>
         (Edited)
       </GeneralTooltip>
     </span>
@@ -55,7 +55,7 @@ defineProps<{
 .status {
   width: 100%;
   text-align: v-bind(align);
-  font-size: 0.6rem;
+  font-size: var(--text-sm);
 
   &-error {
     display: flex;
