@@ -71,7 +71,8 @@ onMounted(() => {
   row-gap: 0.5rem;
   place-items: center;
 
-  background-color: var(--bg-alt3);
+  background: linear-gradient(to bottom left, var(--bg-primary) 10%, var(--base), var(--bg-primary) 75%);
+  box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
 
   padding: 0.75rem;
 

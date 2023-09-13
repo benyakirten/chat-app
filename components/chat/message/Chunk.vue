@@ -44,7 +44,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 <style scoped>
 .message-group {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-direction: v-bind(flexDirection);
   max-width: 60%;
 }

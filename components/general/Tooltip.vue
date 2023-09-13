@@ -81,7 +81,7 @@ useAddMountedEventCallback('keydown', tooltipListener)
     /* TODO: Use the popover/anchor API when they are well supported */
     /* TODO: Use variables to make code more DRY */
     position: absolute;
-    z-index: 2;
+    z-index: var(--z-high);
     padding: 0.25rem 0.5rem;
     width: max-content;
     isolation: isolate;
