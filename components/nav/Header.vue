@@ -17,7 +17,7 @@
   align-items: center;
   display: grid;
   grid-template-columns: 30% 50% 1fr;
-  border-bottom: 2px solid var(--accent);
+  background-color: var(--bg-alt5);
 
   &-search {
     grid-column: 2 / 3;

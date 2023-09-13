@@ -39,7 +39,7 @@ const { title, size, type, icon } = withDefaults(
 
     &:hover {
       color: v-bind(hoverColor);
-      animation: twitch 3000ms ease infinite alternate;
+      animation: twitch 3000ms cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
     }
 
     &.disabled {
@@ -60,13 +60,13 @@ const { title, size, type, icon } = withDefaults(
     rotate: 0deg;
   }
   25% {
-    rotate: -10deg;
+    rotate: -12deg;
   }
   50% {
     scale: 1.07;
   }
   75% {
-    rotate: 10deg;
+    rotate: 12deg;
   }
 }
 </style>
