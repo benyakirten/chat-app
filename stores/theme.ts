@@ -1,18 +1,13 @@
 import { defineStore } from 'pinia'
 
 export interface ColorTheme {
-  bgColorPrimary: string
-  bgColorAlt1: string
-  bgColorAlt2: string
-  bgColorAlt3: string
-  bgColorAlt4: string
-  bgColorAlt5: string
+  bgPrimary: string
   accent: string
-  primaryText: string
-  secondaryText: string
+  text: string
   highlight: string
-  link: string
   neutral: string
+  base: string
+  mix: string
 }
 
 export interface ThemeStoreState {
@@ -26,33 +21,23 @@ export interface ThemeStoreState {
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
     // Bg alts suck
-    bgColorPrimary: '#f4f4f4',
-    bgColorAlt1: '#e0e0e0',
-    bgColorAlt2: '#d2d2d2',
-    bgColorAlt3: '#c4c4c4',
-    bgColorAlt4: '#b6b6b6',
-    bgColorAlt5: '#a8a8a8',
+    bgPrimary: '#f4f4f4',
     accent: '#27ae60',
-    primaryText: '#333333',
-    secondaryText: '#777777',
+    text: '#333333',
     highlight: '#d32f2f',
-    link: '#2980b9',
     neutral: '#dcdcdc',
+    base: '#fff',
+    mix: '#000',
   },
   night: {
     // Alt 4-5 aren't good
-    bgColorPrimary: '#0a192f',
-    bgColorAlt1: '#05263c',
-    bgColorAlt2: '#032a46',
-    bgColorAlt3: '#013655',
-    bgColorAlt4: '#015788',
-    bgColorAlt5: '#071828',
+    bgPrimary: '#0a192f',
     accent: '#00b894',
-    primaryText: '#f4f4f4',
-    secondaryText: '#c1c1c1',
+    text: '#f4f4f4',
     highlight: '#f39c12',
-    link: '#3498db',
     neutral: '#495555',
+    base: '#000',
+    mix: '#0082cb',
   },
 }
 

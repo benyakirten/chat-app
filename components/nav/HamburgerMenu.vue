@@ -18,11 +18,10 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
 
 <style scoped>
 button {
-  position: fixed;
   cursor: pointer;
   z-index: 2;
-  bottom: 4rem;
-  right: 4rem;
+  bottom: 2rem;
+  right: 2rem;
 
   padding: 1rem;
   height: 1rem;
@@ -38,7 +37,7 @@ button {
   div {
     width: 1rem;
     height: 2px;
-    background-color: var(--bg-color-primary);
+    background-color: var(--bg-primary);
     transition: rotate 200ms ease-in, scale 200ms ease-in 100ms;
   }
 

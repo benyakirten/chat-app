@@ -77,7 +77,7 @@ useAddMountedEventCallback('keydown', tooltipListener)
   position: relative;
 
   &-content {
-    background-color: var(--bg-color-alt4);
+    background-color: var(--bg-alt4);
     /* TODO: Use the popover/anchor API when they are well supported */
     /* TODO: Use variables to make code more DRY */
     position: absolute;

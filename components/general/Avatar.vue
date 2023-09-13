@@ -31,7 +31,7 @@ const user = computed(() => userStore.users.get(userId))
   height: v-bind(size);
 
   border-radius: 9999px;
-  border: 1px solid var(--secondary-text);
+  border: 1px solid var(--text);
 
   span {
     font-size: 0.8rem;

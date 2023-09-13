@@ -42,7 +42,7 @@ const userStore = useUsersStore()
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: var(--bg-color-alt3);
+    background-color: var(--bg-alt3);
     border-radius: 2px;
 
     &-remove {

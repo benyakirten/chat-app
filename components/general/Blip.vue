@@ -17,7 +17,7 @@ div {
   left: v-bind(left);
 
   border-radius: 9999px;
-  background-color: var(--primary-text);
+  background-color: var(--text);
   opacity: 0;
 
   height: 0.5rem;

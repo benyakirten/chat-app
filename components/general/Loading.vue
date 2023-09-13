@@ -24,10 +24,10 @@ const { size } = defineProps<{ size: string }>()
     width: calc(4 / 5 * v-bind(size));
     height: calc(4 / 5 * v-bind(size));
     margin: calc(1 / 10 * v-bind(size));
-    border: calc(1 / 10 * v-bind(size)) solid var(--primary-text);
+    border: calc(1 / 10 * v-bind(size)) solid var(--text);
     border-radius: 9999px;
     animation: rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: var(--primary-text) transparent transparent transparent;
+    border-color: var(--text) transparent transparent transparent;
 
     &:nth-child(1) {
       animation-delay: -0.45s;

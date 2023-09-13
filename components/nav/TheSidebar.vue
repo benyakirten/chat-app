@@ -29,14 +29,7 @@ function getTitle(route: string) {
   </Transition>
   <Transition name="slide-in">
     <nav id="nav" v-if="layoutStore.sidebarOpen">
-      <NavTheSearchBar />
-      <NavSection
-        height="8rem"
-        width="100%"
-        group="chat"
-        :z-index="5"
-        :background-color="themeStore.activeTheme.bgColorAlt1"
-      >
+      <NavSection height="8rem" width="100%" group="chat" :z-index="5" background-color="var(--bg-alt1)">
         <BaseLink class="router-link" to="/chat">All Chats</BaseLink>
         <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed pages.</div>
         <ul v-else>
@@ -47,24 +40,12 @@ function getTitle(route: string) {
           </li>
         </ul>
       </NavSection>
-      <NavSection
-        height="4rem"
-        width="90%"
-        group="about"
-        :z-index="4"
-        :background-color="themeStore.activeTheme.bgColorAlt2"
-      >
+      <NavSection height="4rem" width="90%" group="about" :z-index="4" background-color="var(--bg-alt2)">
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
         <p>SAMPLE TEXT</p>
       </NavSection>
-      <NavSection
-        height="4rem"
-        width="80%"
-        group="account"
-        :z-index="3"
-        :background-color="themeStore.activeTheme.bgColorAlt3"
-      >
+      <NavSection height="4rem" width="80%" group="account" :z-index="3" background-color="var(--bg-alt3)">
         <p>View account page</p>
         <p>Details about me</p>
         <p>More Details</p>
@@ -117,7 +98,7 @@ nav {
     flex-grow: 1;
     padding: 1rem;
     width: 70%;
-    background-color: var(--bg-color-alt4);
+    background-color: var(--bg-alt4);
 
     display: flex;
     flex-direction: column;
@@ -150,33 +131,5 @@ nav {
 .backdrop-blur-enter-from,
 .backdrop-blur-leave-to {
   backdrop-filter: blur(0px);
-}
-
-.router-link {
-  position: relative;
-  color: var(--primary-text);
-  display: inline-block;
-
-  &:not(:last-child) {
-    margin-bottom: 2px;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
-
-  &::after {
-    content: '';
-
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-
-    width: 100%;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 250ms ease;
-    border: 1px solid var(--accent);
-  }
 }
 </style>

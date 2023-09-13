@@ -2,15 +2,15 @@
 import type { LayoutState } from '@/stores/layout'
 
 const layoutStore = useLayoutStore()
-const { group, height, zIndex, backgroundColor, width } = defineProps<{
+const props = defineProps<{
   group: LayoutState['sidebarTabOpened']
   height: string
   zIndex: number
   backgroundColor: string
   width: string
 }>()
-const isOpen = computed(() => layoutStore.isOpen(group))
-const id = computed(() => `${group}-expadable-content`)
+const isOpen = computed(() => layoutStore.isOpen(props.group))
+const id = computed(() => `${props.group}-expadable-content`)
 </script>
 
 <template>
@@ -56,7 +56,7 @@ const id = computed(() => `${group}-expadable-content`)
 
     outline: none;
     border: none;
-    color: var(--primary-text);
+    color: var(--text);
     background-color: inherit;
     width: 100%;
     height: 100%;

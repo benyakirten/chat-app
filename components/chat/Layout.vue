@@ -19,7 +19,7 @@ useHead({
 .messages {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  height: 100vh;
+  height: calc(100vh - 6rem);
   margin-right: 2rem;
 }
 </style>

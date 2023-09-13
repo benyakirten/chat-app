@@ -17,10 +17,10 @@ const { open } = defineProps<{ open: boolean }>()
   position: relative;
   width: 0.15rem;
   height: 0.7rem;
-  background-color: var(--primary-text);
+  background-color: var(--text);
 
   div {
-    background-color: var(--primary-text);
+    background-color: var(--text);
     width: 0.45rem;
     height: 0.9rem;
     translate: -30% -20%;

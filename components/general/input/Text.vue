@@ -47,7 +47,7 @@ function handleInput(e: Event) {
     /* TODO: This is a mess */
     &:disabled {
       background-color: var(--neutral);
-      color: var(--primary-text);
+      color: var(--text);
     }
   }
 
@@ -58,7 +58,7 @@ function handleInput(e: Event) {
     height: var(--icon);
     width: var(--icon);
     transform: translateY(-50%);
-    color: var(--primary-text);
+    color: var(--text);
   }
 }
 </style>

@@ -249,8 +249,8 @@ label {
       padding-right: var(--padding-right);
 
       input {
-        background-color: var(--bg-color-primary);
-        color: var(--primary-text);
+        background-color: var(--bg-primary);
+        color: var(--text);
         outline: none;
         padding: 0.5rem;
         flex: 1;
@@ -270,8 +270,8 @@ label {
     }
 
     &-button {
-      background-color: var(--bg-color-primary);
-      color: var(--primary-text);
+      background-color: var(--bg-primary);
+      color: var(--text);
       border-left: 1px solid gray;
       position: relative;
       cursor: pointer;
@@ -297,7 +297,7 @@ label {
   width: 100%;
   top: calc(100% + 0.2rem);
   left: 0;
-  background-color: var(--bg-color-primary);
+  background-color: var(--bg-primary);
 
   border: 2px currentcolor solid;
   max-height: v-bind(maxHeight);
@@ -314,7 +314,7 @@ label {
 
     &[aria-selected='true'],
     &:hover {
-      background-color: var(--bg-color-alt4);
+      background-color: var(--bg-alt4);
     }
 
     &-left {

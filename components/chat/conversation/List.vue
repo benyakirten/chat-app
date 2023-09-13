@@ -64,8 +64,8 @@ function closeModal() {
 
     &:hover {
       /* TODO: Improve colors/styles */
-      color: var(--primary-text);
-      background-color: var(--bg-color-alt4);
+      color: var(--text);
+      background-color: var(--bg-alt4);
     }
   }
 }

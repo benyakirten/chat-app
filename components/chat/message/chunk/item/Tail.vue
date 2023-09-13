@@ -11,7 +11,7 @@ const { isMine } = defineProps<{ isMine: boolean }>()
   place-self: end;
   width: 1rem;
   height: 1rem;
-  background-color: var(--bg-color-alt1);
+  background-color: var(--bg-alt1);
   position: absolute;
 
   --dist: 0.75rem;

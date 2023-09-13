@@ -11,7 +11,7 @@ const { title, size, type, icon } = withDefaults(
     color?: string
     hoverColor?: string
   }>(),
-  { type: 'button', disabled: false, color: 'var(--highlight)', hoverColor: 'var(--bg-color-primary)' }
+  { type: 'button', disabled: false, color: 'var(--highlight)', hoverColor: 'var(--accent)' }
 )
 </script>
 
@@ -21,7 +21,6 @@ const { title, size, type, icon } = withDefaults(
       <template #content>
         {{ title }}
       </template>
-      <!-- TODO: Make these styles standardized according to theme -->
       <component :is="icon" :class="{ disabled: disabled }" class="button-icon" />
     </GeneralTooltip>
   </button>
@@ -58,9 +57,16 @@ const { title, size, type, icon } = withDefaults(
   0%,
   100% {
     scale: 1;
+    rotate: 0deg;
+  }
+  25% {
+    rotate: -10deg;
   }
   50% {
-    scale: 1.1;
+    scale: 1.07;
+  }
+  75% {
+    rotate: 10deg;
   }
 }
 </style>

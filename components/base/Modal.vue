@@ -61,8 +61,8 @@ watch(
   min-height: 2rem;
   min-width: 2rem;
 
-  background-color: var(--bg-color-alt4);
-  color: var(--primary-text);
+  background-color: var(--bg-alt4);
+  color: var(--text);
   border: 2px solid var(--neutral);
 
   &::backdrop {

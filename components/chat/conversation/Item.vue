@@ -83,8 +83,8 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
   padding: 1rem 0;
 
-  background-color: var(--bg-color-primary);
-  color: var(--primary-text);
+  background-color: var(--bg-primary);
+  color: var(--text);
 
   &-unread {
     font-size: 1rem;
