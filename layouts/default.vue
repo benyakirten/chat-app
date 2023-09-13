@@ -36,17 +36,20 @@ body {
   --bg-alt5: color-mix(in srgb, var(--bg-primary) 79%, var(--mix));
   --box-shadow-color: color-mix(in srgb, var(--accent) 25%, transparent);
 
-  background: linear-gradient(145deg, var(--bg-primary), var(--bg-alt5) 75%, var(--bg-alt5) 100%);
+  background: linear-gradient(
+    to bottom right,
+    var(--bg-alt5) 15%,
+    var(--bg-primary) 25%,
+    var(--bg-primary) 35%,
+    var(--bg-primary) 65%,
+    var(--bg-alt5) 100%
+  );
   color: var(--text);
 }
 
 #app-host {
   position: relative;
   max-width: 100vw;
-
-  main {
-    height: 100vh;
-  }
 }
 
 .page-leave-active,

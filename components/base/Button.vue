@@ -7,7 +7,7 @@
   cursor: pointer;
   border-top: 1px solid var(--accent);
 
-  background: linear-gradient(145deg, var(--bg-primary) 35%, var(--opposite) 100%);
+  background: linear-gradient(to bottom right, var(--bg-primary) 25%, var(--opposite) 100%);
   background-size: 250%;
   background-position: left;
 

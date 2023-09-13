@@ -21,6 +21,7 @@
   display: grid;
   grid-template-columns: 30% 50% 1fr;
   box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
+  border-bottom: 1px solid var(--accent);
 
   &-search {
     grid-column: 2 / 3;

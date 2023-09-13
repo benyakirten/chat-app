@@ -53,7 +53,6 @@ defineProps<{
 
 <style scoped>
 .status {
-  color: var(--neutral);
   width: 100%;
   text-align: v-bind(align);
   font-size: 0.6rem;
