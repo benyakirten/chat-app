@@ -8,6 +8,7 @@ export interface ColorTheme {
   neutral: string
   base: string
   mix: string
+  opposite: string
 }
 
 export interface ThemeStoreState {
@@ -28,6 +29,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     neutral: '#dcdcdc',
     base: '#fff',
     mix: '#000',
+    opposite: '#000',
   },
   night: {
     // Alt 4-5 aren't good
@@ -38,6 +40,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     neutral: '#495555',
     base: '#000',
     mix: '#0082cb',
+    opposite: '#00D4FF',
   },
 }
 

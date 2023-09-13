@@ -34,7 +34,7 @@ function closeModal() {
         />
       </ul>
     </div>
-    <ChatConversationNew @click="modalOpen = 'new'" />
+    <BaseButton @click="modalOpen = 'new'">Start a new conversation</BaseButton>
     <ChatConversationModal :modal-open="modalOpen" :conversation-id="conversationToModify" @close="closeModal" />
   </div>
 </template>
