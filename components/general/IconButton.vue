@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FunctionalComponent, HTMLAttributes, VNodeProps } from 'nuxt/dist/app/compat/capi'
 
-const { title, size, type, icon } = withDefaults(
+withDefaults(
   defineProps<{
     title: string
     size: string
@@ -11,7 +11,7 @@ const { title, size, type, icon } = withDefaults(
     color?: string
     hoverColor?: string
   }>(),
-  { type: 'button', disabled: false, color: 'var(--highlight)', hoverColor: 'var(--accent)' }
+  { type: 'button', disabled: false, color: 'var(--accent)', hoverColor: 'var(--highlight)' }
 )
 </script>
 
@@ -63,7 +63,7 @@ const { title, size, type, icon } = withDefaults(
     rotate: -12deg;
   }
   50% {
-    scale: 1.07;
+    scale: 1.06;
   }
   75% {
     rotate: 12deg;

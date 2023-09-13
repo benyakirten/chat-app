@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { User } from '@/stores/users'
-
 const userStore = useUsersStore()
 const selected = ref<Set<string>>(new Set(['u1']))
 
@@ -15,7 +13,6 @@ async function searchCallback(val: string) {
   const user: User = {
     id,
     name: `New Person${++newPersons.value} - ${val}`,
-    state: 'completed',
   }
   userStore.users.set(id, user)
 }

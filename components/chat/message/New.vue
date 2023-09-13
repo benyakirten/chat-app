@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ConversationId } from '@/stores/messages'
-
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
 const conversation = computed(() => messageStore.conversations.get(conversationId))

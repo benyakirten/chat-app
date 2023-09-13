@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { UserIcon } from '@heroicons/vue/24/solid'
 
-import type { UserId } from '@/stores/messages'
-
 const userStore = useUsersStore()
-const { userId, size } = withDefaults(defineProps<{ userId: UserId; size?: string }>(), {
+const props = withDefaults(defineProps<{ userId: UserId; size?: string }>(), {
   size: '1.5rem',
 })
-const user = computed(() => userStore.users.get(userId))
+const user = computed(() => userStore.users.get(props.userId))
 </script>
 
 <template>

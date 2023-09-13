@@ -18,7 +18,7 @@ function closeModal() {
 <template>
   <div class="container">
     <!-- TODO (future): Add filters -->
-    <div class="conversations">
+    <div class="container-conversations">
       <div v-if="messageStore.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
       <!--
         TODO: Virtualize the list - either hand rolled or use a library
@@ -34,7 +34,7 @@ function closeModal() {
         />
       </ul>
     </div>
-    <button class="new-conversation" @click="modalOpen = 'new'">Start a new conversation</button>
+    <ChatConversationNew @click="modalOpen = 'new'" />
     <ChatConversationModal :modal-open="modalOpen" :conversation-id="conversationToModify" @close="closeModal" />
   </div>
 </template>
@@ -48,25 +48,8 @@ function closeModal() {
 
   border-right: 1px solid var(--accent);
 
-  .conversations {
+  &-conversations {
     flex-grow: 1;
-  }
-
-  .new-conversation {
-    cursor: pointer;
-    width: 100%;
-    padding: 0.5rem 0;
-    text-align: center;
-
-    transition: background-color 150ms ease-in, color 150ms ease-out;
-
-    border-top: 1px solid var(--accent);
-
-    &:hover {
-      /* TODO: Improve colors/styles */
-      color: var(--text);
-      background-color: var(--bg-alt4);
-    }
   }
 }
 </style>

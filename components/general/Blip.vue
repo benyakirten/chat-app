@@ -5,11 +5,11 @@ const top = computed(() => `${y}px`)
 </script>
 
 <template>
-  <div></div>
+  <div class="blip"></div>
 </template>
 
 <style scoped>
-div {
+.blip {
   pointer-events: none;
 
   position: absolute;

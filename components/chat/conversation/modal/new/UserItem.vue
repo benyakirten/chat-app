@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { User } from '@/stores/users'
-
 defineProps<{ user: User }>()
 </script>
 

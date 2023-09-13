@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid'
 
-const { direction, debounceTimeout, id, disableClick } = withDefaults(
+const props = withDefaults(
   defineProps<{
     direction?: 'top' | 'bottom' | 'left' | 'right'
     debounceTimeout?: number
@@ -12,7 +12,7 @@ const { direction, debounceTimeout, id, disableClick } = withDefaults(
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
-const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), debounceTimeout)
+const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), props.debounceTimeout)
 
 function handleMouseLeave() {
   clear()
@@ -23,7 +23,7 @@ function handleMouseLeave() {
 }
 
 function handleClick(e: Event) {
-  if (disableClick) {
+  if (props.disableClick) {
     clear()
     tooltipState.value = 'hidden'
     return
@@ -33,7 +33,7 @@ function handleClick(e: Event) {
   tooltipState.value = tooltipState.value === 'hidden' ? 'clicked' : 'hidden'
 }
 
-const tooltipDirectionClass = computed(() => `tooltip-content-${direction}`)
+const tooltipDirectionClass = computed(() => `tooltip-content-${props.direction}`)
 
 const tooltipListener = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { ConversationId, ConversationMessage, UserReadTimes } from '@/stores/messages'
-
 const userStore = useUsersStore()
 const props = defineProps<{
   chunk: ConversationMessage[]

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { ConversationMessage, MessageId, UserReadTimes } from '@/stores/messages'
-import { getMessageReadList } from '~/utils/messages'
-
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const props = defineProps<{

@@ -1,5 +1,3 @@
-import type { Conversation, ConversationId, ConversationMessage } from '@/stores/messages'
-
 export const arrayify = <T>(item: T | T[]) => (Array.isArray(item) ? item : [item])
 export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
   for (const mapKey of map.keys()) {

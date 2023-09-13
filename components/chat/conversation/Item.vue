@@ -2,7 +2,7 @@
 import { v4 as uuid } from 'uuid'
 import { ChevronRightIcon, CogIcon } from '@heroicons/vue/24/outline'
 
-import type { ConversationId } from '@/stores/messages'
+import { getMouseRelativePosition } from '@/utils/dom'
 
 const route = useRoute()
 const messageStore = useMessageStore()
@@ -19,18 +19,11 @@ async function viewConversation(e: MouseEvent) {
 
   // TODO: Make this into a hook/component/reusable instead of magic numbers
   // TODO: Figure out the best way to tie the timeout with the animation length
-  if (!(e.target instanceof HTMLButtonElement)) {
-    return
-  }
 
   const id = uuid()
-  const { left, top } = e.target.getBoundingClientRect()
-  const { clientX, clientY } = e
+  const pos = getMouseRelativePosition(e)
 
-  const x = clientX - left
-  const y = clientY - top
-
-  points.value.set(id, { x, y })
+  points.value.set(id, pos)
   setTimeout(() => {
     points.value.delete(id)
   }, 400)
@@ -51,13 +44,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
         {{ titleStore.conversationSubtitle(conversation) }}
       </span>
       <button class="conversation-settings" v-if="!conversation?.isPrivate">
-        <GeneralIconButton
-          :icon="CogIcon"
-          title="Settings"
-          color="var(--highlight)"
-          size="1.5rem"
-          @click.stop="emit('modify')"
-        />
+        <GeneralIconButton :icon="CogIcon" title="Settings" size="1.5rem" @click.stop="emit('modify')" />
       </button>
       <Transition name="active">
         <span v-if="route.params['id'] === conversationId" class="conversation-active">

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { LayoutState } from '@/stores/layout'
-
 const layoutStore = useLayoutStore()
 const props = defineProps<{
   group: LayoutState['sidebarTabOpened']
@@ -23,9 +21,7 @@ const id = computed(() => `${props.group}-expadable-content`)
         @click="layoutStore.toggleTabOpened(group)"
       >
         <NavOpenIndicator :open="isOpen" />
-        <h4>
-          {{ `${group?.charAt(0).toUpperCase()}${group?.slice(1)}` }}
-        </h4>
+        <h4>{{ group }}</h4>
       </button>
       <Transition name="section-expand">
         <div :id="id" class="section-body" v-if="isOpen">
@@ -40,7 +36,6 @@ const id = computed(() => `${props.group}-expadable-content`)
 .section {
   width: v-bind(width);
   background-color: v-bind(backgroundColor);
-  --box-shadow: color-mix(in srgb, var(--accent) 25%, transparent);
   box-shadow: -7px 8px 6px -3px var(--box-shadow);
   transition: width 250ms ease-in;
   z-index: v-bind(zIndex);
@@ -61,6 +56,10 @@ const id = computed(() => `${props.group}-expadable-content`)
     width: 100%;
     height: 100%;
     padding: 0.5rem 0;
+
+    h4 {
+      text-transform: capitalize;
+    }
   }
 
   &-body {
