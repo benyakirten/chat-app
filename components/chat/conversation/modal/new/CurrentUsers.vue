@@ -36,6 +36,8 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
   height: 2.5rem;
   gap: 0.5rem;
 
+  overflow-x: hidden;
+
   /* TODO: Make this better */
 
   &-user {

@@ -20,9 +20,6 @@ const selected = ref<Set<string>>(new Set())
 const message = ref('')
 const isPrivate = ref(true)
 const errorMessage = ref<string | null>(null)
-const canSend = computed(
-  () => message.value !== '' && (isPrivate.value ? selected.value.size === 1 : selected.value.size >= 1)
-)
 
 // TODO: Replace this with form validation + checking if inputs are touched
 const displayedErrorMessage = computed(() => {
@@ -75,14 +72,16 @@ async function handleSubmit() {
     </div>
     <GeneralInputAutosize class="new-autosize" placeholder="Write a message..." label="New Message" v-model="message" />
     <div class="new-submit">
-      <GeneralIconButton
-        :title="displayedErrorMessage ?? 'Send Message'"
-        :icon="PaperAirplaneIcon"
-        color="var(--highlight)"
-        size="2.5rem"
-        type="submit"
-        :disabled="loading || !canSend"
-      />
+      <div class="new-submit-error" v-if="displayedErrorMessage">{{ displayedErrorMessage }}</div>
+      <div class="new-submit-icon">
+        <GeneralIconButton
+          :title="'Send Message'"
+          :icon="PaperAirplaneIcon"
+          size="2.5rem"
+          type="submit"
+          :disabled="loading || !!displayedErrorMessage"
+        />
+      </div>
     </div>
   </form>
 </template>
@@ -97,7 +96,8 @@ async function handleSubmit() {
 
   &-first {
     display: flex;
-    gap: 4rem;
+    justify-content: space-between;
+    padding-right: 4rem;
 
     &-checkbox {
       align-self: end;
@@ -111,10 +111,22 @@ async function handleSubmit() {
 
   &-submit {
     justify-self: end;
-  }
 
-  &-error {
-    color: red;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    width: 100%;
+
+    &-error {
+      justify-self: start;
+      color: var(--error-bg);
+      grid-column: 1 / 2;
+    }
+
+    &-icon {
+      grid-column: 2 / -1;
+      justify-self: end;
+    }
   }
 }
 </style>
