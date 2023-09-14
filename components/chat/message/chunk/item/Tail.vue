@@ -11,18 +11,19 @@ const { isMine } = defineProps<{ isMine: boolean }>()
   place-self: end;
   width: 1rem;
   height: 1rem;
-  background-color: var(--bg-alt1);
   position: absolute;
 
-  --dist: 0.75rem;
+  --dist: 1rem;
 
   &-left {
+    background-color: var(--base);
     left: calc(-1 * var(--dist));
     bottom: var(--dist);
     clip-path: polygon(0 100%, 100% 100%, 100% 0);
   }
 
   &-right {
+    background-color: var(--bg-alt2);
     right: calc(-1 * var(--dist));
     bottom: var(--dist);
     clip-path: polygon(0 0, 0 100%, 100% 100%);

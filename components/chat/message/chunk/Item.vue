@@ -71,7 +71,13 @@ onMounted(() => {
   row-gap: 0.5rem;
   place-items: center;
 
-  background: linear-gradient(to bottom left, var(--bg-primary) 10%, var(--base), var(--bg-primary) 75%);
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--bg-primary) 0%,
+    var(--bg-alt3) 15%,
+    var(--base) 75%,
+    var(--bg-alt3) 85%
+  );
   box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
 
   padding: 0.75rem;
