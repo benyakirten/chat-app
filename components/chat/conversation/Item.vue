@@ -60,8 +60,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   border-bottom: 1px solid var(--accent);
   position: relative;
 
-  overflow: hidden;
-
   display: grid;
   grid-template-columns: 1rem 2rem 1fr 2rem 2rem;
 
@@ -72,7 +70,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   background: linear-gradient(to right, transparent 50%, var(--bg-primary), var(--base));
   background-position: left;
   background-size: 200%;
-  transition: all 600ms ease-out;
+  transition: background-position 250ms ease-out;
 
   color: var(--text);
 

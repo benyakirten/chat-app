@@ -96,7 +96,7 @@ const userOptions = computed(() =>
           :canDelete="false"
         />
         <label class="modify-form-alias">
-          <GeneralTooltip>
+          <GeneralTooltip direction="left">
             <template #content> Set a displayed name for a conversation visible to all other participants. </template>
             Alias
           </GeneralTooltip>
@@ -106,8 +106,8 @@ const userOptions = computed(() =>
       <div class="modify-form-buttons">
         <GeneralIconButton
           title="Leave conversation"
+          tooltipDirection="right"
           :icon="PowerIcon"
-          color="var(--highlight)"
           size="1.5rem"
           type="button"
           @click="leaveConversation"
@@ -115,9 +115,9 @@ const userOptions = computed(() =>
         <GeneralIconButton
           title="Send message"
           :icon="PaperAirplaneIcon"
-          color="var(--highlight)"
-          size="1.5rem"
+          size="2.5rem"
           type="submit"
+          tooltipDirection="left"
           :disabled="!canSend || !!submit.loading || !!leave.loading"
         />
       </div>

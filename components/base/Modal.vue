@@ -44,6 +44,7 @@ watch(
         title="Close Modal"
         @click="emit('close')"
         size="1.2rem"
+        tooltip-direction="left"
         :icon="XMarkIcon"
       />
       <slot></slot>

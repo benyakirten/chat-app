@@ -6,14 +6,14 @@ defineProps<{ isMine: boolean; readList: string[]; isPrivate: boolean; createTim
   <span>
     <span v-if="isMine && isPrivate && readList.length > 0"> Read </span>
     <span v-if="isMine && readList.length > 0">
-      <GeneralTooltip>
+      <GeneralTooltip :direction="isMine ? 'left' : 'right'">
         <template #content> By {{ readList.join(', ') }} </template>
         Read
       </GeneralTooltip>
     </span>
     <span v-else> Sent </span>
     {{ formatMessageDate(createTime) }}
-    <GeneralTooltip v-if="createTime.valueOf() !== updateTime.valueOf()">
+    <GeneralTooltip v-if="createTime.valueOf() !== updateTime.valueOf()" :direction="isMine ? 'left' : 'right'">
       <template #content> Latest edit at {{ formatMessageDate(updateTime) }} </template>
       (Edited)
     </GeneralTooltip>

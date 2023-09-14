@@ -7,7 +7,13 @@ defineEmits<{ (e: 'resend'): void }>()
 <template>
   <span class="error">
     <span>An error occurred</span>
-    <GeneralIconButton :icon="ArrowPathIcon" size="0.8rem" title="Retry Sending Message" @click="$emit('resend')" />
+    <GeneralIconButton
+      :icon="ArrowPathIcon"
+      size="0.8rem"
+      title="Retry Sending Message"
+      tooltip-direction="left"
+      @click="$emit('resend')"
+    />
   </span>
 </template>
 

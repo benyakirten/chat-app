@@ -64,7 +64,7 @@ async function handleSubmit() {
         :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me?.id)"
       />
       <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
-        <GeneralTooltip>
+        <GeneralTooltip direction="left">
           <template #content>Once made, conversations cannot be converted between group and private. </template>
           Private Conversation
         </GeneralTooltip>
@@ -80,6 +80,7 @@ async function handleSubmit() {
           size="2.5rem"
           type="submit"
           :disabled="loading || !!displayedErrorMessage"
+          tooltipDirection="left"
         />
       </div>
     </div>

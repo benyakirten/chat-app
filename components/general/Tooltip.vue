@@ -10,6 +10,7 @@ const props = withDefaults(
   }>(),
   { direction: 'top', debounceTimeout: 800, id: uuid(), disableClick: false }
 )
+defineOptions({ inheritAttrs: false })
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
 const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), props.debounceTimeout)
@@ -59,6 +60,7 @@ useAddMountedEventCallback('keydown', tooltipListener)
         v-if="tooltipState !== 'hidden'"
         class="tooltip-content"
         :class="tooltipDirectionClass"
+        v-bind="$attrs"
       >
         <slot :state="tooltipState" name="content"></slot>
       </div>
@@ -77,9 +79,13 @@ useAddMountedEventCallback('keydown', tooltipListener)
   position: relative;
 
   &-content {
+    --dist-wide: 1.5rem;
+    --dist-high: 0.6rem;
+
     position: absolute;
     z-index: var(--z-high);
     background-color: var(--bg-alt3);
+    font-size: var(--text-lg);
 
     padding: 0.4rem 0.5rem;
     width: max-content;
@@ -91,15 +97,16 @@ useAddMountedEventCallback('keydown', tooltipListener)
     &::after {
       content: '';
       position: absolute;
-      width: 0.25rem;
-      height: 0.35rem;
+      width: var(--dist-wide);
+      height: var(--dist-high);
       background-color: inherit;
       top: 0;
       left: 0;
+      background-color: var(--highlight);
     }
 
     &-top {
-      bottom: 0;
+      bottom: 0.5rem;
       left: 50%;
       transform: translate(-50%, calc(-50% - 0.35rem));
 
@@ -113,45 +120,46 @@ useAddMountedEventCallback('keydown', tooltipListener)
     }
 
     &-bottom {
-      bottom: -100%;
       left: 50%;
       transform: translate(-50%, calc(50% + 0.35rem));
 
       &::after {
-        top: -0.35rem;
         left: 50%;
+        top: calc(-1 * var(--dist-high));
         width: 0.5rem;
         transform: translateX(-50%);
         clip-path: polygon(100% 100%, 0% 100%, 50% 0);
       }
     }
 
-    &-right {
+    &-right,
+    &-left {
       top: 50%;
-      right: -100%;
-      transform: translate(calc(-25% - 0.35rem), -50%);
 
       &::after {
         top: 50%;
-        left: -0.35rem;
-        width: 0.35rem;
-        height: 0.35rem;
+        width: calc(var(--dist-wide) / 2);
+        height: calc(var(--dist-high) / 2);
         transform: translateY(-50%);
+      }
+    }
+
+    &-right {
+      left: 105%;
+      transform: translate(calc(var(--dist-high) / 2), -50%);
+
+      &::after {
+        left: calc(var(--dist-wide) / -2);
         clip-path: polygon(100% 0, 100% 100%, 0 50%);
       }
     }
 
     &-left {
-      top: 50%;
       right: 100%;
-      transform: translate(-0.35rem, -50%);
+      transform: translate(calc(-1 * var(--dist-high)), -50%);
 
       &::after {
-        top: 50%;
         left: 100%;
-        width: 0.35rem;
-        height: 0.35rem;
-        transform: translateY(-50%);
         clip-path: polygon(100% 50%, 0% 100%, 0 0);
       }
     }

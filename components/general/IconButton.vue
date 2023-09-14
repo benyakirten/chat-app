@@ -24,7 +24,7 @@ withDefaults(
 
 <template>
   <button :type="type" class="button" :aria-label="title" :disabled="disabled">
-    <GeneralTooltip :disable-click="true">
+    <GeneralTooltip :direction="tooltipDirection" :disable-click="true">
       <template #content>
         {{ title }}
       </template>
