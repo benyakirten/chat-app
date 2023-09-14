@@ -10,8 +10,15 @@ withDefaults(
     disabled?: boolean
     color?: string
     hoverColor?: string
+    tooltipDirection?: 'top' | 'bottom' | 'left' | 'right'
   }>(),
-  { type: 'button', disabled: false, color: 'var(--accent)', hoverColor: 'var(--highlight)' }
+  {
+    type: 'button',
+    disabled: false,
+    color: 'var(--accent)',
+    hoverColor: 'var(--highlight)',
+    tooltipDirection: 'top',
+  }
 )
 </script>
 

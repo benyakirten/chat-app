@@ -53,7 +53,6 @@ watch(
 
 <style scoped>
 .dialog {
-  /* TODO: Make This look better in regards to color */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -65,6 +64,7 @@ watch(
   background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
   color: var(--text);
   border: 2px solid var(--neutral);
+  overflow-x: hidden;
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0);

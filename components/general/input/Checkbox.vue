@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ modelValue: boolean }>()
+const props = withDefaults(defineProps<{ modelValue: boolean; disabled?: boolean }>(), { disabled: false })
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
 function handleUpdate(e: Event) {
@@ -12,9 +12,9 @@ function handleUpdate(e: Event) {
 </script>
 
 <template>
-  <label class="checkbox">
+  <label class="checkbox" :class="{ disabled }">
     <slot></slot>
-    <input type="checkbox" class="checkbox-input" :checked="modelValue" @input="handleUpdate" />
+    <input type="checkbox" class="checkbox-input" :checked="modelValue" @input="handleUpdate" :disabled="disabled" />
   </label>
 </template>
 
@@ -27,14 +27,28 @@ function handleUpdate(e: Event) {
   position: relative;
   cursor: pointer;
 
+  &.disabled {
+    cursor: default;
+  }
+
   &-input {
+    --checkmark-color: var(--opposite);
+
     appearance: none;
+
     position: relative;
     cursor: pointer;
+
     width: 2rem;
     height: 2rem;
     border: 1px solid var(--highlight);
     border-radius: 2px;
+
+    &[disabled] {
+      cursor: default;
+      --checkmark-color: var(--text);
+      background-color: var(--neutral);
+    }
 
     &::before {
       position: absolute;
@@ -45,7 +59,7 @@ function handleUpdate(e: Event) {
       content: '';
       width: 1.2rem;
       height: 1.8rem;
-      box-shadow: inset 1rem 1rem var(--opposite);
+      box-shadow: inset 1rem 1rem var(--checkmark-color);
 
       clip-path: polygon(0% 65.01%, 0% 65%, 50% 100%, 50% 100%);
     }
