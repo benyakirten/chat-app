@@ -3,7 +3,6 @@ const props = withDefaults(
   defineProps<{ modelValue: string; placeholder: string; label: string; autofocus?: boolean }>(),
   { autofocus: false }
 )
-defineOptions({ inheritAttrs: false })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -46,7 +45,6 @@ onMounted(() => {
       ref="textarea"
       :aria-label="label"
       @input="handleUpdateValue"
-      v-bind="$attrs"
       :value="props.modelValue"
       class="autosize-input"
       :placeholder="placeholder"
@@ -75,7 +73,6 @@ onMounted(() => {
     border-radius: 4px;
     resize: none;
 
-    /* TODO: Figure out why this has to be specified */
     font-family: 'Roboto';
     height: clamp(3.2rem, v-bind(itemHeight), 12.8rem);
   }
@@ -83,7 +80,7 @@ onMounted(() => {
   &-hidden {
     position: absolute;
     height: min-content;
-    margin: 0 1.2rem;
+    margin: 0 var(--text-lg);
     z-index: -100;
     visibility: hidden;
     pointer-events: none;

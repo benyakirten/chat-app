@@ -60,19 +60,20 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit" class="new">
-    <!-- TODO: Make this into a generalizable component -->
-    <ChatConversationModalUserMultiSelect
-      :selected="selected"
-      @setSelected="selected = $event"
-      :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me?.id)"
-    />
-    <GeneralInputCheckbox v-model="isPrivate">
-      <GeneralTooltip>
-        <template #content>Once made, conversations cannot be converted between group and private. </template>
-        Private Conversation
-      </GeneralTooltip>
-    </GeneralInputCheckbox>
-    <GeneralInputAutosize placeholder="Write a message..." label="New Message" v-model="message" />
+    <div class="new-first">
+      <ChatConversationModalUserMultiSelect
+        :selected="selected"
+        @setSelected="selected = $event"
+        :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me?.id)"
+      />
+      <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
+        <GeneralTooltip>
+          <template #content>Once made, conversations cannot be converted between group and private. </template>
+          Private Conversation
+        </GeneralTooltip>
+      </GeneralInputCheckbox>
+    </div>
+    <GeneralInputAutosize class="new-autosize" placeholder="Write a message..." label="New Message" v-model="message" />
     <div class="new-submit">
       <GeneralIconButton
         title="Send message"
@@ -82,10 +83,9 @@ async function handleSubmit() {
         type="submit"
         :disabled="loading || !canSend"
       />
-    </div>
-    <!-- If we use a tooltip, it has to be big and obnoxious -->
-    <div class="new-error" v-if="displayedErrorMessage">
-      {{ displayedErrorMessage }}
+      <div class="new-error" v-if="displayedErrorMessage">
+        {{ displayedErrorMessage }}
+      </div>
     </div>
   </form>
 </template>
@@ -93,10 +93,24 @@ async function handleSubmit() {
 <style scoped>
 .new {
   padding: 2rem;
-  width: 50vw;
+  width: 80rem;
 
   display: grid;
   row-gap: 4rem;
+
+  &-first {
+    display: flex;
+    gap: 4rem;
+
+    &-checkbox {
+      align-self: end;
+      padding-bottom: 0.8rem;
+    }
+  }
+
+  &-autosize {
+    padding: 0;
+  }
 
   &-submit {
     justify-self: end;

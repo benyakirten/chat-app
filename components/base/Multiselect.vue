@@ -244,7 +244,6 @@ label {
     }
 
     &-input {
-      --padding-right: 0.5rem;
       position: relative;
       padding-right: var(--padding-right);
 
@@ -310,7 +309,8 @@ label {
     cursor: pointer;
 
     display: grid;
-    grid-template-columns: 1fr 4rem;
+    grid-template-columns: 1fr 3rem;
+    height: 2rem;
 
     &[aria-selected='true'],
     &:hover {

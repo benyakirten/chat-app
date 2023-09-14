@@ -4,6 +4,8 @@ import { XCircleIcon } from '@heroicons/vue/24/outline'
 defineProps<{ selected: Set<string>; canDelete: boolean }>()
 defineEmits<{ (e: 'delete', id: UserId): void }>()
 const userStore = useUsersStore()
+
+const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name ?? 'Unknown User')
 </script>
 
 <template>
@@ -11,10 +13,15 @@ const userStore = useUsersStore()
     <h4 class="current-users-title">Current users:</h4>
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
-        <span class="current-users-user-name">{{ userStore.users.get(userId)?.name ?? 'Unknown User' }}</span>
-        <button v-if="canDelete" class="current-users-user-remove" @click="$emit('delete', userId)" type="button">
-          <XCircleIcon />
-        </button>
+        <span class="current-users-user-name">{{ getUserName(userId) }}</span>
+        <GeneralIconButton
+          v-if="canDelete"
+          :icon="XCircleIcon"
+          title="Remove Users"
+          type="button"
+          @click="$emit('delete', userId)"
+          size="1.2rem"
+        />
       </span>
     </TransitionGroup>
   </div>
@@ -23,15 +30,11 @@ const userStore = useUsersStore()
 <style scoped>
 .current-users {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   overflow: auto;
   height: 2.5rem;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
-
-  &-title {
-    padding: 0.5rem 1rem;
-  }
 
   /* TODO: Make this better */
 
@@ -39,22 +42,18 @@ const userStore = useUsersStore()
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
     padding: 0.5rem 1rem;
-    background-color: var(--bg-alt3);
     border-radius: 2px;
 
-    &-remove {
-      color: var(--highlight);
-      width: 1.2rem;
-      height: 1.2rem;
-      opacity: 0.9;
-      transition: scale 100ms ease 100ms, opacity 200ms ease;
+    background: linear-gradient(to top right, var(--bg-alt1), var(--bg-alt5));
+    background-size: 200%;
+    background-position: left;
 
-      &:hover,
-      &:focus {
-        scale: 1.1;
-        opacity: 1;
-      }
+    transition: all 300ms ease-out;
+
+    &:hover {
+      background-position: right;
     }
   }
 }

@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/solid'
 
-const props = defineProps<{ open: boolean; initialFocusCallback?: () => HTMLElement }>()
-defineOptions({
-  inheritAttrs: false,
-})
+const props = defineProps<{ open: boolean; initialFocusCallback?: () => void }>()
+defineOptions({ inheritAttrs: false })
 useAddMountedEventCallback('click', detectBackdropClick)
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const dialog = ref<HTMLDialogElement | null>(null)
-const button = ref<HTMLButtonElement | null>(null)
 function handleKeydown(e: KeyboardEvent) {
   if (props.open && e.key === 'Escape' && !isTextInputFocused()) {
     emit('close')
@@ -31,7 +28,7 @@ watch(
   (open) => {
     if (open) {
       dialog.value?.showModal()
-      props.initialFocusCallback ? props.initialFocusCallback() : button.value?.focus()
+      requestAnimationFrame(() => props.initialFocusCallback?.())
       return
     }
     dialog.value?.close()
@@ -42,9 +39,13 @@ watch(
 <template>
   <Teleport to="body">
     <dialog ref="dialog" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
-      <button class="dialog-close" ref="button" aria-label="Close Modal" @click="emit('close')">
-        <XMarkIcon />
-      </button>
+      <GeneralIconButton
+        class="dialog-close"
+        title="Close Modal"
+        @click="emit('close')"
+        size="1.2rem"
+        :icon="XMarkIcon"
+      />
       <slot></slot>
     </dialog>
   </Teleport>
@@ -61,7 +62,7 @@ watch(
   min-height: 2rem;
   min-width: 2rem;
 
-  background-color: var(--bg-alt4);
+  background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
   color: var(--text);
   border: 2px solid var(--neutral);
 
