@@ -8,6 +8,7 @@ export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
 
   return null
 }
+export const getFirstSetItem = <T>(set: Set<T>): T | undefined => set.keys().next().value
 
 // Is this worthwhile over just using a Conversaiton[]?
 export class ConversationMap extends Map<ConversationId, Conversation> {

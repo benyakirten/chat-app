@@ -618,9 +618,61 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  // Should we use TS results?
-  async function startConversation(isPrivate: boolean, otherUsers: Set<string>, message: string): Promise<string> {
-    // TODO: Clean this up
+  // TODO: The backend will do pretty much all of this - if we don't find a local conversation
+  // we'll need to query the backend - though we may need it
+  async function startPrivateConversation(otherUser: string, message: string): Promise<string> {
+    if (!userStore.me) {
+      throw new Error('You must be logged in to start a conversation')
+    }
+
+    let convoId: string | null = null
+
+    for (const [id, conversation] of conversations.value) {
+      if (conversation.members.size !== 2) {
+        continue
+      }
+
+      // If we already have a private conversation then
+      // just add the message to that conversation
+      if (conversation.members.get(otherUser)) {
+        addMessage(id, {
+          sender: userStore.me.id,
+          id: uuid(),
+          content: message,
+          status: 'pending',
+          createTime: new Date(),
+          updateTime: new Date(),
+        })
+        return id
+      }
+    }
+
+    // No existing conversation between the user and someone else
+    // So we create a new conversation and message
+    const newConvo: Conversation = {
+      isPrivate: true,
+      id: uuid(),
+      members: new Map([
+        [userStore.me?.id, { state: 'idle', lastRead: new Date() }],
+        [otherUser, { state: 'idle', lastRead: new Date(0) }],
+      ]),
+      messages: new Map(),
+    }
+
+    conversations.value.add(newConvo)
+    addMessage(newConvo.id, {
+      sender: userStore.me?.id,
+      id: uuid(),
+      content: message,
+      status: 'pending',
+      createTime: new Date(),
+      updateTime: new Date(),
+    })
+
+    return newConvo.id
+  }
+
+  async function startGroupConversation(otherUsers: Set<string>, message: string): Promise<string> {
     if (!userStore.me) {
       throw new Error('You must be logged in to start a conversation')
     }
@@ -629,75 +681,14 @@ export const useMessageStore = defineStore('messages', () => {
       throw new Error('A conversation must have at least 1 other person in it')
     }
 
-    if (isPrivate === true) {
-      if (otherUsers.size !== 1) {
-        // TODO: Error handling
-        throw new Error('A private conversation can only have 1 other participant')
-      }
-
-      // Get the other user from the set
-      // TODO: Figure out a less verbose way of doing this
-      // Some reason otherUser.values().next().value isn't typed as string
-      let otherUser: string = ''
-      for (const user of otherUsers) {
-        otherUser = user
-      }
-
-      let convoId: string | null = null
-
-      // TODO: Check if a private conversation with the other user already exists
-      for (const [id, conversation] of conversations.value) {
-        if (conversation.members.size !== 2) {
-          continue
-        }
-
-        if (conversation.members.get(otherUser)) {
-          // TODO: When we have the backend, it will create the uuid
-          addMessage(id, {
-            sender: userStore.me.id,
-            id: uuid(),
-            content: message,
-            status: 'pending',
-            createTime: new Date(),
-            updateTime: new Date(),
-          })
-          return id
-        }
-      }
-
-      if (!convoId) {
-        const newConvo: Conversation = {
-          isPrivate: true,
-          id: uuid(),
-          members: new Map([
-            [userStore.me?.id, { state: 'idle', lastRead: new Date() }],
-            [otherUser, { state: 'idle', lastRead: new Date(0) }],
-          ]),
-          messages: new Map(),
-        }
-        conversations.value.add(newConvo)
-        addMessage(newConvo.id, {
-          sender: userStore.me?.id,
-          id: uuid(),
-          content: message,
-          status: 'pending',
-          createTime: new Date(),
-          updateTime: new Date(),
-        })
-        return newConvo.id
-      }
-
-      return convoId
-    }
-
     let members: Map<UserId, UserConversationState> = new Map()
-    for (const userId of otherUsers) {
+    otherUsers.forEach((userId) => {
       const user: UserConversationState = {
         state: 'idle',
         lastRead: userId === userStore.me?.id ? new Date() : new Date(0),
       }
       members.set(userId, user)
-    }
+    })
 
     const newConvo: Conversation = {
       isPrivate: false,
@@ -719,9 +710,11 @@ export const useMessageStore = defineStore('messages', () => {
 
   // TODO: This will be completely modified when we have a backend
   async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
-    members.forEach(
-      (id) => !conversation.members.has(id) && conversation.members.set(id, { state: 'idle', lastRead: new Date(0) })
-    )
+    members.forEach((id) => {
+      if (!conversation.members.has(id)) {
+        conversation.members.set(id, { state: 'idle', lastRead: new Date(0) })
+      }
+    })
 
     if (alias) {
       conversation.alias = alias
@@ -748,7 +741,8 @@ export const useMessageStore = defineStore('messages', () => {
     editMessage,
     stopMessageEdit,
     unreadMessages,
-    startConversation,
+    startGroupConversation,
+    startPrivateConversation,
     modifyConversation,
     leaveConversation,
   }

@@ -2,9 +2,16 @@
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
-const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) =>
-  messageStore.startConversation(isPrivate, selected, message)
-)
+const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
+  if (isPrivate) {
+    const otherUser = getFirstSetItem(selected)
+    if (!otherUser) {
+      throw new Error('A conversation must involve one other person.')
+    }
+    return messageStore.startPrivateConversation(otherUser, message)
+  }
+  return messageStore.startGroupConversation(selected, message)
+})
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()

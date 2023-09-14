@@ -38,11 +38,12 @@ body {
 
   background: linear-gradient(
     to bottom right,
-    var(--bg-alt5) 15%,
-    var(--bg-primary) 25%,
-    var(--bg-primary) 35%,
+    var(--bg-alt5) 5%,
+    var(--bg-primary) 10%,
+    var(--bg-primary) 30%,
+    var(--bg-alt5) 40%,
     var(--bg-primary) 65%,
-    var(--bg-alt5) 100%
+    var(--bg-alt5) 95%
   );
   color: var(--text);
 }
