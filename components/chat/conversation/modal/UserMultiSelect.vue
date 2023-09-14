@@ -21,6 +21,9 @@ function handleDelete(value: string) {
     :search="handleSearch"
     placeholder="Choose the participants"
   >
+    <template #no-options>
+      <div class="no-options">No options available.</div>
+    </template>
     <template #label>
       <ChatConversationModalNewCurrentUsers :can-delete="canDelete" :selected="selected" @delete="handleDelete" />
     </template>
@@ -29,3 +32,19 @@ function handleDelete(value: string) {
     </template>
   </BaseMultiSelect>
 </template>
+
+<style scoped>
+.no-options {
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+
+  cursor: default;
+
+  font-size: var(--text-xl);
+
+  &:hover {
+    background-color: var(--bg-primary);
+  }
+}
+</style>

@@ -58,7 +58,10 @@ async function leaveConversation() {
     return
   }
 
-  const needReroute = route.params['id'] === conversation?.value.id
+  // The conversation might be deleted if the user leaves
+  // In which case, we need to check now, before it's deleted
+  // whether the user might have to navigate away
+  const needReroute = route.params['id'] === conversation.value.id
 
   const res = await leave.invoke(conversation.value)
   emit('close')
@@ -71,6 +74,12 @@ async function leaveConversation() {
     await navigateTo('/chat')
   }
 }
+
+const userOptions = computed(() =>
+  [...userStore.users.values()].filter(
+    (user) => user.id !== userStore.me?.id && !conversation.value?.members.has(user.id)
+  )
+)
 </script>
 
 <template>
@@ -79,23 +88,21 @@ async function leaveConversation() {
       Unable to modify the conversation. Please check that the conversation exists and is not private.
     </div>
     <form class="modify-form" v-else @submit.prevent="handleSubmit">
-      <ChatConversationModalUserMultiSelect
-        :options="
-          [...userStore.users.values()].filter(
-            (user) => user.id !== userStore.me?.id && !conversation?.members.has(user.id)
-          )
-        "
-        :selected="mutableOtherUsersSet"
-        @setSelected="mutableOtherUsersSet = $event"
-        :canDelete="false"
-      />
-      <label class="modify-form-submit">
-        <GeneralTooltip>
-          <template #content> Set a displayed name for a conversation visible to all other participants. </template>
-          Alias
-        </GeneralTooltip>
-        <input v-model="alias" />
-      </label>
+      <div class="modify-form-first">
+        <ChatConversationModalUserMultiSelect
+          :options="userOptions"
+          :selected="mutableOtherUsersSet"
+          @setSelected="mutableOtherUsersSet = $event"
+          :canDelete="false"
+        />
+        <label class="modify-form-alias">
+          <GeneralTooltip>
+            <template #content> Set a displayed name for a conversation visible to all other participants. </template>
+            Alias
+          </GeneralTooltip>
+          <input v-model="alias" />
+        </label>
+      </div>
       <div class="modify-form-buttons">
         <GeneralIconButton
           title="Leave conversation"
@@ -120,7 +127,8 @@ async function leaveConversation() {
 
 <style scoped>
 .modify {
-  padding: 4rem;
+  padding: 2rem;
+  width: 80rem;
 
   &-error {
     font-size: 1.8rem;
@@ -129,6 +137,17 @@ async function leaveConversation() {
   &-form {
     display: grid;
     row-gap: 4rem;
+
+    &-first {
+      display: flex;
+      justify-content: space-between;
+      padding-right: 4rem;
+
+      &-alias {
+        align-self: end;
+        padding-bottom: 0.6rem;
+      }
+    }
 
     &-buttons {
       display: flex;

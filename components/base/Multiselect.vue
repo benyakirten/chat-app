@@ -166,6 +166,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
             @keydown="handleComboboxKeydown"
             @focus="isOpen = true"
             @input="props.searchCallback && text.trim() && debouncer(text)"
+            @click="alternateOpen"
           />
           <div v-if="isSearching" class="combobox-group-input-loading">
             <GeneralLoading size="1.6rem" />
@@ -222,14 +223,12 @@ useAddMountedEventCallback('click', backdropClickDetector)
 
 <style scoped>
 label {
-  /*  */
   color: currentColor;
 }
 .combobox {
   position: relative;
   isolation: isolate;
-  z-index: 2;
-  /* TODO: Revisit this */
+  z-index: var(--z-high);
   width: min-content;
 
   &-group {
@@ -290,7 +289,6 @@ label {
 }
 
 .listbox {
-  /* TODO: Customize scrollbar */
   z-index: 2;
   position: absolute;
   width: 100%;
