@@ -77,15 +77,16 @@ useAddMountedEventCallback('keydown', tooltipListener)
   position: relative;
 
   &-content {
-    background-color: var(--bg-alt4);
-    /* TODO: Use the popover/anchor API when they are well supported */
-    /* TODO: Use variables to make code more DRY */
     position: absolute;
     z-index: var(--z-high);
-    padding: 0.25rem 0.5rem;
+    background-color: var(--bg-alt3);
+
+    padding: 0.4rem 0.5rem;
     width: max-content;
     isolation: isolate;
-    border-radius: 2px;
+
+    border-radius: 4px;
+    border: 1px solid var(--highlight);
 
     &::after {
       content: '';
@@ -158,12 +159,12 @@ useAddMountedEventCallback('keydown', tooltipListener)
 }
 
 .tooltip-enter-active {
-  transition: all 300ms ease;
+  transition: all 50ms ease;
   transform-origin: center;
 }
 
 .tooltip-leave-active {
-  transition: all 300ms ease 100ms;
+  transition: all 100ms ease 50ms;
   transform-origin: center;
 }
 

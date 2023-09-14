@@ -76,16 +76,13 @@ async function handleSubmit() {
     <GeneralInputAutosize class="new-autosize" placeholder="Write a message..." label="New Message" v-model="message" />
     <div class="new-submit">
       <GeneralIconButton
-        title="Send message"
+        :title="displayedErrorMessage ?? 'Send Message'"
         :icon="PaperAirplaneIcon"
         color="var(--highlight)"
-        size="1.5rem"
+        size="2.5rem"
         type="submit"
         :disabled="loading || !canSend"
       />
-      <div class="new-error" v-if="displayedErrorMessage">
-        {{ displayedErrorMessage }}
-      </div>
     </div>
   </form>
 </template>
@@ -104,7 +101,7 @@ async function handleSubmit() {
 
     &-checkbox {
       align-self: end;
-      padding-bottom: 0.8rem;
+      padding-bottom: 0.6rem;
     }
   }
 

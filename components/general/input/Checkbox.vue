@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { CheckIcon } from '@heroicons/vue/24/solid'
-
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
@@ -38,7 +36,6 @@ function handleUpdate(e: Event) {
     border: 1px solid var(--highlight);
     border-radius: 2px;
 
-    &::after,
     &::before {
       position: absolute;
       top: 50%;
@@ -47,27 +44,37 @@ function handleUpdate(e: Event) {
 
       content: '';
       width: 1.2rem;
-      height: 1.6rem;
+      height: 1.8rem;
       box-shadow: inset 1rem 1rem var(--opposite);
-    }
 
-    &::before {
-      transition: clip-path 300ms ease;
       clip-path: polygon(0% 65.01%, 0% 65%, 50% 100%, 50% 100%);
     }
 
-    &::after {
-      transition: clip-path 300ms ease-out 300ms;
-      clip-path: polygon(55.91% 90.06%, 55.91% 90.06%, 45.96% 83.15%, 45.96% 83.15%);
-    }
-
     &:checked::before {
-      clip-path: polygon(6.12% 56.26%, 0% 65%, 50% 100%, 56.12% 91.26%);
+      animation: grow-checkmark 300ms ease-out forwards;
     }
+  }
+}
 
-    &:checked::after {
-      clip-path: polygon(55.91% 90.06%, 100% 16%, 90.05% 10.07%, 45.96% 84.14%);
-    }
+@keyframes grow-checkmark {
+  0% {
+    clip-path: polygon(0% 65.01%, 0% 65%, 50% 100%, 50% 100%);
+  }
+
+  25% {
+    clip-path: polygon(6.12% 56.26%, 0% 65%, 25.76% 83.04%, 31.88% 74.3%);
+  }
+
+  35% {
+    clip-path: polygon(6.12% 56.26%, 0% 65%, 50% 100%, 56.12% 91.26%);
+  }
+
+  50% {
+    clip-path: polygon(6.12% 56.26%, 0% 65%, 50% 100%, 56.12% 91.26%, 80.63% 56.26%, 68.04% 47.45%, 43.53% 82.45%);
+  }
+
+  100% {
+    clip-path: polygon(6.12% 56.26%, 0% 65%, 50% 100%, 56.12% 91.26%, 97.51% 32.15%, 84.92% 23.34%, 43.53% 82.45%);
   }
 }
 </style>
