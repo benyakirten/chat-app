@@ -3,11 +3,21 @@ interface EventHost<T extends Event> {
   removeEventListener(name: string, callback: (evt: T) => void): void
 }
 
+type HostGetter<T extends Event> = () => EventHost<T> | null
+
 export const useAddMountedEventCallback = <T extends Event>(
   eventName: string,
   callback: (evt: T) => void,
-  host: EventHost<T> = globalThis
+  hostGetter: HostGetter<T> = () => globalThis
 ) => {
-  onMounted(() => host.addEventListener(eventName, callback))
-  onUnmounted(() => host.removeEventListener(eventName, callback))
+  function modifyHostEvents(eventType: 'add' | 'remove') {
+    const host = hostGetter()
+    if (!host) {
+      return
+    }
+    host[`${eventType}EventListener`](eventName, callback)
+  }
+
+  onMounted(() => modifyHostEvents('add'))
+  onUnmounted(() => modifyHostEvents('remove'))
 }

@@ -34,22 +34,7 @@ watch(
   }
 )
 
-// TODO: Figure out why useAddMountedEventCallback doesn't work with `dialog.value` - maybe because of the teleport?
-onMounted(() => {
-  if (!dialog.value) {
-    return
-  }
-
-  dialog.value.addEventListener('close', close)
-})
-
-onUnmounted(() => {
-  if (!dialog.value) {
-    return
-  }
-
-  dialog.value.removeEventListener('close', close)
-})
+useAddMountedEventCallback('close', close, () => dialog.value)
 </script>
 
 <template>
