@@ -8,7 +8,7 @@ useAddMountedEventCallback('click', detectBackdropClick)
 const emit = defineEmits<{ (e: 'close'): void }>()
 const dialog = ref<HTMLDialogElement | null>(null)
 function handleKeydown(e: KeyboardEvent) {
-  if (props.open && e.key === 'Escape' && !isTextInputFocused()) {
+  if (props.open && e.key === 'Escape') {
     emit('close')
   }
 }

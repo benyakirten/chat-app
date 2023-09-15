@@ -96,11 +96,13 @@ const userOptions = computed(() =>
           :canDelete="false"
         />
         <label class="modify-form-alias">
-          <GeneralTooltip direction="left">
-            <template #content> Set a displayed name for a conversation visible to all other participants. </template>
-            Alias
+          <GeneralTooltip direction="right">
+            <template #content>
+              Set a displayed name for a conversation visible to all other participants (or leave it empty).
+            </template>
+            <div>Alias</div>
           </GeneralTooltip>
-          <input v-model="alias" />
+          <input placeholder="Write a nickname..." v-model="alias" />
         </label>
       </div>
       <div class="modify-form-buttons">
@@ -140,13 +142,7 @@ const userOptions = computed(() =>
 
     &-first {
       display: flex;
-      justify-content: space-between;
-      padding-right: 4rem;
-
-      &-alias {
-        align-self: end;
-        padding-bottom: 0.6rem;
-      }
+      gap: 2rem;
     }
 
     &-buttons {
