@@ -10,7 +10,7 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
 
 <template>
   <div class="current-users">
-    <h4 class="current-users">{{ isNewConversation ? 'Selected' : 'New' }} users:</h4>
+    <h4 class="current-users-title">{{ isNewConversation ? 'Selected' : 'New' }} users:</h4>
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
         <span class="current-users-user-name">{{ getUserName(userId) }}</span>
