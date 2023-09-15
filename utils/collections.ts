@@ -1,16 +1,7 @@
 export const arrayify = <T>(item: T | T[]) => (Array.isArray(item) ? item : [item])
-export const getOtherMapKey = <T, U>(map: Map<T, U>, key: T): T | null => {
-  for (const mapKey of map.keys()) {
-    if (mapKey !== key) {
-      return mapKey
-    }
-  }
-
-  return null
-}
 export const getFirstSetItem = <T>(set: Set<T>): T | undefined => set.keys().next().value
 
-// Is this worthwhile over just using a Conversaiton[]?
+// Is this worthwhile over just using a Conversation[]?
 export class ConversationMap extends Map<ConversationId, Conversation> {
   public history: Conversation[] = []
 
@@ -23,15 +14,17 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
     const convo = this.get(id)
     const historyIndex = this.history.findIndex((convo) => convo.id === id)
 
-    if (convo && historyIndex === -1) {
-      throw new Error('Make sure you are not setting a conversation directly but calling the .add method')
-    }
-
-    if (!convo || historyIndex === -1) {
+    if (!convo) {
       return false
     }
 
+    if (convo && historyIndex === -1) {
+      this.history.push(convo)
+      return true
+    }
+
     convo.messages.set(message.id, message)
+    // Already at the top of the history
     if (historyIndex === 0) {
       return true
     }
