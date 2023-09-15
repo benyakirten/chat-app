@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { v4 as uuid } from 'uuid'
 import { ChevronRightIcon, CogIcon } from '@heroicons/vue/24/outline'
-
-import { getMouseRelativePosition } from '@/utils/dom'
 
 const route = useRoute()
 const messageStore = useMessageStore()
@@ -21,22 +18,20 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
 <template>
   <li>
-    <!-- TODO: Make everything here into its own component, improve CSS -->
     <button class="conversation" @click="viewConversation">
       <Transition name="unread">
         <span class="conversation-unread" v-if="unreadMessages > 0">{{ unreadMessages }}</span>
       </Transition>
       <span class="conversation-participants">
-        {{ titleStore.conversationSubtitle(conversation) }}
+        <span class="conversation-participants-child">
+          {{ titleStore.conversationSubtitle(conversation) }}
+        </span>
       </span>
       <button class="conversation-settings" v-if="!conversation?.isPrivate">
         <GeneralIconButton :icon="CogIcon" title="Settings" size="1.5rem" @click.stop="emit('modify')" />
       </button>
-      <Transition name="active">
-        <span v-if="route.params['id'] === conversationId" class="conversation-active">
-          <ChevronRightIcon />
-        </span>
-      </Transition>
+      <!-- Remove a transition from this since I cannot get it to react to route params -->
+      <ChevronRightIcon class="conversation-active" v-if="route.params['id'] === conversationId" aria-hidden="true" />
     </button>
   </li>
 </template>
@@ -48,8 +43,9 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
   display: grid;
   grid-template-columns: 1rem 2rem 1fr 2rem 2rem;
+  align-content: center;
 
-  min-height: 2rem;
+  height: 2rem;
   width: 100%;
 
   padding: 1rem 0;
@@ -73,11 +69,26 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   }
 
   &-participants {
+    grid-column: 3 / 4;
+
     display: flex;
     align-items: center;
-    grid-column: 3 / 4;
     overflow: hidden;
-    text-overflow: ellipsis;
+
+    /*
+      TODO: Investigate: Is this extra nesting necessary?
+      We use flex box to make sure the text is centered
+      because the grid column will grow with the addition
+      of the icon at the end.
+      And I'm not sure how to get the text overflow to work
+      correct otherwise.
+    */
+    &-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
   }
 
   &-settings {
@@ -85,19 +96,10 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
     display: flex;
     align-items: center;
     justify-content: center;
-
-    height: 100%;
-    width: 100%;
   }
 
   &-active {
     grid-column: 5 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 100%;
-    width: 100%;
   }
 }
 
@@ -109,18 +111,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
 
 .unread-enter-active,
 .unread-leave-active {
-  transition: opacity 200ms ease-in, scale 250ms ease;
-}
-
-/* TODO: Figure out why this transition isn't working */
-.active-enter-from,
-.active-leave-to {
-  opacity: 0;
-  scale: 0.5;
-}
-
-.active-enter-active,
-.active-leave-active {
   transition: opacity 200ms ease-in, scale 250ms ease;
 }
 </style>

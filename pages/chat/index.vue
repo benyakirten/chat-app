@@ -5,5 +5,11 @@ definePageMeta({
 </script>
 
 <template>
-  <ChatLayout> Select a conversation to see the relevant messages. </ChatLayout>
+  <ChatLayout><p class="no-conversation">Select a conversation to see messages.</p> </ChatLayout>
 </template>
+
+<style scoped>
+.no-conversation {
+  padding: 1rem;
+}
+</style>

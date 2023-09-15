@@ -79,6 +79,7 @@ const conversation2: Conversation = {
     [conversation2message6.id, conversation2message6],
   ]),
   isPrivate: false,
+  alias: 'I want to be very clear. I love my wife.',
 }
 
 const conversation1message1: ConversationMessage = {

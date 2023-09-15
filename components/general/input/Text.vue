@@ -2,9 +2,7 @@
 import { v4 as uuid } from 'uuid'
 
 withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), { id: uuid() })
-defineOptions({
-  inheritAttrs: false,
-})
+defineOptions({ inheritAttrs: false })
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
 function handleInput(e: Event) {
@@ -20,7 +18,14 @@ function handleInput(e: Event) {
     <slot name="label"></slot>
   </label>
   <div class="text">
-    <input :id="id" class="text-input" :placeholder="placeholder" @input="handleInput" v-bind="$attrs" />
+    <input
+      :id="id"
+      class="text-input"
+      :placeholder="placeholder"
+      :value="modelValue"
+      @input="handleInput"
+      v-bind="$attrs"
+    />
     <div class="text-icon">
       <slot name="icon"></slot>
     </div>

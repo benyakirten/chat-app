@@ -7,19 +7,18 @@ useAddMountedEventCallback('click', detectBackdropClick)
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const dialog = ref<HTMLDialogElement | null>(null)
-function handleKeydown(e: KeyboardEvent) {
-  if (props.open && e.key === 'Escape') {
-    emit('close')
-  }
+
+function close() {
+  emit('close')
 }
 
 function detectBackdropClick(e: MouseEvent) {
-  if (e.target instanceof HTMLButtonElement || !dialog.value || !dialog.value.open) {
+  if (e.target instanceof HTMLButtonElement || !dialog.value?.open) {
     return
   }
 
   if (!isClickWithinElement(e, dialog.value)) {
-    emit('close')
+    close()
   }
 }
 
@@ -34,11 +33,28 @@ watch(
     dialog.value?.close()
   }
 )
+
+// TODO: Figure out why useAddMountedEventCallback doesn't work with `dialog.value` - maybe because of the teleport?
+onMounted(() => {
+  if (!dialog.value) {
+    return
+  }
+
+  dialog.value.addEventListener('close', close)
+})
+
+onUnmounted(() => {
+  if (!dialog.value) {
+    return
+  }
+
+  dialog.value.removeEventListener('close', close)
+})
 </script>
 
 <template>
   <Teleport to="body">
-    <dialog ref="dialog" class="dialog" @keydown="handleKeydown" v-bind="$attrs">
+    <dialog ref="dialog" class="dialog" v-bind="$attrs">
       <GeneralIconButton
         class="dialog-close"
         title="Close Modal"
@@ -58,7 +74,6 @@ watch(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
   min-height: 2rem;
   min-width: 2rem;
 
@@ -71,7 +86,6 @@ watch(
     background-color: rgba(0, 0, 0, 0);
     backdrop-filter: blur(0px);
     transition: all 300ms ease;
-    z-index: 99;
   }
 
   &[open]::backdrop {

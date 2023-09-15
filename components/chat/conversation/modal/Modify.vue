@@ -10,7 +10,10 @@ const props = defineProps<{ conversationId: ConversationId | null }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const conversation = computed(() => messageStore.conversations.get(props.conversationId ?? ''))
+
 const alias = ref('')
+watch(conversation, (val) => (alias.value = val?.alias ?? ''))
+
 const submit = useLoading((conversation: Conversation, users: Set<string>, alias: string) =>
   messageStore.modifyConversation(conversation, users, alias)
 )
@@ -20,13 +23,14 @@ const newUsers = ref<Set<string>>(new Set())
 
 async function handleSubmit() {
   if (!conversation.value) {
-    // TODO: Error handling
+    // Shouldn't be possible
     return
   }
 
   const res = await submit.invoke(conversation.value, newUsers.value, alias.value)
+  newUsers.value = new Set()
   emit('close')
-  // TODO: Error handling
+
   if (res instanceof Error) {
     toastStore.add(res.message, { type: 'error' })
   }
@@ -60,9 +64,6 @@ const userOptions = computed(() =>
     (user) => user.id !== userStore.me?.id && !conversation.value?.members.has(user.id)
   )
 )
-
-watch(submit.loading, (val) => console.log(!!val), { immediate: true })
-watch(leave.loading, (val) => console.log(!!val), { immediate: true })
 </script>
 
 <template>
@@ -85,12 +86,12 @@ watch(leave.loading, (val) => console.log(!!val), { immediate: true })
           <ChatConversationModalUserMultiSelect
             :options="userOptions"
             :selected="newUsers"
-            @setSelected="newUsers = $event"
             :is-new-conversation="false"
+            @setSelected="newUsers = $event"
           />
         </div>
         <div class="modify-form-first-alias">
-          <GeneralInputText v-model="alias" placeholder="Chose a nickname...">
+          <GeneralInputText v-model="alias" placeholder="Choose a nickname...">
             <template #label>
               <GeneralTooltip direction="right">
                 <template #content>
