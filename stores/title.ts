@@ -36,7 +36,7 @@ export const useTitleStore = defineStore('title', () => {
     }
 
     const pageTitle = capitalize(sections[0])
-    title += ` ${pageTitle}`
+    title += ` - ${pageTitle}`
     if (pageTitle !== 'Chat' || typeof id !== 'string' || !userStore.me) {
       return title
     }

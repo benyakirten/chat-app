@@ -14,7 +14,7 @@ const props = withDefaults(
     placeholder: string
     iconSize?: string
     maxHeight?: string
-    type: 'multi' | 'single'
+    type?: 'multi' | 'single'
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
   }>(),

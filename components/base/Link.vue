@@ -10,6 +10,8 @@ defineProps<{ to: string }>()
 
 <style scoped>
 .router-link {
+  cursor: pointer;
+
   position: relative;
   display: inline-block;
 

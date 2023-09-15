@@ -3,7 +3,7 @@ const recentsStore = useRecentsStore()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 const layoutStore = useLayoutStore()
-const themeStore = useThemeStore()
+const userStore = useUsersStore()
 
 function getConversationFromRoute(route: string) {
   const segments = route.split('/')
@@ -21,6 +21,8 @@ function getTitle(route: string) {
   const id = segments.at(segments.length - 1)
   return titleStore.title(route, id)
 }
+
+const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
 </script>
 
 <template>
@@ -30,8 +32,8 @@ function getTitle(route: string) {
   <Transition name="slide-in">
     <nav id="nav" v-if="layoutStore.sidebarOpen">
       <NavSection height="8rem" width="100%" group="chat" :z-index="5" background-color="var(--bg-alt1)">
-        <BaseLink class="router-link" to="/chat">All Chats</BaseLink>
-        <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed pages.</div>
+        <BaseLink to="/chat">All Chats</BaseLink>
+        <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed chats.</div>
         <ul v-else>
           <li v-for="recentChat of recentsStore.chatLRU.cache" :key="recentChat">
             <BaseLink :to="recentChat">
@@ -40,18 +42,14 @@ function getTitle(route: string) {
           </li>
         </ul>
       </NavSection>
-      <NavSection height="4rem" width="90%" group="about" :z-index="4" background-color="var(--bg-alt2)">
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-        <p>SAMPLE TEXT</p>
-      </NavSection>
-      <NavSection height="4rem" width="80%" group="account" :z-index="3" background-color="var(--bg-alt3)">
-        <p>View account page</p>
-        <p>Details about me</p>
-        <p>More Details</p>
+      <NavSection height="4rem" width="90%" group="account" :z-index="3" background-color="var(--bg-alt3)">
+        <BaseLink to="/account">Settings</BaseLink>
+        <div class="nav-account">
+          <div>Name: {{ me?.name ?? 'Unknown User' }}</div>
+          <!-- Other data: number of private conversations, group conversations, interests?, etc. -->
+        </div>
       </NavSection>
       <div class="recent">
-        <!-- TODO: Get font sizes correct -->
         <h4>Recently Viewed</h4>
         <div v-if="recentsStore.allLRU.cache.length === 0">No recently viewed pages.</div>
         <ul v-else>
@@ -97,7 +95,7 @@ nav {
   .recent {
     flex-grow: 1;
     padding: 1rem;
-    width: 70%;
+    width: 80%;
     background-color: var(--bg-alt4);
 
     display: flex;

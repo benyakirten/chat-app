@@ -14,6 +14,7 @@ defineProps<{ title?: string }>()
   height: 100%;
 
   h1 {
+    padding-block: 1rem;
     text-transform: capitalize;
     text-align: center;
   }
