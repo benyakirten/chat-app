@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{ modelValue: string; placeholder: string }>()
+import { v4 as uuid } from 'uuid'
+
+withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), { id: uuid() })
 defineOptions({
   inheritAttrs: false,
 })
@@ -14,18 +16,19 @@ function handleInput(e: Event) {
 </script>
 
 <template>
-  <label class="text">
+  <label :for="id">
     <slot name="label"></slot>
-    <input class="text-input" :placeholder="placeholder" @input="handleInput" v-bind="$attrs" />
+  </label>
+  <div class="text">
+    <input :id="id" class="text-input" :placeholder="placeholder" @input="handleInput" v-bind="$attrs" />
     <div class="text-icon">
       <slot name="icon"></slot>
     </div>
-  </label>
+  </div>
 </template>
 
 <style scoped>
 .text {
-  --padding-x-container: 2rem;
   --padding-x-input: 1rem;
   --icon: 2rem;
 
@@ -33,7 +36,6 @@ function handleInput(e: Event) {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 var(--padding-x-container);
 
   &-input {
     height: calc(var(--icon) + 0.5rem);
@@ -54,7 +56,7 @@ function handleInput(e: Event) {
   &-icon {
     position: absolute;
     top: 50%;
-    right: calc(var(--padding-x-container) + var(--padding-x-input));
+    right: var(--padding-x-input);
     height: var(--icon);
     width: var(--icon);
     transform: translateY(-50%);

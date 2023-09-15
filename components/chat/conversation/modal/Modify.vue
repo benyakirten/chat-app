@@ -10,33 +10,13 @@ const props = defineProps<{ conversationId: ConversationId | null }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const conversation = computed(() => messageStore.conversations.get(props.conversationId ?? ''))
-const canSend = computed(() => otherUsersSet.value.size !== 0)
 const alias = ref('')
 const submit = useLoading((conversation: Conversation, users: Set<string>, alias: string) =>
   messageStore.modifyConversation(conversation, users, alias)
 )
 const leave = useLoading((conversation: Conversation) => messageStore.leaveConversation(conversation))
 
-const otherUsersSet = computed(() => {
-  const otherUsers = new Set<string>()
-  if (conversation.value) {
-    const otherUsersMap = userStore.getOtherUsers(conversation.value.members)
-    for (let { id } of otherUsersMap) {
-      otherUsers.add(id)
-    }
-  }
-
-  return otherUsers
-})
-
-const mutableOtherUsersSet = ref<Set<string>>(new Set())
-watch(
-  otherUsersSet,
-  (val) => {
-    val.forEach((id) => mutableOtherUsersSet.value.add(id))
-  },
-  { immediate: true }
-)
+const newUsers = ref<Set<string>>(new Set())
 
 async function handleSubmit() {
   if (!conversation.value) {
@@ -44,7 +24,7 @@ async function handleSubmit() {
     return
   }
 
-  const res = await submit.invoke(conversation.value, mutableOtherUsersSet.value, alias.value)
+  const res = await submit.invoke(conversation.value, newUsers.value, alias.value)
   emit('close')
   // TODO: Error handling
   if (res instanceof Error) {
@@ -80,6 +60,9 @@ const userOptions = computed(() =>
     (user) => user.id !== userStore.me?.id && !conversation.value?.members.has(user.id)
   )
 )
+
+watch(submit.loading, (val) => console.log(!!val), { immediate: true })
+watch(leave.loading, (val) => console.log(!!val), { immediate: true })
 </script>
 
 <template>
@@ -89,21 +72,35 @@ const userOptions = computed(() =>
     </div>
     <form class="modify-form" v-else @submit.prevent="handleSubmit">
       <div class="modify-form-first">
-        <ChatConversationModalUserMultiSelect
-          :options="userOptions"
-          :selected="mutableOtherUsersSet"
-          @setSelected="mutableOtherUsersSet = $event"
-          :canDelete="false"
-        />
-        <label class="modify-form-alias">
-          <GeneralTooltip direction="right">
-            <template #content>
-              Set a displayed name for a conversation visible to all other participants (or leave it empty).
+        <div class="modify-form-first-multiselect">
+          <div class="modify-form-first-multiselect-noone" v-if="!conversation">
+            There is no one in this conversation.
+          </div>
+          <div class="modify-form-first-multiselect-users" v-else>
+            <span>Current users:</span>
+            <span v-for="id in conversation.members.keys()" :key="id">
+              {{ userStore.users.get(id)?.name ?? 'Unknown User' }}
+            </span>
+          </div>
+          <ChatConversationModalUserMultiSelect
+            :options="userOptions"
+            :selected="newUsers"
+            @setSelected="newUsers = $event"
+            :is-new-conversation="false"
+          />
+        </div>
+        <div class="modify-form-first-alias">
+          <GeneralInputText v-model="alias" placeholder="Chose a nickname...">
+            <template #label>
+              <GeneralTooltip direction="right">
+                <template #content>
+                  Set a displayed name for a conversation visible to all other participants (or leave it empty).
+                </template>
+                <div class="modify-form-first-alias-label">Alias:</div>
+              </GeneralTooltip>
             </template>
-            <div>Alias</div>
-          </GeneralTooltip>
-          <input placeholder="Write a nickname..." v-model="alias" />
-        </label>
+          </GeneralInputText>
+        </div>
       </div>
       <div class="modify-form-buttons">
         <GeneralIconButton
@@ -120,7 +117,7 @@ const userOptions = computed(() =>
           size="2.5rem"
           type="submit"
           tooltipDirection="left"
-          :disabled="!canSend || !!submit.loading || !!leave.loading"
+          :disabled="submit.loading.value || leave.loading.value"
         />
       </div>
     </form>
@@ -142,7 +139,28 @@ const userOptions = computed(() =>
 
     &-first {
       display: flex;
-      gap: 2rem;
+      flex-direction: column;
+      gap: 4rem;
+
+      &-multiselect {
+        &-noone {
+          font-size: var(--text-xl);
+        }
+
+        &-users {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+      }
+
+      &-alias {
+        &-label {
+          font-size: var(--text-xl);
+          padding-bottom: 0.5rem;
+        }
+      }
     }
 
     &-buttons {

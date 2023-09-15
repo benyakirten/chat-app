@@ -12,21 +12,8 @@ const props = defineProps<{ conversationId: ConversationId }>()
 const emit = defineEmits<{ (e: 'modify'): void }>()
 const conversation = messageStore.conversations.get(props.conversationId)
 
-const points = ref<Map<string, { x: number; y: number }>>(new Map())
-
-async function viewConversation(e: MouseEvent) {
+async function viewConversation() {
   await navigateTo(`/chat/${props.conversationId}`)
-
-  // TODO: Make this into a hook/component/reusable instead of magic numbers
-  // TODO: Figure out the best way to tie the timeout with the animation length
-
-  const id = uuid()
-  const pos = getMouseRelativePosition(e)
-
-  points.value.set(id, pos)
-  setTimeout(() => {
-    points.value.delete(id)
-  }, 400)
 }
 
 const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
@@ -36,7 +23,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
   <li>
     <!-- TODO: Make everything here into its own component, improve CSS -->
     <button class="conversation" @click="viewConversation">
-      <GeneralBlip v-for="[id, { x, y }] of points" :key="id" :x="x" :y="y" />
       <Transition name="unread">
         <span class="conversation-unread" v-if="unreadMessages > 0">{{ unreadMessages }}</span>
       </Transition>

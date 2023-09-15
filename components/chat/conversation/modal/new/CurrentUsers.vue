@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/outline'
 
-defineProps<{ selected: Set<string>; canDelete: boolean }>()
+defineProps<{ selected: Set<string>; isNewConversation: boolean }>()
 defineEmits<{ (e: 'delete', id: UserId): void }>()
 const userStore = useUsersStore()
 
@@ -10,12 +10,11 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
 
 <template>
   <div class="current-users">
-    <h4 class="current-users-title">Current users:</h4>
+    <h4 class="current-users">{{ isNewConversation ? 'Selected' : 'New' }} users:</h4>
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
         <span class="current-users-user-name">{{ getUserName(userId) }}</span>
         <GeneralIconButton
-          v-if="canDelete"
           :icon="XCircleIcon"
           title="Remove Users"
           type="button"
@@ -38,7 +37,9 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
 
   overflow-x: hidden;
 
-  /* TODO: Make this better */
+  &-title {
+    font-weight: normal;
+  }
 
   &-user {
     display: flex;

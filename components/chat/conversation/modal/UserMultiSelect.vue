@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ selected: Set<string>; options: User[]; canDelete?: boolean }>(), {
-  canDelete: true,
+const props = withDefaults(defineProps<{ selected: Set<string>; options: User[]; isNewConversation?: boolean }>(), {
+  isNewConversation: true,
 })
 const emit = defineEmits<{ (e: 'setSelected', val: Set<string>): void }>()
 
@@ -10,6 +10,8 @@ function handleDelete(value: string) {
   props.selected.delete(value)
   emit('setSelected', props.selected)
 }
+
+const placeholder = computed(() => (props.isNewConversation ? 'Choose the participants' : 'Choose new participants'))
 </script>
 
 <template>
@@ -17,15 +19,19 @@ function handleDelete(value: string) {
     :options="options"
     title="Participants"
     :model-value="selected"
-    @update:modelValue="emit('setSelected', $event)"
     :search="handleSearch"
-    placeholder="Choose the participants"
+    :placeholder="placeholder"
+    @update:modelValue="emit('setSelected', $event)"
   >
     <template #no-options>
       <div class="no-options">No options available.</div>
     </template>
     <template #label>
-      <ChatConversationModalNewCurrentUsers :can-delete="canDelete" :selected="selected" @delete="handleDelete" />
+      <ChatConversationModalNewCurrentUsers
+        :is-new-conversation="isNewConversation"
+        :selected="selected"
+        @delete="handleDelete"
+      />
     </template>
     <template #item="{ item }">
       <ChatConversationModalNewUserItem :user="item" />
