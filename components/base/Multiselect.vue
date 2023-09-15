@@ -14,10 +14,11 @@ const props = withDefaults(
     placeholder: string
     iconSize?: string
     maxHeight?: string
+    type: 'multi' | 'single'
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
   }>(),
-  { iconSize: '0.8rem', maxHeight: '8rem', id: uuid() }
+  { iconSize: '0.8rem', maxHeight: '8rem', id: uuid(), type: 'multi' }
 )
 
 const combobox = ref<HTMLElement | null>(null)
@@ -25,18 +26,10 @@ const listbox = ref<HTMLElement | null>(null)
 const itemRefs = ref<HTMLLIElement[]>([])
 
 const isOpen = ref(false)
-const isSearching = ref(false)
 const text = ref('')
 
-const { clear, debouncer } = useDebounce(async (value) => {
-  if (!props.searchCallback) {
-    return
-  }
-
-  isSearching.value = true
-  await props.searchCallback(value)
-  isSearching.value = false
-})
+const { loading, invoke } = useLoading(async (value: string) => props.searchCallback?.(value))
+const { clear, debouncer } = useDebounce(async (value: string) => props.searchCallback && invoke(value))
 
 const withId = (name: string) => `${props.id}-${name}`
 
@@ -69,7 +62,9 @@ function toggleItem(id?: string) {
   props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
   emit('update:modelValue', props.modelValue)
 
-  text.value = ''
+  if (props.type !== 'single') {
+    text.value = ''
+  }
   close()
 }
 
@@ -168,7 +163,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
             @input="props.searchCallback && text.trim() && debouncer(text)"
             @click="alternateOpen"
           />
-          <div v-if="isSearching" class="combobox-group-input-loading">
+          <div v-if="loading" class="combobox-group-input-loading">
             <GeneralLoading size="1.6rem" />
           </div>
         </div>
