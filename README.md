@@ -1,3 +1,6 @@
+![Unit Tests](https://github.com/benyakirten/chat-app/actions/workflows/unit_test.yml/badge.svg)
+![E2E Tests](https://github.com/benyakirten/chat-app/actions/workflows/playwright.yml/badge.svg)
+
 # TOC
 
 1. [What is this?](#what-is-this)
