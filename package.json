@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest",
+    "test": "vitest --watch",
+    "test:ci": "vitest --ci",
     "test:e2e": "npx playwright test"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeEach } from 'vitest'
 
-import { arrayify, getFirstSetItem, ConversationMap } from './collections'
+import { arrayify, getFirstSetItem, ConversationMap, ConversationMap2 } from './collections'
 
 describe('arrayify', () => {
   it('should return the item unchanged if the argument is already an array', () => {
@@ -33,20 +33,84 @@ describe('getFirstSetItem', () => {
 })
 
 describe('ConversationMap', () => {
-  describe('constructor', () => {
-    it('should add the items into the conversation and add the history', () => {
-      // TODO
-    })
+  let map: ConversationMap2
+  const conversation: Conversation = {
+    id: 'c1',
+    members: new Map(),
+    messages: new Map(),
+    isPrivate: false,
+  }
+  const conversation2: Conversation = {
+    id: 'c2',
+    members: new Map(),
+    messages: new Map(),
+    isPrivate: true,
+  }
+
+  beforeEach(() => {
+    map = new ConversationMap2()
   })
 
   describe('add', () => {
-    it('should add the item to the history and add the conversation to the map', () => {
-      // TODO
+    it('should add the item to top item in the map', () => {
+      expect(map.length).toEqual(0)
+
+      map.add(conversation)
+
+      expect(map.length).toEqual(1)
+
+      const iter = map[Symbol.iterator]()
+      expect(iter.next().value).toEqual(conversation)
+      expect(map.get('c1')).toEqual(conversation)
+    })
+
+    it('should add each new item as the most recent item', () => {
+      map.add(conversation)
+      map.add(conversation2)
+
+      expect(map.length).toEqual(2)
+
+      const iter = map[Symbol.iterator]()
+      expect(iter.next().value).toEqual(conversation2)
+      expect(iter.next().value).toEqual(conversation)
+    })
+
+    it('should move a conversation to the top of the history and overwrite the existing conversation fi ti already exists in the map', () => {
+      map.add(conversation)
+      map.add(conversation2)
+      map.add({ ...conversation, isPrivate: true })
+
+      const iter = map[Symbol.iterator]()
+      expect(iter.next().value).toEqual({ ...conversation, isPrivate: true })
+      expect(map.get('c1')).toEqual({ ...conversation, isPrivate: true })
+
+      expect(iter.next().value).toEqual(conversation2)
     })
   })
 
   describe('batchAdd', () => {
-    it('should add a series of items and update the history correctly', () => {
+    it('should add a series of items with the last item received to being the most recent item in the cache', () => {
+      map.batchAdd([conversation, conversation2])
+
+      expect(map.length).toEqual(2)
+
+      expect(map.get('c1')).toEqual(conversation)
+      expect(map.get('c2')).toEqual(conversation2)
+
+      const iter = map[Symbol.iterator]()
+      expect(iter.next().value).toEqual(conversation2)
+      expect(iter.next().value).toEqual(conversation)
+    })
+  })
+
+  describe('iterator', () => {
+    it('should be able to operate as an iterator over the conversation items added to it', () => {
+      //
+    })
+  })
+
+  describe('constructor', () => {
+    it('should add the items into the conversation and add the history', () => {
       // TODO
     })
   })
