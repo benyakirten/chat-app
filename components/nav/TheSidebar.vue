@@ -12,7 +12,7 @@ function getConversationFromRoute(route: string) {
   }
 
   const id = segments[segments.length - 1]
-  const conversation = messageStore.conversations.get(id)
+  const conversation = messageStore.conversation(id)
   return titleStore.conversationSubtitle(conversation)
 }
 

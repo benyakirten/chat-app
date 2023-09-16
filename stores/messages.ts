@@ -347,7 +347,7 @@ export interface ConversationMessage {
 export type UserReadTimes = Record<UserId, Date>
 
 export const useMessageStore = defineStore('messages', () => {
-  const conversations = ref(PROP_CONVERSATIONS)
+  const conversations = ref([conversation1, conversation2])
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
@@ -379,13 +379,29 @@ export const useMessageStore = defineStore('messages', () => {
     return unreadMessages
   })
 
+  function moveConversationToTop(conversation: Conversation) {
+    const historyIndex = conversations.value.findIndex((convo) => convo.id === conversation.id)
+
+    if (conversations.value.length > 1 && historyIndex === conversations.value.length - 1) {
+      return
+    }
+
+    if (historyIndex !== -1) {
+      conversations.value.splice(historyIndex, 1)
+    }
+
+    conversations.value.push(conversation)
+  }
+
+  const conversation = computed(() => (id: ConversationId) => conversations.value.find((convo) => convo.id === id))
+
   const visibleConversations = computed(() => {
     if (!filteredConversationIds.value) {
-      return conversations.value.history
+      return conversations.value
     }
 
     return filteredConversationIds.value.reduce<Conversation[]>((acc, next) => {
-      const convo = conversations.value.get(next)
+      const convo = conversation.value(next)
       if (!convo) {
         return acc
       }
@@ -400,13 +416,13 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const conversation = conversations.value.get(conversationId)
-    if (!conversation) {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
       // TODO: Error handling
       return
     }
 
-    const member = conversation.members.get(userId)
+    const member = convo.members.get(userId)
     if (!member) {
       // TODO: Error handling
       return
@@ -424,16 +440,13 @@ export const useMessageStore = defineStore('messages', () => {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
 
-    const result = conversations.value.addMessage(conversationId, message)
-    if (!result) {
-      toastStore.add('Unable to add message', { type: 'error' })
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      toastStore.add('Unable to find conversation', { type: 'error' })
       return
     }
 
-    const conversation = conversations.value.get(conversationId)
-    if (!conversation) {
-      return
-    }
+    convo.messages.set(message.id, message)
 
     // TODO: Make this better
     if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
@@ -443,7 +456,7 @@ export const useMessageStore = defineStore('messages', () => {
 
   function startTyping(id: ConversationId) {
     // Users should only be able to type in their active conversation
-    const convo = conversations.value.get(id)
+    const convo = conversation.value(id)
     // TODO: Analyze: can this situation arise? How? Do we need to handle it?
     // Presumably it will be an error state
     if (!convo) {
@@ -474,7 +487,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const convo = conversations.value.get(id)
+    const convo = conversation.value(id)
     if (!convo) {
       // TODO: Error handling - must have an active conversation to send a message
       return
@@ -517,13 +530,13 @@ export const useMessageStore = defineStore('messages', () => {
     createTime?: Date,
     updateTime?: Date
   ) {
-    const conversation = conversations.value.get(conversationId)
-    if (!conversation) {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
       // TODO: Error handling
       return
     }
 
-    const message = conversation.messages.get(oldId)
+    const message = convo.messages.get(oldId)
     if (!message) {
       // TODO: Error handling
       return
@@ -539,8 +552,8 @@ export const useMessageStore = defineStore('messages', () => {
       newMessage.updateTime = updateTime
     }
 
-    conversation.messages.delete(oldId)
-    conversation.messages.set(newId, newMessage)
+    convo.messages.delete(oldId)
+    convo.messages.set(newId, newMessage)
   }
 
   function resendMessage(message: ConversationMessage) {
@@ -554,13 +567,13 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   function deleteMessage(conversationId: ConversationId, messageId: MessageId) {
-    const conversation = conversations.value.get(conversationId)
-    if (!conversation) {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
       toastStore.add('Error deleting message', { type: 'error' })
       return
     }
 
-    const message = conversation.messages.get(messageId)
+    const message = convo.messages.get(messageId)
     if (!message) {
       toastStore.add('Error deleting message', { type: 'error' })
       return
@@ -572,7 +585,7 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     // TODO: Transmit that the message has been deleted
-    conversation.messages.delete(messageId)
+    convo.messages.delete(messageId)
   }
 
   function startMessageEdit(conversationId: ConversationId, message: ConversationMessage) {
@@ -592,13 +605,13 @@ export const useMessageStore = defineStore('messages', () => {
 
     const { conversationId, messageId } = editedMessage.value
 
-    const conversation = conversations.value.get(conversationId)
-    if (!conversation) {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
       // TODO: Error handling
       return
     }
 
-    const message = conversation.messages.get(messageId)
+    const message = convo.messages.get(messageId)
     if (!message) {
       // TODO: Error handling
       return
@@ -626,9 +639,7 @@ export const useMessageStore = defineStore('messages', () => {
       throw new Error('You must be logged in to start a conversation')
     }
 
-    let convoId: string | null = null
-
-    for (const [id, conversation] of conversations.value) {
+    for (const conversation of conversations.value) {
       if (conversation.members.size !== 2) {
         continue
       }
@@ -636,7 +647,7 @@ export const useMessageStore = defineStore('messages', () => {
       // If we already have a private conversation then
       // just add the message to that conversation
       if (conversation.members.get(otherUser)) {
-        addMessage(id, {
+        addMessage(conversation.id, {
           sender: userStore.me.id,
           id: uuid(),
           content: message,
@@ -644,7 +655,7 @@ export const useMessageStore = defineStore('messages', () => {
           createTime: new Date(),
           updateTime: new Date(),
         })
-        return id
+        return conversation.id
       }
     }
 
@@ -660,7 +671,7 @@ export const useMessageStore = defineStore('messages', () => {
       messages: new Map(),
     }
 
-    conversations.value.add(newConvo)
+    conversations.value.unshift(newConvo)
     addMessage(newConvo.id, {
       sender: userStore.me?.id,
       id: uuid(),
@@ -697,7 +708,7 @@ export const useMessageStore = defineStore('messages', () => {
       members,
       messages: new Map(),
     }
-    conversations.value.add(newConvo)
+    conversations.value.unshift(newConvo)
     addMessage(newConvo.id, {
       sender: userStore.me.id,
       id: uuid(),
@@ -723,7 +734,10 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   async function leaveConversation(conversation: Conversation) {
-    conversations.value.remove(conversation.id)
+    const idx = conversations.value.findIndex((convo) => convo.id === conversation.id)
+    if (idx !== -1) {
+      conversations.value.splice(idx, 1)
+    }
     // TODO: Transmit that we have left the conversation
   }
 
@@ -746,5 +760,7 @@ export const useMessageStore = defineStore('messages', () => {
     startPrivateConversation,
     modifyConversation,
     leaveConversation,
+    moveConversationToTop,
+    conversation,
   }
 })

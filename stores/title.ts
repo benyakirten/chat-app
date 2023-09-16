@@ -41,7 +41,7 @@ export const useTitleStore = defineStore('title', () => {
       return title
     }
 
-    const conversation = messageStore.conversations.get(id)
+    const conversation = messageStore.conversation(id)
     const subpageTitle = conversationSubtitle.value(conversation)
     title += ` - ${subpageTitle}`
 

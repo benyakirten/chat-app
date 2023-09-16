@@ -9,7 +9,7 @@ const route = useRoute()
 const props = defineProps<{ conversationId: ConversationId | null }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const conversation = computed(() => messageStore.conversations.get(props.conversationId ?? ''))
+const conversation = computed(() => messageStore.conversation(props.conversationId ?? ''))
 
 const alias = ref('')
 watch(conversation, (val) => (alias.value = val?.alias ?? ''))

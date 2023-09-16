@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { conversationId } = defineProps<{ conversationId: ConversationId }>()
 const messageStore = useMessageStore()
-const conversation = computed(() => messageStore.conversations.get(conversationId))
+const conversation = computed(() => messageStore.conversation(conversationId))
 const { debouncer } = useDebounce((val: string) => {
   if (conversation.value) {
     conversation.value.draft = val
@@ -21,7 +21,7 @@ function sendMessage(conversationId: string, val: string) {
   <GeneralInputAutosize
     placeholder="Write a message..."
     label="New Message"
-    @submit="sendMessage(conversationId, $event)"
+    @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
   />
 </template>
