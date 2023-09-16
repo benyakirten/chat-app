@@ -19,10 +19,13 @@ html {
   --white: #fff;
   --black: #000;
 
+  --text-xxl: 1.8rem;
   --text-xl: 1.4rem;
   --text-lg: 1.2rem;
   --text-md: 1rem;
   --text-sm: 0.8rem;
+
+  --header-height: 6rem;
 
   @media (prefers-reduced-motion: reduce) {
     *,

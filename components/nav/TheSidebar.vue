@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useMediaStore } from '~/stores/media'
+
 const recentsStore = useRecentsStore()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
@@ -91,6 +93,19 @@ nav {
   flex-direction: column;
   min-height: 100vh;
   width: 40%;
+  transition: width 200ms ease;
+
+  @media (width <= 910px) {
+    width: 50%;
+  }
+
+  @media (width <= 650px) {
+    width: 60%;
+  }
+
+  @media (width <= 550px) {
+    width: 75%;
+  }
 
   .recent {
     flex-grow: 1;
@@ -101,6 +116,10 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    h4 {
+      font-size: var(--text-xxl);
+    }
 
     ul > li {
       margin-bottom: 0.5rem;

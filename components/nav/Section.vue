@@ -58,6 +58,7 @@ const id = computed(() => `${props.group}-expadable-content`)
     padding: 0.5rem 0;
 
     h4 {
+      font-size: var(--text-xxl);
       text-transform: capitalize;
     }
   }

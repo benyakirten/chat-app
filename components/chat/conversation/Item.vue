@@ -4,11 +4,13 @@ import { ChevronRightIcon, CogIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
+const mediaStore = useMediaStore()
 
 const props = defineProps<{ conversation: Conversation }>()
 const emit = defineEmits<{ (e: 'modify'): void }>()
 
 async function viewConversation() {
+  mediaStore.conversationListOpen = false
   await navigateTo(`/chat/${props.conversation.id}`)
 }
 

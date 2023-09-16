@@ -130,7 +130,8 @@ const conversation1message5: ConversationMessage = {
 const conversation1message6: ConversationMessage = {
   sender: 'u1',
   id: 'c1m6',
-  content: 'I can assure you.',
+  content:
+    'I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you.  I can assure you. I can assure you. v I can assure you.I can assure you.',
   status: 'complete',
   createTime: new Date('2020-1-5'),
   updateTime: new Date('2020-1-5'),
@@ -312,8 +313,6 @@ const conversation1: Conversation = {
   ]),
   isPrivate: true,
 }
-
-const PROP_CONVERSATIONS = new ConversationMap([conversation1, conversation2])
 
 export interface UserConversationState {
   state: 'typing' | 'idle'

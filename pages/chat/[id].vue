@@ -22,10 +22,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <!-- TODO: Figure out why this has to be wrapped in a div -->
-    <ChatLayout>
-      <ChatMessageList :conversation-id="id" />
-    </ChatLayout>
-  </div>
+  <ChatLayout :id="id" />
 </template>

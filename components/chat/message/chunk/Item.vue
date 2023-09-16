@@ -33,6 +33,8 @@ onMounted(() => {
     }, MESSAGE_HIGHLIGHT_DURATION)
   }
 })
+
+const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' : 'none'))
 </script>
 
 <template>
@@ -79,10 +81,11 @@ onMounted(() => {
     var(--bg-alt3) 85%
   );
   box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
+  border: v-bind(border);
 
   padding: 0.75rem;
 
-  transition: transform 200ms ease, background-color 300ms ease;
+  transition: transform 200ms ease, background-color 300ms ease, border 100ms ease;
 
   &.highlighted {
     background-color: var(--bg-alt5);

@@ -1,24 +1,15 @@
 <script setup lang="ts">
 useHead({
   bodyAttrs: {
-    style: 'max-height: 100vh; overflow: hidden;',
+    style: 'height: 100vh;',
   },
 })
+defineProps<{ id: ConversationId }>()
+
+const mediaStore = useMediaStore()
 </script>
 
 <template>
-  <BasePage>
-    <div class="messages">
-      <ChatConversationList />
-      <slot></slot>
-    </div>
-  </BasePage>
+  <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
+  <ChatMobileLayout v-else :id="id" />
 </template>
-
-<style scoped>
-.messages {
-  display: grid;
-  grid-template-columns: 16rem 1fr;
-  height: calc(100vh - 6rem);
-}
-</style>

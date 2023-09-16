@@ -1,5 +1,19 @@
+<script setup lang="ts">
+import { UsersIcon } from '@heroicons/vue/24/solid'
+
+const mediaStore = useMediaStore()
+</script>
+
 <template>
   <header class="header">
+    <div class="header-users" v-if="mediaStore.state === 'mobile'">
+      <GeneralIconButton
+        :icon="UsersIcon"
+        title="View Conversations"
+        size="2rem"
+        @click="mediaStore.conversationListOpen = true"
+      />
+    </div>
     <div class="header-search">
       <NavSearchBar />
     </div>
@@ -15,21 +29,28 @@
   z-index: var(--z-high);
 
   width: 100%;
-  height: 6rem;
+  height: var(--header-height);
+
+  --padding-edge: 4rem;
 
   align-items: center;
   display: grid;
   grid-template-columns: 30% 50% 1fr;
   border-bottom: 1px solid var(--accent);
 
+  &-users {
+    grid-column: 1 / 2;
+    padding-inline: var(--padding-edge);
+  }
+
   &-search {
     grid-column: 2 / 3;
   }
 
   &-hamburger {
-    justify-self: end;
-    padding-right: 4rem;
     grid-column: 3 / -1;
+    justify-self: end;
+    padding-inline: var(--padding-edge);
   }
 }
 </style>
