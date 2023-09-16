@@ -1,9 +1,4 @@
 <script setup lang="ts">
-useHead({
-  bodyAttrs: {
-    style: 'height: 100vh;',
-  },
-})
 defineProps<{ id: ConversationId }>()
 
 const mediaStore = useMediaStore()

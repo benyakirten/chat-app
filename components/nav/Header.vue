@@ -11,7 +11,7 @@ const mediaStore = useMediaStore()
         :icon="UsersIcon"
         title="View Conversations"
         size="2rem"
-        @click="mediaStore.conversationListOpen = true"
+        @click="mediaStore.conversationListOpen = !mediaStore.conversationListOpen"
       />
     </div>
     <div class="header-search">
@@ -25,7 +25,10 @@ const mediaStore = useMediaStore()
 
 <style scoped>
 .header {
-  position: relative;
+  position: sticky;
+  top: 0;
+  left: 0;
+
   z-index: var(--z-high);
 
   width: 100%;
@@ -37,6 +40,8 @@ const mediaStore = useMediaStore()
   display: grid;
   grid-template-columns: 30% 50% 1fr;
   border-bottom: 1px solid var(--accent);
+
+  background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
 
   &-users {
     grid-column: 1 / 2;

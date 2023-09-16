@@ -11,9 +11,17 @@ defineProps<{ id: ConversationId }>()
 
 <template>
   <div class="mobile-layout">
-    <div class="mobile-layout-conversation-list" v-if="mediaStore.conversationListOpen === true">
-      CONVERSATION LIST GOES HERE
-    </div>
+    <Transition name="conversations">
+      <div
+        class="mobile-layout-conversation"
+        v-if="mediaStore.conversationListOpen === true"
+        @click="mediaStore.conversationListOpen = false"
+      >
+        <div class="mobile-layout-conversation-list">
+          <ChatConversationList />
+        </div>
+      </div>
+    </Transition>
     <ChatMessageList :conversation-id="id" />
   </div>
 </template>
@@ -23,14 +31,35 @@ defineProps<{ id: ConversationId }>()
   position: relative;
   height: calc(100vh - var(--header-height));
 
-  &-conversation-list {
+  &-conversation {
     position: absolute;
-    z-index: var(--z-high);
+    z-index: var(--z-raised);
     top: calc(-1 * var(--header-height));
     left: 0;
-    width: 80%;
+    width: 100vw;
     height: 100vh;
-    background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
+    overflow: hidden;
+
+    backdrop-filter: blur(4px);
+    &-list {
+      position: absolute;
+      z-index: var(--z-high);
+      top: var(--header-height);
+      left: 0;
+      width: 80%;
+      height: 100vh;
+      background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
+    }
   }
+}
+
+.conversations-enter-active,
+.conversations-leave-active {
+  transition: translate 400ms ease-in-out;
+}
+
+.conversations-enter-from,
+.conversations-leave-to {
+  translate: -100% 0;
 }
 </style>
