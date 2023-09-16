@@ -74,6 +74,7 @@ onMounted(() => {
     resize: none;
 
     font-family: 'Roboto';
+    font-size: var(--text-xl);
     height: clamp(3.2rem, v-bind(itemHeight), 12.8rem);
   }
 
@@ -85,6 +86,7 @@ onMounted(() => {
     visibility: hidden;
     pointer-events: none;
     white-space: pre-wrap;
+    font-size: var(--text-xl);
   }
 }
 </style>
