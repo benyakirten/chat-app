@@ -5,15 +5,14 @@ const route = useRoute()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 
-const props = defineProps<{ conversationId: ConversationId }>()
+const props = defineProps<{ conversation: Conversation }>()
 const emit = defineEmits<{ (e: 'modify'): void }>()
-const conversation = messageStore.conversations.get(props.conversationId)
 
 async function viewConversation() {
-  await navigateTo(`/chat/${props.conversationId}`)
+  await navigateTo(`/chat/${props.conversation.id}`)
 }
 
-const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
+const unreadMessages = computed(() => messageStore.unreadMessages(props.conversation))
 </script>
 
 <template>
@@ -31,7 +30,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(conversation))
         <GeneralIconButton :icon="CogIcon" title="Settings" size="1.5rem" @click.stop="emit('modify')" />
       </button>
       <!-- Remove a transition from this since I cannot get it to react to route params -->
-      <ChevronRightIcon class="conversation-active" v-if="route.params['id'] === conversationId" aria-hidden="true" />
+      <ChevronRightIcon class="conversation-active" v-if="route.params['id'] === conversation.id" aria-hidden="true" />
     </button>
   </li>
 </template>

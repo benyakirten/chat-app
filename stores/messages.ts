@@ -723,7 +723,7 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   async function leaveConversation(conversation: Conversation) {
-    conversations.value.remove(conversation)
+    conversations.value.remove(conversation.id)
     // TODO: Transmit that we have left the conversation
   }
 

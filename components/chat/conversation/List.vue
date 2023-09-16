@@ -27,9 +27,9 @@ function closeModal() {
       -->
       <ul v-else>
         <ChatConversationItem
-          v-for="conversation in messageStore.visibleConversations"
+          v-for="conversation of messageStore.visibleConversations"
           :key="conversation.id"
-          :conversation-id="conversation.id"
+          :conversation="conversation"
           @modify="modifyConversation(conversation.id)"
         />
       </ul>

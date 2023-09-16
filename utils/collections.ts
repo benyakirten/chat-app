@@ -2,16 +2,14 @@ export const arrayify = <T>(item: T | T[]) => (Array.isArray(item) ? item : [ite
 export const getFirstSetItem = <T>(set: Set<T>): T | undefined => set.keys().next().value
 
 /**
- * This is a combination of a map and a stack ecause it is more efficient to look up an
- * individual conversation for reference, but at the same time we want to be able to
- * manually reorder the items in the map. Is this better than just a stack we reorder?
- * We might be consuming more memory unnecessarily. I use an array instead of custom stack
- * because a JavaScript array is better than a linked list - CF https://www.youtube.com/watch?v=YQs6IC-vgmo
- *
- * Should this be replaced with a LRU cache with no size limit?
+ * ConversationMap2 performs all things as required but cannot be marshalled/unmarshalled by flatten
+ * which nuxt uses to handle values - therefore we are using something much more like what is used in the LRU
  */
 export class ConversationMap extends Map<ConversationId, Conversation> {
-  public history: Conversation[] = []
+  private _history: Conversation[] = []
+  public get history() {
+    return [...this._history].reverse()
+  }
 
   constructor(conversations: Conversation | Conversation[] = []) {
     super()
@@ -20,56 +18,45 @@ export class ConversationMap extends Map<ConversationId, Conversation> {
 
   public addMessage(id: ConversationId, message: ConversationMessage): boolean {
     const convo = this.get(id)
-
     if (!convo) {
       return false
     }
 
     convo.messages.set(message.id, message)
-    this.moveConvoToTopOfHistory(convo)
+    this.moveToTop(convo)
 
     return true
   }
 
-  /**
-   * General purpose method that will make sure a conversation is moved to the top of the history.
-   * Caveat emptor: this assumes that its position in the map has already been done correctly.
-   */
-  private moveConvoToTopOfHistory(conversation: Conversation) {
-    const historyIndex = this.history.findIndex((convo) => convo.id === conversation.id)
+  private moveToTop(conversation: Conversation) {
+    const historyIndex = this._history.findIndex((convo) => convo.id === conversation.id)
 
-    // Already at the top of the history
-    if (historyIndex === 0) {
+    if (this.history.length > 1 && historyIndex === this.history.length - 1) {
       return
     }
 
-    // If it's -1, .splice removes the last element
     if (historyIndex !== -1) {
-      this.history.splice(historyIndex, 1)
+      this._history.splice(historyIndex, 1)
     }
-    this.history.unshift(conversation)
+
+    this._history.push(conversation)
   }
 
-  /**
-   * Add the conversation to the map and history.
-   * If the conversation already exists then it will
-   * bump it into top item on the history.
-   * NOTE: This will overwrite the conversation in the map if it already exists.
-   */
   public add(conversation: Conversation) {
     this.set(conversation.id, conversation)
-    this.moveConvoToTopOfHistory(conversation)
+    this.moveToTop(conversation)
 
     return this
   }
 
-  /**
-   * Remove a conversation from the map and the history.
-   */
-  public remove(conversation: Conversation) {
-    const convoIdx = this.history.findIndex((convo) => convo.id === conversation.id)
-    this.history.splice(convoIdx, 1)
-    this.delete(conversation.id)
+  public remove(id: ConversationId) {
+    const convoIdx = this._history.findIndex((convo) => convo.id === id)
+    if (convoIdx === -1) {
+      return
+    }
+
+    this._history.splice(convoIdx, 1)
+    this.delete(id)
 
     return this
   }
@@ -84,35 +71,25 @@ class ConversationNode {
   constructor(public value: Conversation, public prev?: ConversationNode, public next?: ConversationNode) {}
 }
 
+/**
+ * Modeled off a LRU cache, this does not have a size limit and has some customized functions
+ */
 export class ConversationMap2 {
   public length: number = 0
 
   private head?: ConversationNode = undefined
   private tail?: ConversationNode = undefined
-  private lookup: Map<ConversationId, ConversationNode> = new Map()
+  public lookup: Map<ConversationId, ConversationNode> = new Map()
 
   constructor(conversations: Conversation | Conversation[] = []) {
     this.batchAdd(arrayify(conversations))
   }
 
-  public [Symbol.iterator]() {
+  public *[Symbol.iterator]() {
     let node = this.head
-    return {
-      next() {
-        if (node) {
-          const convo = node.value
-          node = node.next
-          return {
-            value: convo,
-            done: false,
-          }
-        }
-
-        return {
-          value: undefined,
-          done: true,
-        }
-      },
+    while (node) {
+      yield node.value
+      node = node.next
     }
   }
 
@@ -120,7 +97,7 @@ export class ConversationMap2 {
     return this.lookup.get(id)?.value
   }
 
-  public add(conversation: Conversation): ConversationMap2 {
+  public add(conversation: Conversation) {
     let node = this.lookup.get(conversation.id)
     if (!node) {
       node = new ConversationNode(conversation)
@@ -155,6 +132,19 @@ export class ConversationMap2 {
     conversations.forEach((convo) => this.add(convo))
 
     return this
+  }
+
+  public remove(id: ConversationId): boolean {
+    const node = this.lookup.get(id)
+    if (!node) {
+      return false
+    }
+
+    this.length--
+    this.detach(node)
+    this.lookup.delete(id)
+
+    return true
   }
 
   private raise(node: ConversationNode) {
