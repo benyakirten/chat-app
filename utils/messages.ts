@@ -1,6 +1,3 @@
-/**
- * Given a map of messages then
- */
 export function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>): ConversationMessage[][] {
   const messageChunks: ConversationMessage[][] = []
 

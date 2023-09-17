@@ -1,4 +1,4 @@
-import { describe, expect, beforeEach, afterAll, vi, it, test } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { isTextInputFocused, isClickWithinElement, getMouseRelativePosition } from './dom'
 
 describe('isTextInputFocused', () => {
