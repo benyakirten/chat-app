@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
+import { useModalStore } from '~/stores/modal'
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
   if (isPrivate) {
     const otherUser = getFirstSetItem(selected)
@@ -15,6 +15,7 @@ const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
+const modalStore = useModalStore()
 
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
@@ -46,8 +47,8 @@ async function handleSubmit() {
   errorMessage.value = null
   const res = await invoke(isPrivate.value, selected.value, message.value)
   if (typeof res === 'string') {
-    emit('close')
-    navigateTo(`/chat/${res}`)
+    modalStore.close()
+    await navigateTo(`/chat/${res}`)
     return
   }
 
@@ -90,7 +91,7 @@ async function handleSubmit() {
 <style scoped>
 .new {
   padding: 2rem;
-  width: 80rem;
+  width: 80vw;
 
   display: grid;
   row-gap: 4rem;

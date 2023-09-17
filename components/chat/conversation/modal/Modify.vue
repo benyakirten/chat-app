@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon, PowerIcon } from '@heroicons/vue/24/solid'
+import { useModalStore } from '~/stores/modal'
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const toastStore = useToastStore()
+const modalStore = useModalStore()
 const route = useRoute()
 
 const props = defineProps<{ conversationId: ConversationId | null }>()
-const emit = defineEmits<{ (e: 'close'): void }>()
 
 const conversation = computed(() => messageStore.conversation(props.conversationId ?? ''))
 
@@ -29,7 +30,7 @@ async function handleSubmit() {
 
   const res = await submit.invoke(conversation.value, newUsers.value, alias.value)
   newUsers.value = new Set()
-  emit('close')
+  modalStore.close()
 
   if (res instanceof Error) {
     toastStore.add(res.message, { type: 'error' })
@@ -48,7 +49,7 @@ async function leaveConversation() {
   const needReroute = route.params['id'] === conversation.value.id
 
   const res = await leave.invoke(conversation.value)
-  emit('close')
+  modalStore.close()
   // TODO: Error handling
   if (res instanceof Error) {
     toastStore.add(res.message, { type: 'error' })
@@ -128,7 +129,7 @@ const userOptions = computed(() =>
 <style scoped>
 .modify {
   padding: 2rem;
-  width: 80rem;
+  width: 80vw;
 
   &-error {
     font-size: 1.8rem;

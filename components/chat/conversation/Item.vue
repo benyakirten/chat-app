@@ -5,9 +5,9 @@ const route = useRoute()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 const mediaStore = useMediaStore()
+const modalStore = useModalStore()
 
 const props = defineProps<{ conversation: Conversation }>()
-const emit = defineEmits<{ (e: 'modify'): void }>()
 
 async function viewConversation() {
   mediaStore.conversationListOpen = false
@@ -29,7 +29,12 @@ const unreadMessages = computed(() => messageStore.unreadMessages(props.conversa
         </span>
       </span>
       <button class="conversation-settings" v-if="!conversation?.isPrivate">
-        <GeneralIconButton :icon="CogIcon" title="Settings" size="1.5rem" @click.stop="emit('modify')" />
+        <GeneralIconButton
+          :icon="CogIcon"
+          title="Settings"
+          size="1.5rem"
+          @click.stop="modalStore.modifyConversation(conversation.id)"
+        />
       </button>
       <!-- Remove a transition from this since I cannot get it to react to route params -->
       <ChevronRightIcon class="conversation-active" v-if="route.params['id'] === conversation.id" aria-hidden="true" />

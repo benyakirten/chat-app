@@ -41,13 +41,14 @@ defineProps<{ id: ConversationId }>()
     overflow: hidden;
 
     backdrop-filter: blur(4px);
+
     &-list {
       position: absolute;
       z-index: var(--z-high);
       top: var(--header-height);
       left: 0;
       width: 80%;
-      height: 100vh;
+      height: calc(100vh - var(--header-height));
       background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
     }
   }

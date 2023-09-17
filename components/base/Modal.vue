@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/solid'
+import { useModalStore } from '~/stores/modal'
 
 const props = defineProps<{ open: boolean; initialFocusCallback?: () => void }>()
 defineOptions({ inheritAttrs: false })
 useAddMountedEventCallback('click', detectBackdropClick)
 
-const emit = defineEmits<{ (e: 'close'): void }>()
-const dialog = ref<HTMLDialogElement | null>(null)
+const modalStore = useModalStore()
 
-function close() {
-  emit('close')
-}
+const dialog = ref<HTMLDialogElement | null>(null)
 
 function detectBackdropClick(e: MouseEvent) {
   if (e.target instanceof HTMLButtonElement || !dialog.value?.open) {
@@ -18,7 +16,7 @@ function detectBackdropClick(e: MouseEvent) {
   }
 
   if (!isClickWithinElement(e, dialog.value)) {
-    close()
+    modalStore.close()
   }
 }
 
@@ -34,7 +32,11 @@ watch(
   }
 )
 
-useAddMountedEventCallback('close', close, () => dialog.value)
+useAddMountedEventCallback(
+  'close',
+  () => modalStore.close(),
+  () => dialog.value
+)
 </script>
 
 <template>
@@ -43,7 +45,7 @@ useAddMountedEventCallback('close', close, () => dialog.value)
       <GeneralIconButton
         class="dialog-close"
         title="Close Modal"
-        @click="emit('close')"
+        @click="modalStore.close()"
         size="1.2rem"
         tooltip-direction="left"
         :icon="XMarkIcon"

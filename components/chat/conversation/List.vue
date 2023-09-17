@@ -1,18 +1,6 @@
 <script lang="ts" setup>
 const messageStore = useMessageStore()
-
-const modalOpen = ref<'new' | 'modify' | null>(null)
-const conversationToModify = ref<ConversationId | null>(null)
-
-function modifyConversation(id: ConversationId) {
-  modalOpen.value = 'modify'
-  conversationToModify.value = id
-}
-
-function closeModal() {
-  modalOpen.value = null
-  conversationToModify.value = null
-}
+const modalStore = useModalStore()
 </script>
 
 <template>
@@ -30,12 +18,10 @@ function closeModal() {
           v-for="conversation of messageStore.visibleConversations"
           :key="conversation.id"
           :conversation="conversation"
-          @modify="modifyConversation(conversation.id)"
         />
       </ul>
     </div>
-    <BaseButton class="container-new" @click="modalOpen = 'new'">Start a new conversation</BaseButton>
-    <ChatConversationModal :modal-open="modalOpen" :conversation-id="conversationToModify" @close="closeModal" />
+    <BaseButton class="container-new" @click="modalStore.newConversation()">Start a new conversation</BaseButton>
   </div>
 </template>
 

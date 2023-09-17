@@ -59,12 +59,14 @@ function toggleItem(id?: string) {
     return
   }
 
-  props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
-  emit('update:modelValue', props.modelValue)
-
-  if (props.type !== 'single') {
+  if (props.type === 'multi') {
+    props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
+    emit('update:modelValue', props.modelValue)
     text.value = ''
+    return
   }
+
+  emit('update:modelValue', new Set([id]))
   close()
 }
 

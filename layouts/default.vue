@@ -17,14 +17,12 @@ useHead({
   <Head>
     <Title>{{ title }}</Title>
   </Head>
-  <div class="container" id="app-host">
-    <NavHeader />
-    <NavTheSidebar />
-    <ToasterComponent />
-    <main>
-      <slot></slot>
-    </main>
-  </div>
+  <NavHeader />
+  <NavTheSidebar />
+  <ToasterComponent />
+  <main>
+    <slot></slot>
+  </main>
 </template>
 
 <style>
@@ -46,11 +44,6 @@ body {
     var(--bg-alt5) 95%
   );
   color: var(--text);
-}
-
-#app-host {
-  position: relative;
-  max-width: 100vw;
 }
 
 .page-leave-active,
