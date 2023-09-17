@@ -10,7 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest --watch",
-    "test:ci": "vitest --ci",
+    "test:ci": "vitest --run",
     "test:e2e": "npx playwright test"
   },
   "devDependencies": {

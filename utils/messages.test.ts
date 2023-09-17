@@ -187,9 +187,8 @@ describe('chunkMessagesByAuthor', () => {
       ],
       desc: 'the lists of messages correctly separated by author',
     },
-  ])('should return ^^ ($desc)', ({ desc, want, input }) => {
+  ])('should return $desc', ({ desc, want, input }) => {
     // Bun problem: https://github.com/oven-sh/bun/issues/5631
-    console.log(desc)
     const got = chunkMessagesByAuthor(input)
     expect(got).toEqual(want)
   })
