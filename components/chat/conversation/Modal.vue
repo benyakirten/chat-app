@@ -12,13 +12,11 @@ function focusCombobox() {
 </script>
 
 <template>
-  <ClientOnly>
-    <BaseModal :open="modalStore.state !== null" :initial-focus-callback="focusCombobox">
-      <ChatConversationModalNew v-if="modalStore.state?.type === 'new'" />
-      <ChatConversationModalModify
-        v-else-if="modalStore.state?.type === 'modify'"
-        :conversation-id="modalStore.state.id"
-      />
-    </BaseModal>
-  </ClientOnly>
+  <BaseModal :open="modalStore.state !== null" :initial-focus-callback="focusCombobox">
+    <ChatConversationModalNew v-if="modalStore.state?.type === 'new'" />
+    <ChatConversationModalModify
+      v-else-if="modalStore.state?.type === 'modify'"
+      :conversation-id="modalStore.state.id"
+    />
+  </BaseModal>
 </template>

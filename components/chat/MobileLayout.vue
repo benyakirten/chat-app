@@ -5,8 +5,9 @@ useHead({
   },
 })
 
-const mediaStore = useMediaStore()
 defineProps<{ id: ConversationId }>()
+
+const mediaStore = useMediaStore()
 </script>
 
 <template>

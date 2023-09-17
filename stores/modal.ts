@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, skipHydrate } from 'pinia'
 import { ConversationId } from './messages'
 
 interface NewMessageModal {
@@ -29,5 +29,5 @@ export const useModalStore = defineStore('modal', () => {
     state.value = null
   }
 
-  return { state, modifyConversation, newConversation, close }
+  return { state: skipHydrate(state), modifyConversation, newConversation, close }
 })
