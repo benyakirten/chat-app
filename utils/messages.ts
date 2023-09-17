@@ -36,7 +36,7 @@ export function getMessageReadList(messageTime: Date, users: Map<UserId, User>, 
   const readUsers: string[] = []
 
   for (const id in readTimes) {
-    if (readTimes[id].valueOf() > messageTime.valueOf()) {
+    if (readTimes[id].valueOf() >= messageTime.valueOf()) {
       const user = users.get(id)
       if (user) {
         readUsers.push(user.name)
