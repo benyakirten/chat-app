@@ -8,12 +8,10 @@ defineProps<{ id: ConversationId }>()
 </script>
 
 <template>
-  <BasePage>
-    <div class="messages">
-      <ChatConversationList />
-      <ChatMessageList :conversation-id="id" />
-    </div>
-  </BasePage>
+  <div class="messages">
+    <ChatConversationList />
+    <ChatMessageList :conversation-id="id" />
+  </div>
 </template>
 
 <style scoped>

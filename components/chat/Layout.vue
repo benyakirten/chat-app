@@ -5,9 +5,9 @@ const mediaStore = useMediaStore()
 </script>
 
 <template>
-  <div>
+  <BasePage>
     <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
     <ChatMobileLayout v-else :id="id" />
     <ChatConversationModal />
-  </div>
+  </BasePage>
 </template>

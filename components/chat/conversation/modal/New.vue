@@ -96,14 +96,27 @@ async function handleSubmit() {
   display: grid;
   row-gap: 4rem;
 
+  @media (width <= 800px) {
+    row-gap: 1rem;
+  }
+
   &-first {
     display: flex;
     justify-content: space-between;
     padding-right: 4rem;
 
+    @media (width <= 800px) {
+      flex-direction: column;
+      gap: 10rem;
+    }
+
     &-checkbox {
       align-self: end;
       padding-bottom: 0.6rem;
+
+      @media (width <= 800px) {
+        align-self: start;
+      }
     }
   }
 
