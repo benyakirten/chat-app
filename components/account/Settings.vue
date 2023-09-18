@@ -7,11 +7,16 @@ const magnificationOptions = Array.from({ length: 8 }, (_, idx) => ({ id: conver
 const magnificationSelected = ref(
   new Set([convertOptionToText(isNaN(props.me.textSizeMagnification) ? 10 : props.me.textSizeMagnification * 10)])
 )
-const searchMagnification = (item: { id: string }, text: string) => item.id.includes(text)
+const search = (item: { id: string }, text: string) => item.id.includes(text)
 watch(magnificationSelected, (val) => userStore.setMyOptions('textSizeMagnification', getFirstSetItem(val) ?? '100%'))
 
 const themeOptions = [{ id: 'night' }, { id: 'day' }, { id: 'auto' }]
-const themeSelected = new Set([props.me.colorTheme])
+const themeSelected = ref(new Set([capitalize(props.me.colorTheme)]))
+watch(themeSelected, (val) => userStore.setMyOptions('colorTheme', getFirstSetItem(val) ?? 'night'))
+
+const userName = ref(userStore.userMe?.name)
+const { debouncer } = useDebounce((val: string) => userStore.setMyOptions('name', val), 1200)
+watch(userName, (val) => val && debouncer(val))
 </script>
 
 <template>
@@ -24,16 +29,36 @@ const themeSelected = new Set([props.me.colorTheme])
         title="Text Magnification"
         placeholder="Set text magnification..."
         type="single"
-        :search="searchMagnification"
+        :search="search"
       >
         <template #label>
-          <div class="user-settings-magnification-label">Choose text magnification</div>
+          <div class="user-settings-label">Choose text magnification</div>
         </template>
         <template #item="{ item }">
-          <div class="user-settings-magnification-item">{{ item.id }}</div>
+          <div class="user-settings-item">{{ item.id }}</div>
         </template>
       </BaseMultiSelect>
-      <!-- Color theme -->
+      <BaseMultiSelect
+        :options="themeOptions"
+        v-model="themeSelected"
+        title="Color Theme"
+        placeholder="Set color theme..."
+        type="single"
+        :search="search"
+        :get-text="(item) => capitalize(item.id)"
+      >
+        <template #label>
+          <div class="user-settings-label">Choose color theme</div>
+        </template>
+        <template #item="{ item }">
+          <div class="user-settings-item" style="text-transform: capitalize">
+            {{ item.id }}
+          </div>
+        </template>
+      </BaseMultiSelect>
+      <GeneralInputText v-if="userName" v-model="userName" placeholder="Choose a username">
+        <template #label><div class="user-settings-label">Display Name</div> </template>
+      </GeneralInputText>
       <!-- Name -->
     </div>
     <h2>Statistics</h2>
@@ -56,16 +81,19 @@ const themeSelected = new Set([props.me.colorTheme])
 
     margin-bottom: 4rem;
 
-    &-magnification {
-      &-label {
-        font-size: var(--text-xl);
-        padding-bottom: 1rem;
-      }
+    &-label {
+      font-size: var(--text-xl);
+      padding-bottom: 1rem;
+    }
 
-      &-item {
-        color: var(--text);
-        font-size: var(--text-xl);
-      }
+    &-item {
+      color: var(--text);
+      font-size: var(--text-xl);
+
+      display: flex;
+      padding-inline: 1rem;
+      padding-block: 0.4rem;
+      align-items: center;
     }
   }
 

@@ -36,7 +36,7 @@ export interface Me {
   // TODO: Other customization options
 }
 
-export type MutableMeOption = keyof Me | 'name'
+export type MutableMeOption = keyof Omit<Me, 'id'> | 'name'
 
 // Users can be retrieved individually
 // and will probably be batch added
@@ -114,6 +114,12 @@ export const useUsersStore = defineStore('users', () => {
     if (option === 'textSizeMagnification') {
       return setTextMagnification(value)
     }
+
+    if (option === 'colorTheme') {
+      return setTextTheme(value)
+    }
+
+    return setMyName(value)
   }
 
   async function setTextMagnification(size: string) {
@@ -127,9 +133,39 @@ export const useUsersStore = defineStore('users', () => {
       return
     }
 
-    // TODO: Send POST request to save user magnification size
+    // TODO: Save text magnification to backend
     me.value.textSizeMagnification = val
   }
 
-  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers, setMyOptions }
+  async function setTextTheme(newValue: string) {
+    if (newValue !== 'auto' && newValue !== 'day' && newValue !== 'night') {
+      toastStore.add('Theme choice must either be auto, day or night', { type: 'error' })
+      return
+    }
+
+    if (!me.value) {
+      return
+    }
+
+    // TODO: Send color theme to backend
+    me.value.colorTheme = newValue
+  }
+
+  async function setMyName(name: string) {
+    if (!name || !me.value) {
+      return
+    }
+
+    const user = users.value.get(me.value.id)
+    if (!user) {
+      toastStore.add('Unable to change username', { type: 'error' })
+      return
+    }
+
+    user.name = name
+  }
+
+  const userMe = computed(() => users.value.get(me.value?.id ?? ''))
+
+  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers, setMyOptions, userMe }
 })

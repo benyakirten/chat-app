@@ -27,7 +27,6 @@ export const useTitleStore = defineStore('title', () => {
     return `${otherUsers[0].name} and ${otherUsers.length - 1} other${otherUsers.length === 2 ? '' : 's'}`
   })
 
-  // TODO: Clean this the F up
   const title = computed(() => (path: string, id?: string | string[]) => {
     let title = 'Chat App'
     const sections = path.slice(1).split('/')

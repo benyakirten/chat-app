@@ -2,7 +2,6 @@
 import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 
-// TODO: Make this work for either single select or multiselect
 const emit = defineEmits<{ (e: 'update:modelValue', value: Set<string>): void }>()
 
 const props = withDefaults(
@@ -18,8 +17,9 @@ const props = withDefaults(
     isLoading?: boolean
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
+    getText?: (item: T) => string
   }>(),
-  { iconSize: '1.2rem', maxHeight: '8rem', id: uuid(), type: 'multi', isLoading: false }
+  { iconSize: '1.2rem', maxHeight: '8rem', id: uuid(), type: 'multi', isLoading: false, getText: (item: T) => item.id }
 )
 
 const combobox = ref<HTMLElement | null>(null)
@@ -60,14 +60,19 @@ function toggleItem(id?: string) {
     return
   }
 
-  if (props.type === 'multi') {
-    props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
-    emit('update:modelValue', props.modelValue)
-    text.value = ''
-    return
-  }
+  props.type === 'multi' ? toggleMultiSelectItem(id) : toggleSingleSelectItem(id)
+}
 
-  text.value = id
+function toggleMultiSelectItem(id: string) {
+  props.modelValue.has(id) ? props.modelValue.delete(id) : props.modelValue.add(id)
+  emit('update:modelValue', props.modelValue)
+  text.value = ''
+}
+
+function toggleSingleSelectItem(id: string) {
+  const item = props.options.find((item) => item.id === id)
+  text.value = item ? props.getText(item) : ''
+
   emit('update:modelValue', new Set([id]))
   close()
 }
@@ -305,7 +310,6 @@ label {
 
     display: grid;
     grid-template-columns: 1fr 3rem;
-    height: 2rem;
 
     &[aria-selected='true'],
     &:hover {
