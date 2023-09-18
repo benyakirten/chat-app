@@ -72,7 +72,12 @@ watch(userName, (val) => val && debouncer(val))
 <style scoped>
 .user {
   height: 100%;
-  padding: 2rem;
+  padding: 8rem;
+
+  h2 {
+    text-decoration: underline;
+    margin-bottom: 2rem;
+  }
 
   &-settings {
     display: flex;
