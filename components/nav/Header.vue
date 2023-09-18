@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { UsersIcon } from '@heroicons/vue/24/solid'
 
+const route = useRoute()
 const mediaStore = useMediaStore()
 </script>
 
 <template>
   <header class="header">
-    <div class="header-users" v-if="mediaStore.state === 'mobile'">
+    <div class="header-users" v-if="mediaStore.state === 'mobile' && route.path.includes('chat')">
       <GeneralIconButton
         :icon="UsersIcon"
         title="View Conversations"

@@ -3,10 +3,10 @@ defineProps<{ title?: string }>()
 </script>
 
 <template>
-  <section class="container">
+  <div class="container">
     <h1 v-if="title">{{ title }}</h1>
     <slot></slot>
-  </section>
+  </div>
 </template>
 
 <style scoped>

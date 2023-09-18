@@ -15,10 +15,11 @@ const props = withDefaults(
     iconSize?: string
     maxHeight?: string
     type?: 'multi' | 'single'
+    isLoading?: boolean
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
   }>(),
-  { iconSize: '0.8rem', maxHeight: '8rem', id: uuid(), type: 'multi' }
+  { iconSize: '1.2rem', maxHeight: '8rem', id: uuid(), type: 'multi', isLoading: false }
 )
 
 const combobox = ref<HTMLElement | null>(null)
@@ -26,7 +27,7 @@ const listbox = ref<HTMLElement | null>(null)
 const itemRefs = ref<HTMLLIElement[]>([])
 
 const isOpen = ref(false)
-const text = ref('')
+const text = ref(props.type === 'multi' ? '' : getFirstSetItem(props.modelValue) ?? '')
 
 const { loading, invoke } = useLoading(async (value: string) => props.searchCallback?.(value))
 const { clear, debouncer } = useDebounce(async (value: string) => props.searchCallback && invoke(value))
@@ -66,6 +67,7 @@ function toggleItem(id?: string) {
     return
   }
 
+  text.value = id
   emit('update:modelValue', new Set([id]))
   close()
 }
@@ -146,7 +148,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
         {{ title }}
       </slot>
     </label>
-    <div class="combobox">
+    <div class="combobox" @keydown="handleComboboxKeydown">
       <div class="combobox-group">
         <div class="combobox-group-input">
           <input
@@ -160,12 +162,10 @@ useAddMountedEventCallback('click', backdropClickDetector)
             :aria-expanded="isOpen"
             :aria-controls="withId('listbox')"
             :aria-activedescendant="activeDescendant"
-            @keydown="handleComboboxKeydown"
             @focus="isOpen = true"
             @input="props.searchCallback && text.trim() && debouncer(text)"
-            @click="alternateOpen"
           />
-          <div v-if="loading" class="combobox-group-input-loading">
+          <div v-if="isLoading || loading" class="combobox-group-input-loading">
             <GeneralLoading size="1.6rem" />
           </div>
         </div>
@@ -192,7 +192,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
         aria-multiselectable="true"
       >
         <li class="listbox-item" v-if="shownOptions.length === 0">
-          <slot name="no-options"> No available options </slot>
+          <slot name="no-options"><div class="listbox-item-no-options">No available options</div> </slot>
         </li>
         <li
           v-for="(option, i) of shownOptions"
@@ -286,7 +286,7 @@ label {
 }
 
 .listbox {
-  z-index: 2;
+  z-index: var(--z-high);
   position: absolute;
   width: 100%;
   top: calc(100% + 0.2rem);
@@ -312,6 +312,20 @@ label {
       background-color: var(--bg-alt4);
     }
 
+    &-no-options {
+      display: flex;
+      align-items: center;
+      padding-left: 0.5rem;
+
+      cursor: default;
+
+      font-size: var(--text-xl);
+
+      &:hover {
+        background-color: var(--bg-primary);
+      }
+    }
+
     &-left {
       grid-column: 1 / 2;
     }
@@ -326,6 +340,8 @@ label {
       &-icon {
         height: v-bind(iconSize);
         width: v-bind(iconSize);
+        display: grid;
+        place-items: center;
       }
     }
   }

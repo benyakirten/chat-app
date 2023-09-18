@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useMediaStore } from '~/stores/media'
-
 const recentsStore = useRecentsStore()
 const messageStore = useMessageStore()
 const titleStore = useTitleStore()
@@ -20,7 +18,7 @@ function getConversationFromRoute(route: string) {
 
 function getTitle(route: string) {
   const segments = route.split('/')
-  const id = segments.at(segments.length - 1)
+  const id = segments.length > 2 ? segments.at(segments.length - 1) : undefined
   return titleStore.title(route, id)
 }
 
@@ -33,7 +31,7 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
   </Transition>
   <Transition name="slide-in">
     <nav id="nav" v-if="layoutStore.sidebarOpen">
-      <NavSection height="8rem" width="100%" group="chat" :z-index="5" background-color="var(--bg-alt1)">
+      <NavSection height="8rem" width="100%" group="chat" :z-index="2" background-color="var(--bg-alt1)">
         <BaseLink to="/chat">All Chats</BaseLink>
         <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed chats.</div>
         <ul v-else>
@@ -44,7 +42,7 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
           </li>
         </ul>
       </NavSection>
-      <NavSection height="4rem" width="90%" group="account" :z-index="3" background-color="var(--bg-alt3)">
+      <NavSection height="4rem" width="90%" group="account" :z-index="1" background-color="var(--bg-alt3)">
         <BaseLink to="/account">Settings</BaseLink>
         <div class="nav-account">
           <div>Name: {{ me?.name ?? 'Unknown User' }}</div>
@@ -85,7 +83,7 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
 
 nav {
   position: fixed;
-  z-index: 2;
+  z-index: var(--z-above);
   top: 0;
   left: 0;
 

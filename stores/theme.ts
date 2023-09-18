@@ -44,18 +44,19 @@ const defaultThemes: ThemeStoreState['themes'] = {
 
 export const useThemeStore = defineStore('theme', () => {
   const themes = ref(defaultThemes)
-  const active = ref<ThemeStoreState['active']>('night')
+  const userStore = useUsersStore()
 
-  function setTheme(theme: ThemeStoreState['active']) {
-    active.value = theme
-  }
+  const themeQuery = globalThis.matchMedia?.('(prefers-color-scheme: light)')
+  const computerTheme = ref<ThemeStoreState['active']>(themeQuery?.matches ? 'day' : 'night')
+  themeQuery?.addEventListener('change', (e) => (computerTheme.value = e.matches ? 'day' : 'night'))
+  const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
 
-  const activeTheme = computed(() => themes.value[active.value])
-  const activeThemeVariables = computed(() =>
-    Object.entries(themes.value[active.value]).reduce<string>((acc, [key, value]) => {
+  const activeThemeVariables = computed(() => {
+    const theme = active.value === 'auto' ? computerTheme.value : active.value
+    return Object.entries(themes.value[theme]).reduce<string>((acc, [key, value]) => {
       return `${acc} --${camelToKebabCase(key)}: ${value};`
     }, '')
-  )
+  })
 
-  return { themes, active, setTheme, activeTheme, activeThemeVariables }
+  return { themes, active, activeThemeVariables, computerTheme, themeQuery }
 })

@@ -20,7 +20,7 @@ const ariaLabel = computed(() => `${layoutStore.sidebarOpen ? 'Hide' : 'Show'} S
 <style scoped>
 .menu {
   cursor: pointer;
-  z-index: 2;
+  z-index: var(--z-high);
 
   padding: 1rem;
   height: 1rem;

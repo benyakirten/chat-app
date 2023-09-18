@@ -30,12 +30,13 @@ export interface User {
 
 export interface Me {
   id: UserId
-  // Value between 0-2 where text will be displayed at (text size) * magnification
   textSizeMagnification: number
-  // TODO: Other accessibility options - minor preferences
+  // TODO: Other accessibility options
   colorTheme: 'day' | 'night' | 'auto'
   // TODO: Other customization options
 }
+
+export type MutableMeOption = keyof Me | 'name'
 
 // Users can be retrieved individually
 // and will probably be batch added
@@ -104,5 +105,31 @@ export const useUsersStore = defineStore('users', () => {
     return userList
   })
 
-  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers }
+  async function setMyOptions(option: MutableMeOption, value: string) {
+    if (!me.value) {
+      toastStore.add('You must be logged in to change your options', { type: 'error' })
+      return
+    }
+
+    if (option === 'textSizeMagnification') {
+      return setTextMagnification(value)
+    }
+  }
+
+  async function setTextMagnification(size: string) {
+    const val = parseInt(size) / 100
+    if (isNaN(val)) {
+      toastStore.add('Unable to change text size', { type: 'error' })
+      return
+    }
+
+    if (!me.value) {
+      return
+    }
+
+    // TODO: Send POST request to save user magnification size
+    me.value.textSizeMagnification = val
+  }
+
+  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers, setMyOptions }
 })

@@ -2,20 +2,16 @@
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
 const route = useRoute()
+const userStore = useUsersStore()
 
 const title = computed(() => titleStore.title(route.path, route.params['id']))
-
-useHead({
-  meta: [{ name: 'description', content: title }],
-  bodyAttrs: {
-    style: themeStore.activeThemeVariables,
-  },
-})
+const textMagnification = computed(() => userStore.me?.textSizeMagnification ?? 1)
 </script>
 
 <template>
   <Head>
     <Title>{{ title }}</Title>
+    <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${textMagnification}`"></Body>
   </Head>
   <NavHeader />
   <NavTheSidebar />
@@ -44,6 +40,18 @@ body {
     var(--bg-alt5) 95%
   );
   color: var(--text);
+
+  --text-xxl: calc(var(--size-xxl) * var(--magnification, 1));
+  --text-xl: calc(var(--size-xl) * var(--magnification, 1));
+  --text-lg: calc(var(--size-lg) * var(--magnification, 1));
+  --text-md: calc(var(--size-md) * var(--magnification, 1));
+  --text-sm: calc(var(--size-sm) * var(--magnification, 1));
+
+  font-size: var(--text-lg);
+}
+
+main {
+  min-height: 100vh;
 }
 
 .page-leave-active,
