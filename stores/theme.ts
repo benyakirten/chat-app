@@ -50,13 +50,14 @@ export const useThemeStore = defineStore('theme', () => {
   const computerTheme = ref<ThemeStoreState['active']>(themeQuery?.matches ? 'day' : 'night')
   themeQuery?.addEventListener('change', (e) => (computerTheme.value = e.matches ? 'day' : 'night'))
   const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
+  const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value))
+  const activeTheme = computed(() => themes.value[activeThemeName.value])
 
   const activeThemeVariables = computed(() => {
-    const theme = active.value === 'auto' ? computerTheme.value : active.value
-    return Object.entries(themes.value[theme]).reduce<string>((acc, [key, value]) => {
+    return Object.entries(themes.value[activeThemeName.value]).reduce<string>((acc, [key, value]) => {
       return `${acc} --${camelToKebabCase(key)}: ${value};`
     }, '')
   })
 
-  return { themes, active, activeThemeVariables, computerTheme, themeQuery }
+  return { themes, active, activeThemeVariables, computerTheme, themeQuery, activeThemeName, activeTheme }
 })
