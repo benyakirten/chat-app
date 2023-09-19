@@ -17,7 +17,6 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 
 <template>
   <li class="message-group" :class="{ right: isMine }">
-    <!-- TODO: Figure out why this transition group isn't working -->
     <ul class="messages">
       <TransitionGroup :name="transitionGroupName">
         <ChatMessageChunkItem

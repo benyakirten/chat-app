@@ -6,24 +6,29 @@ const PROP_USERS = new Map<UserId, User>()
 PROP_USERS.set('u1', {
   name: 'Cool Person',
   id: 'u1',
+  online: true,
 })
 PROP_USERS.set('u2', {
   name: 'Completed User',
   id: 'u2',
+  online: false,
 })
 PROP_USERS.set('u3', {
   name: 'Pending User',
   id: 'u3',
+  online: true,
 })
 PROP_USERS.set('u4', {
   name: 'Failed User',
   id: 'u4',
+  online: true,
 })
 
 // TODO: Add details for a user
 export interface User {
   id: UserId
   name: string
+  online: boolean
   // This may be a reach to add user images
   image?: string
 }

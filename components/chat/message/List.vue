@@ -13,19 +13,37 @@ const conversation = computed(() => messageStore.conversation(props.conversation
 const messages = computed(() => conversation.value?.messages)
 const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value, userStore.me?.id) : {}))
+const someoneIsTyping = computed(() => {
+  if (!conversation.value) {
+    return false
+  }
+  for (const [id, { state }] of conversation.value.members) {
+    if (id !== userStore.me?.id && state === 'typing') {
+      return true
+    }
+  }
+
+  return false
+})
+
+watch(someoneIsTyping, (val) => console.log(val), { immediate: true })
 
 watchEffect(() => {
   if (!messages.value) {
     return
   }
 
+  // TODO: Consider:
+  // Should we check if the list is not already at scroll bottom to not scroll down?
   if (messages.value.size > lastMessageSize.value) {
     lastMessageSize.value = messages.value.size
-    // TODO: Add a way to scroll to an individual message
     scrollToListBottom()
   }
 })
 
+// We could do this or we could have the last element scroll into view when it's mounted
+// if there isn't already a message that's
+// TODO: Consider which is better - probably theother method
 async function scrollToListBottom() {
   await nextTick()
   if (!list.value) {
@@ -38,7 +56,6 @@ async function scrollToListBottom() {
   })
 }
 
-// TODO: Add the ability to scroll to a particular message - may require completely different approach
 onMounted(() => {
   if (typeof route.query['view'] !== 'string') {
     scrollToListBottom()
@@ -68,6 +85,9 @@ onUnmounted(() => {
         :conversation-id="conversationId"
         :viewed-message-id="viewedMessageId"
       />
+      <li v-if="someoneIsTyping">
+        <GeneralTypingIndicator />
+      </li>
     </ul>
     <ChatMessageNew v-if="conversationId" :conversation-id="conversationId" />
   </div>
@@ -75,6 +95,15 @@ onUnmounted(() => {
 
 <style scoped>
 .container {
+  --item-bg: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--bg-primary) 0%,
+    var(--bg-alt3) 15%,
+    var(--base) 75%,
+    var(--bg-alt3) 85%
+  );
+  --item-box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
+
   display: grid;
   padding: 1rem 0;
   height: inherit;
@@ -92,6 +121,7 @@ onUnmounted(() => {
     gap: 1rem;
     align-items: flex-start;
     padding: 0.5rem 1.5rem;
+    padding-bottom: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
   }

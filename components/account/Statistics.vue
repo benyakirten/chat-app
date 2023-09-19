@@ -6,6 +6,8 @@ const props = defineProps<{ me: Me; profile: User }>()
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 
+Chart.defaults.font.family = 'Roboto'
+
 const canvas = ref<HTMLCanvasElement | null>(null)
 let chart: Chart<any, any, any> | null = null
 

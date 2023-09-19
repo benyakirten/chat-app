@@ -284,7 +284,7 @@ const conversation1message22: ConversationMessage = {
 const conversation1: Conversation = {
   members: new Map([
     ['u1', { state: 'idle', lastRead: new Date() }],
-    ['u2', { state: 'idle', lastRead: new Date() }],
+    ['u2', { state: 'typing', lastRead: new Date() }],
   ]),
   id: 'c1',
   messages: new Map([
@@ -319,10 +319,6 @@ export interface UserConversationState {
   lastRead: Date
 }
 
-// TODO: Figure out how the typing indicator will work
-// Is it by person or one for anyone else typing in a group conversation?
-// WhatsApp shows only 1 writing indicator in a group conversation but shows
-// who is writing - 1:1 conversation doesn't matter
 export interface Conversation {
   id: ConversationId
   members: Map<UserId, UserConversationState>

@@ -73,14 +73,8 @@ const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' 
   row-gap: 0.5rem;
   place-items: center;
 
-  background-image: conic-gradient(
-    from 0deg at 50% 50%,
-    var(--bg-primary) 0%,
-    var(--bg-alt3) 15%,
-    var(--base) 75%,
-    var(--bg-alt3) 85%
-  );
-  box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
+  background-image: var(--item-bg);
+  box-shadow: var(--item-box-shadow);
   border: v-bind(border);
 
   padding: 0.75rem;
