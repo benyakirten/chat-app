@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid'
+import { TooltipDirection } from '~/utils/types'
 
 const props = withDefaults(
   defineProps<{
-    direction?: 'top' | 'bottom' | 'left' | 'right'
+    direction?: TooltipDirection
     debounceTimeout?: number
     id?: string
     disableClick?: boolean

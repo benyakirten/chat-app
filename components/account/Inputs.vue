@@ -6,6 +6,7 @@ defineProps<{ me: Me; profile: User }>()
   <AccountInputsMagnification :magnification="me.textSizeMagnification" />
   <AccountInputsTheme :theme="me.colorTheme" />
   <AccountInputsUserName :name="profile.name" />
+  <AccountInputsHidden :hidden="me.hidden" />
 </template>
 
 <style scoped>

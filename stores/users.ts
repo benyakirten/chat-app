@@ -40,10 +40,11 @@ export interface Me {
   colorTheme: 'day' | 'night' | 'auto'
   // TODO: Other customization options
   hidden: boolean
+  // TODO: Consider how a block list will work
   block: Set<string>
 }
 
-export type MutableMeOption = keyof Omit<Me, 'id'> | 'name'
+export type MutableOptions = Omit<Me, 'id'>
 
 // Users can be retrieved individually
 // and will probably be batch added
@@ -114,54 +115,26 @@ export const useUsersStore = defineStore('users', () => {
     return userList
   })
 
-  async function setMyOptions(option: MutableMeOption, value: string) {
+  async function setAccountOption<T extends keyof MutableOptions>(option: T, value: MutableOptions[T]) {
     if (!me.value) {
-      toastStore.add('You must be logged in to change your options', { type: 'error' })
+      toastStore.add('Unable to change user settings when not logged in', { type: 'error' })
       return
     }
 
-    if (option === 'textSizeMagnification') {
-      return setTextMagnification(value)
-    }
-
-    if (option === 'colorTheme') {
-      return setTextTheme(value)
-    }
-
-    return setMyName(value)
+    // Not sure why the type isn't narrowing
+    me.value[option] = value as any
+    // TODO: Transmit details
   }
 
-  async function setTextMagnification(size: string) {
-    const val = parseInt(size) / 100
-    if (isNaN(val)) {
-      toastStore.add('Unable to change text size', { type: 'error' })
+  async function setUserName(name: string) {
+    // TODO: Add restrictions on usernames - when we have authentication we will add this
+
+    if (!name) {
+      toastStore.add('Unable to set username to blank strings', { type: 'error' })
       return
     }
 
     if (!me.value) {
-      return
-    }
-
-    // TODO: Save text magnification to backend
-    me.value.textSizeMagnification = val
-  }
-
-  async function setTextTheme(newValue: string) {
-    if (newValue !== 'auto' && newValue !== 'day' && newValue !== 'night') {
-      toastStore.add('Theme choice must either be auto, day or night', { type: 'error' })
-      return
-    }
-
-    if (!me.value) {
-      return
-    }
-
-    // TODO: Send color theme to backend
-    me.value.colorTheme = newValue
-  }
-
-  async function setMyName(name: string) {
-    if (!name || !me.value) {
       return
     }
 
@@ -198,8 +171,9 @@ export const useUsersStore = defineStore('users', () => {
     updateUser,
     isMine,
     otherUsers,
-    setMyOptions,
     userMe,
     allOtherUsers,
+    setAccountOption,
+    setUserName,
   }
 })

@@ -46,7 +46,6 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
         <BaseLink to="/account">Settings</BaseLink>
         <div class="nav-account">
           <div>Name: {{ me?.name ?? 'Unknown User' }}</div>
-          <!-- Other data: number of private conversations, group conversations, interests?, etc. -->
         </div>
       </NavSection>
       <div class="recent">
@@ -71,7 +70,7 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
   top: 0;
   left: 0;
 
-  z-index: 1;
+  z-index: var(--z-above);
   opacity: 1;
 
   width: 100vw;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FunctionalComponent, HTMLAttributes, VNodeProps } from 'nuxt/dist/app/compat/capi'
+import { TooltipDirection } from '~/utils/types'
 
 withDefaults(
   defineProps<{
@@ -10,7 +11,7 @@ withDefaults(
     disabled?: boolean
     color?: string
     hoverColor?: string
-    tooltipDirection?: 'top' | 'bottom' | 'left' | 'right'
+    tooltipDirection?: TooltipDirection
   }>(),
   {
     type: 'button',

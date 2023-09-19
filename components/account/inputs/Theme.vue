@@ -4,7 +4,9 @@ const userStore = useUsersStore()
 
 const themeOptions = [{ id: 'night' }, { id: 'day' }, { id: 'auto' }]
 const themeSelected = ref(new Set([capitalize(props.theme)]))
-watch(themeSelected, (val) => userStore.setMyOptions('colorTheme', getFirstSetItem(val) ?? 'night'))
+watch(themeSelected, (val) =>
+  userStore.setAccountOption('colorTheme', (getFirstSetItem(val) as MutableOptions['colorTheme']) ?? 'night')
+)
 </script>
 
 <template>

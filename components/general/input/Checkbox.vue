@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ modelValue: boolean; disabled?: boolean }>(), { disabled: false })
+const props = withDefaults(defineProps<{ modelValue: boolean; disabled?: boolean }>(), {
+  disabled: false,
+})
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
 function handleUpdate(e: Event) {
-  if (!(e.target instanceof HTMLInputElement)) {
+  if (!(e.target instanceof HTMLInputElement) || props.disabled) {
     return
   }
 
@@ -13,7 +15,9 @@ function handleUpdate(e: Event) {
 
 <template>
   <label class="checkbox" :class="{ disabled }">
-    <slot></slot>
+    <span class="checkbox-label">
+      <slot></slot>
+    </span>
     <input type="checkbox" class="checkbox-input" :checked="modelValue" @input="handleUpdate" :disabled="disabled" />
   </label>
 </template>
@@ -27,8 +31,16 @@ function handleUpdate(e: Event) {
   position: relative;
   cursor: pointer;
 
+  &.vertical {
+    flex-direction: column;
+  }
+
   &.disabled {
     cursor: default;
+  }
+
+  &-label {
+    margin: 2px 0;
   }
 
   &-input {
@@ -38,8 +50,6 @@ function handleUpdate(e: Event) {
 
     position: relative;
     cursor: pointer;
-
-    align-self: start;
 
     width: 2rem;
     height: 2rem;

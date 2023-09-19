@@ -42,7 +42,6 @@ function handleInput(e: Event) {
 
     position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
 
     &-input {
