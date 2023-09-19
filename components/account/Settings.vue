@@ -4,14 +4,12 @@ const props = defineProps<{ me: Me; profile: User }>()
 
 <template>
   <div class="user">
-    <h2>Change Settings</h2>
-    <div class="user-settings">
+    <AccountSection title="Change Settings">
       <AccountInputs v-bind="props" />
-    </div>
-    <h2>Statistics</h2>
-    <div class="user-statistics">
+    </AccountSection>
+    <AccountSection title="Statistics">
       <AccountStatistics v-bind="props" />
-    </div>
+    </AccountSection>
   </div>
 </template>
 
@@ -20,22 +18,7 @@ const props = defineProps<{ me: Me; profile: User }>()
   height: 100%;
   padding: 8rem;
 
-  h2 {
-    text-decoration: underline;
-    padding-bottom: 2px;
-    margin-bottom: 2rem;
-  }
-
-  &-settings {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 4rem;
-  }
-
-  &-statistics {
-    /*  */
-  }
+  display: grid;
+  row-gap: 4rem;
 }
 </style>

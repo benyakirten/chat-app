@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/24/solid'
-import { useModalStore } from '~/stores/modal'
 
 const props = defineProps<{ open: boolean; initialFocusCallback?: () => void }>()
 defineOptions({ inheritAttrs: false })

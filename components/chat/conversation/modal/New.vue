@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
-import { useModalStore } from '~/stores/modal'
 
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
   if (isPrivate) {
@@ -59,10 +58,10 @@ async function handleSubmit() {
 <template>
   <form @submit.prevent="handleSubmit" class="new">
     <div class="new-first">
-      <ChatConversationModalUserMultiSelect
+      <GeneralInputUserMultiSelect
         :selected="selected"
         @setSelected="selected = $event"
-        :options="[...userStore.users.values()].filter((user) => user.id !== userStore.me?.id)"
+        :options="userStore.allOtherUsers"
       />
       <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
         <GeneralTooltip direction="left">

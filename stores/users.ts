@@ -40,6 +40,7 @@ export interface Me {
   colorTheme: 'day' | 'night' | 'auto'
   // TODO: Other customization options
   hidden: boolean
+  block: Set<string>
 }
 
 export type MutableMeOption = keyof Omit<Me, 'id'> | 'name'
@@ -61,6 +62,7 @@ export const useUsersStore = defineStore('users', () => {
     colorTheme: 'night',
     textSizeMagnification: 1,
     hidden: false,
+    block: new Set(),
   })
 
   function addUser(user: User) {
@@ -174,5 +176,30 @@ export const useUsersStore = defineStore('users', () => {
 
   const userMe = computed(() => users.value.get(me.value?.id ?? ''))
 
-  return { users, me, getOtherUsers, addUser, batchAddUsers, updateUser, isMine, otherUsers, setMyOptions, userMe }
+  const allOtherUsers = computed(() => {
+    const otherUsers: User[] = []
+    for (const [id, user] of users.value) {
+      if (id === me.value?.id) {
+        continue
+      }
+
+      otherUsers.push(user)
+    }
+
+    return otherUsers
+  })
+
+  return {
+    users,
+    me,
+    getOtherUsers,
+    addUser,
+    batchAddUsers,
+    updateUser,
+    isMine,
+    otherUsers,
+    setMyOptions,
+    userMe,
+    allOtherUsers,
+  }
 })

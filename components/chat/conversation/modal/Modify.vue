@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon, PowerIcon } from '@heroicons/vue/24/solid'
-import { useModalStore } from '~/stores/modal'
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
@@ -84,7 +83,7 @@ const userOptions = computed(() =>
               {{ userStore.users.get(id)?.name ?? 'Unknown User' }}
             </span>
           </div>
-          <ChatConversationModalUserMultiSelect
+          <GeneralInputUserMultiSelect
             :options="userOptions"
             :selected="newUsers"
             :is-new-conversation="false"
