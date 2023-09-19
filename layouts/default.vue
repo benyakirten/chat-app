@@ -30,7 +30,7 @@ body {
   --bg-alt5: color-mix(in srgb, var(--bg-primary) 79%, var(--mix));
   --box-shadow-color: color-mix(in srgb, var(--accent) 25%, transparent);
 
-  background: linear-gradient(
+  --body-bg: linear-gradient(
     to bottom right,
     var(--bg-alt5) 5%,
     var(--bg-primary) 10%,
@@ -39,6 +39,8 @@ body {
     var(--bg-primary) 65%,
     var(--bg-alt5) 95%
   );
+
+  background: var(--body-bg);
   color: var(--text);
 
   --text-xxl: calc(var(--size-xxl) * var(--magnification, 1));

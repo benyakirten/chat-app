@@ -67,7 +67,7 @@ async function handleSubmit() {
       <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
         <GeneralTooltip direction="left">
           <template #content>Once made, conversations cannot be converted between group and private. </template>
-          Private Conversation
+          <span class="new-first-checkbox-label">Private Conversation</span>
         </GeneralTooltip>
       </GeneralInputCheckbox>
     </div>
@@ -116,6 +116,10 @@ async function handleSubmit() {
 
       @media (width <= 800px) {
         align-self: start;
+      }
+
+      &-label {
+        width: max-content;
       }
     }
   }

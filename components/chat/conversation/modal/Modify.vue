@@ -154,6 +154,7 @@ const userOptions = computed(() =>
           align-items: center;
           flex-wrap: wrap;
           gap: 0.5rem;
+          margin-bottom: 1rem;
         }
       }
 

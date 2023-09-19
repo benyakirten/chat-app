@@ -2,23 +2,30 @@
 import { UserIcon } from '@heroicons/vue/24/solid'
 
 const userStore = useUsersStore()
-const props = withDefaults(defineProps<{ userId: UserId; size?: string }>(), {
-  size: '1.5rem',
+const props = withDefaults(defineProps<{ userId: UserId; size?: string; showOnlineIndicator?: boolean }>(), {
+  size: '1.8rem',
+  showOnlineIndicator: false,
 })
 const user = computed(() => userStore.users.get(props.userId))
+const name = computed(() => user.value?.name ?? 'Unknown User')
 </script>
 
 <template>
-  <!-- TODO: What will the avatar show in a group conversation? -->
-  <!-- TODO: Update the no image found with a better thing - SVG at the least -->
-  <!-- TODO: Work on CSS -->
   <div class="avatar">
-    <img v-if="user?.image" :src="user.image" :alt="user.name" />
-    <UserIcon v-else :aria-label="user?.name ?? 'Unknown User'" />
+    <img v-if="user?.image" :src="user.image" :alt="name" />
+    <UserIcon v-else :aria-label="name" />
+    <GeneralTooltip class="test" v-if="showOnlineIndicator">
+      <template #content> Status: {{ user?.online ? 'Online' : 'Offline' }} </template>
+      <div class="avatar-indicator" :class="{ online: user?.online }"></div>
+    </GeneralTooltip>
   </div>
 </template>
 
 <style scoped>
+.test {
+  width: 100%;
+  height: 100%;
+}
 .avatar {
   position: relative;
   align-self: center;
@@ -28,11 +35,31 @@ const user = computed(() => userStore.users.get(props.userId))
   width: v-bind(size);
   height: v-bind(size);
 
-  border-radius: 9999px;
+  border-radius: var(--rounded);
   border: 1px solid var(--text);
 
-  span {
-    font-size: 0.8rem;
+  &-indicator {
+    --indicator-bg: var(--error-bg);
+    --outside-color: color-mix(in srgb, var(--indicator-bg) 50%, var(--white));
+    --inside-color: color-mix(in srgb, var(--indicator-bg) 80%, var(--black));
+
+    --indicator-size: max(0.6rem, calc(v-bind(size) / 4));
+    --indicator-offset: calc(var(--indicator-size) / -8);
+
+    position: absolute;
+    right: var(--indicator-offset);
+    bottom: var(--indicator-offset);
+
+    border-radius: var(--rounded);
+
+    height: var(--indicator-size);
+    width: var(--indicator-size);
+
+    background: radial-gradient(circle at 30% 30%, var(--inside-color), var(--indicator-bg), var(--outside-color));
+
+    &.online {
+      --indicator-bg: var(--success-bg);
+    }
   }
 }
 </style>

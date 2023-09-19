@@ -13,13 +13,14 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
     <h4 class="current-users-title">{{ isNewConversation ? 'Selected' : 'New' }} users:</h4>
     <TransitionGroup name="selected-users">
       <span class="current-users-user" v-for="userId of selected" :key="userId">
+        <GeneralAvatar :user-id="userId" :show-online-indicator="true" />
         <span class="current-users-user-name">{{ getUserName(userId) }}</span>
         <GeneralIconButton
           :icon="XCircleIcon"
-          title="Remove Users"
+          title="Remove User"
           type="button"
           @click="$emit('delete', userId)"
-          size="1.2rem"
+          size="1.4rem"
         />
       </span>
     </TransitionGroup>
@@ -31,11 +32,11 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  overflow: auto;
-  height: 2.5rem;
   gap: 0.5rem;
 
-  overflow-x: hidden;
+  min-height: 3.2rem;
+
+  margin-bottom: 1rem;
 
   &-title {
     font-weight: normal;
@@ -49,15 +50,8 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
     padding: 0.5rem 1rem;
     border-radius: 2px;
 
-    background: linear-gradient(to top right, var(--bg-alt1), var(--bg-alt5));
-    background-size: 200%;
-    background-position: left;
-
-    transition: all 300ms ease-out;
-
-    &:hover {
-      background-position: right;
-    }
+    background: var(--bg-alt4);
+    border: 2px solid var(--neutral);
   }
 }
 /* TODO: Make this style unique */

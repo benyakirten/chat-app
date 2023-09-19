@@ -25,7 +25,7 @@ defineProps<{ size: string }>()
     height: calc(4 / 5 * v-bind(size));
     margin: calc(1 / 10 * v-bind(size));
     border: calc(1 / 10 * v-bind(size)) solid var(--text);
-    border-radius: 9999px;
+    border-radius: var(--rounded);
     animation: rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: var(--text) transparent transparent transparent;
 

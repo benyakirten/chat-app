@@ -35,7 +35,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
       </TransitionGroup>
     </ul>
     <div class="avatar">
-      <GeneralAvatar :user-id="userId" />
+      <GeneralAvatar :user-id="userId" size="2.4rem" />
     </div>
   </li>
 </template>

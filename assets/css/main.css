@@ -20,6 +20,8 @@ html {
   --white: #fff;
   --black: #000;
 
+  --rounded: 9999px;
+
   --size-xxl: 1.8rem;
   --size-xl: 1.4rem;
   --size-lg: 1.2rem;

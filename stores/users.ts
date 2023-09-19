@@ -39,6 +39,7 @@ export interface Me {
   // TODO: Other accessibility options
   colorTheme: 'day' | 'night' | 'auto'
   // TODO: Other customization options
+  hidden: boolean
 }
 
 export type MutableMeOption = keyof Omit<Me, 'id'> | 'name'
@@ -59,6 +60,7 @@ export const useUsersStore = defineStore('users', () => {
     id: 'u1',
     colorTheme: 'night',
     textSizeMagnification: 1,
+    hidden: false,
   })
 
   function addUser(user: User) {

@@ -10,7 +10,6 @@ const props = withDefaults(
   }>(),
   { direction: 'top', debounceTimeout: 800, id: uuid(), disableClick: false }
 )
-defineOptions({ inheritAttrs: false })
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
 const { clear, debouncer } = useDebounce(() => (tooltipState.value = 'hovered'), props.debounceTimeout)
@@ -60,7 +59,6 @@ useAddMountedEventCallback('keydown', tooltipListener)
         v-if="tooltipState !== 'hidden'"
         class="tooltip-content"
         :class="tooltipDirectionClass"
-        v-bind="$attrs"
       >
         <slot :state="tooltipState" name="content"></slot>
       </div>
@@ -168,13 +166,11 @@ useAddMountedEventCallback('keydown', tooltipListener)
 }
 
 .tooltip-enter-active {
-  transition: all 50ms ease;
-  transform-origin: center;
+  transition: all 200ms ease;
 }
 
 .tooltip-leave-active {
   transition: all 100ms ease 50ms;
-  transform-origin: center;
 }
 
 .tooltip-enter-from,

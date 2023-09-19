@@ -39,6 +39,8 @@ function handleUpdate(e: Event) {
     position: relative;
     cursor: pointer;
 
+    align-self: start;
+
     width: 2rem;
     height: 2rem;
     border: 1px solid var(--highlight);
