@@ -43,6 +43,8 @@ onMounted(() => {
     type: 'doughnut',
     options: {
       color: themeStore.activeTheme.text,
+      responsive: true,
+      maintainAspectRatio: false,
     },
     data: {
       labels: ['My average message length', "Others' average message length"],

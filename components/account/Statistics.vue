@@ -52,7 +52,32 @@ const otherMessages = computed(() => messages.value.filter((message) => message.
 </script>
 
 <template>
-  <AccountChartsGroupTypes v-bind="conversationRatio" />
-  <AccountChartsPeopleByGroupTypes v-bind="peopleByGroups" />
-  <AccountChartsMessageLength :my-messages="myMessages" :other-messages="otherMessages" />
+  <div class="row">
+    <div class="row-block">
+      <AccountChartsGroupTypes v-bind="conversationRatio" />
+    </div>
+    <div class="row-block">
+      <AccountChartsPeopleByGroupTypes v-bind="peopleByGroups" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="row-block">
+      <AccountChartsMessageLength :my-messages="myMessages" :other-messages="otherMessages" />
+    </div>
+  </div>
 </template>
+
+<style scoped>
+/* For some reason, the charts do not do well with flex boxes or grid */
+.row {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+
+  &-block {
+    flex: 1;
+    max-width: 50%;
+  }
+}
+</style>

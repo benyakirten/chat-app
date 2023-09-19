@@ -3,21 +3,20 @@ const props = defineProps<{ me: Me; profile: User }>()
 </script>
 
 <template>
-  <div class="user">
+  <div class="user-settings">
     <AccountSection title="Change Settings">
       <AccountInputs v-bind="props" />
     </AccountSection>
-    <!-- TODO: Get this to work without the occasional error -->
+    <!-- TODO: Figure out why this is erroring -->
     <!-- <ClientOnly>
-      <AccountSection title="Statistics">
-        <AccountStatistics v-bind="props" />
-      </AccountSection>
+      <AccountSection title="Statistics" />
+      <AccountStatistics v-bind="props" />
     </ClientOnly> -->
   </div>
 </template>
 
 <style scoped>
-.user {
+.user-settings {
   height: 100%;
   overflow: auto;
   padding: 8rem;

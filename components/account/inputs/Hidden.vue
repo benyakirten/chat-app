@@ -11,10 +11,7 @@ const isHidden = ref(props.hidden)
     :model-value="isHidden"
     @update:model-value="userStore.setAccountOption('hidden', $event)"
   >
-    <GeneralTooltip direction="right">
-      <template #content>Do not let other users know when you log in.</template>
-      <div>Hidden:</div>
-    </GeneralTooltip>
+    Do not let other users know when you log in:
   </GeneralInputCheckbox>
 </template>
 

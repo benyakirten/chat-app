@@ -47,6 +47,8 @@ onMounted(() => {
     type: 'bar',
     options: {
       color: themeStore.activeTheme.text,
+      responsive: true,
+      maintainAspectRatio: false,
     },
     data: {
       labels: ['Private', 'Group', 'In both', 'In one'],

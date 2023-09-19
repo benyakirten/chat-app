@@ -20,8 +20,7 @@ defineProps<{ title: string }>()
 
 .group {
   display: grid;
-  /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 4rem;
 
   @media (width < 600px) {
