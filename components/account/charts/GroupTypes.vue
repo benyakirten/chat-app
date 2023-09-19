@@ -48,6 +48,10 @@ onMounted(() => {
     },
   })
 })
+
+onUnmounted(() => {
+  chart.destroy()
+})
 </script>
 
 <template>

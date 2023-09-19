@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FunctionalComponent, HTMLAttributes, VNodeProps } from 'nuxt/dist/app/compat/capi'
-import { TooltipDirection } from '~/utils/types'
 
 withDefaults(
   defineProps<{

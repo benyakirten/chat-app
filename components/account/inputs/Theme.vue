@@ -20,7 +20,7 @@ watch(themeSelected, (val) =>
     :get-text="(item) => capitalize(item.id)"
   >
     <template #label>
-      <AccountInputsLabel>Text Magnification</AccountInputsLabel>
+      <AccountInputsLabel>Color theme</AccountInputsLabel>
     </template>
     <template #item="{ item }">
       <AccountInputsLabel>{{ item.id }}</AccountInputsLabel>

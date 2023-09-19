@@ -12,6 +12,7 @@ defineProps<{ title?: string }>()
 <style scoped>
 .page {
   height: 100%;
+  overflow: auto;
 
   h1 {
     padding-block: 1rem;

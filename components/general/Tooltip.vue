@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid'
-import { TooltipDirection } from '~/utils/types'
 
 const props = withDefaults(
   defineProps<{

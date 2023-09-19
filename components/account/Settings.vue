@@ -7,15 +7,19 @@ const props = defineProps<{ me: Me; profile: User }>()
     <AccountSection title="Change Settings">
       <AccountInputs v-bind="props" />
     </AccountSection>
-    <AccountSection title="Statistics">
-      <AccountStatistics v-bind="props" />
-    </AccountSection>
+    <!-- TODO: Get this to work without the occasional error -->
+    <!-- <ClientOnly>
+      <AccountSection title="Statistics">
+        <AccountStatistics v-bind="props" />
+      </AccountSection>
+    </ClientOnly> -->
   </div>
 </template>
 
 <style scoped>
 .user {
   height: 100%;
+  overflow: auto;
   padding: 8rem;
 
   display: grid;
