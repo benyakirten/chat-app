@@ -26,8 +26,6 @@ const someoneIsTyping = computed(() => {
   return false
 })
 
-watch(someoneIsTyping, (val) => console.log(val), { immediate: true })
-
 watchEffect(() => {
   if (!messages.value) {
     return
@@ -68,7 +66,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="message-chunk-list">
     <p class="no-conversation" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
@@ -94,7 +92,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.container {
+.message-chunk-list {
   --item-bg: conic-gradient(
     from 0deg at 50% 50%,
     var(--bg-primary) 0%,

@@ -4,9 +4,9 @@ const modalStore = useModalStore()
 </script>
 
 <template>
-  <div class="container">
+  <div class="conversation-list">
     <!-- TODO (future): Add filters -->
-    <div class="container-conversations">
+    <div class="conversation-list-conversations">
       <div v-if="messageStore.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
       <!--
         TODO: Virtualize the list - either hand rolled or use a library
@@ -21,12 +21,14 @@ const modalStore = useModalStore()
         />
       </ul>
     </div>
-    <BaseButton class="container-new" @click="modalStore.newConversation()">Start a new conversation</BaseButton>
+    <BaseButton class="conversation-list-new" @click="modalStore.newConversation()"
+      >Start a new conversation</BaseButton
+    >
   </div>
 </template>
 
 <style scoped>
-.container {
+.conversation-list {
   display: flex;
   flex-direction: column;
   justify-content: space-between;

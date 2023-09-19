@@ -3,14 +3,14 @@ defineProps<{ title?: string }>()
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
     <h1 v-if="title">{{ title }}</h1>
     <slot></slot>
   </div>
 </template>
 
 <style scoped>
-.container {
+.page {
   height: 100%;
 
   h1 {

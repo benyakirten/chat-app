@@ -19,7 +19,7 @@ withDefaults(defineProps<{ size?: string }>(), { size: '1rem' })
   padding: 1rem 1.5rem;
 
   background-color: var(--bg-primary);
-  box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
+  box-shadow: var(--item-box-shadow);
   background-image: var(--item-bg);
   border-radius: 1rem;
 

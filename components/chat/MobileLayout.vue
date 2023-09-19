@@ -8,6 +8,12 @@ useHead({
 defineProps<{ id: ConversationId }>()
 
 const mediaStore = useMediaStore()
+
+useAddMountedEventCallback('keydown', (e: KeyboardEvent) => {
+  if (!isTextInputFocused() && e.key === 'Escape') {
+    mediaStore.conversationListOpen = false
+  }
+})
 </script>
 
 <template>

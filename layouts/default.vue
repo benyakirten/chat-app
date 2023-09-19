@@ -51,7 +51,7 @@ body {
 }
 
 main {
-  min-height: 100vh;
+  height: calc(100vh - var(--header-height));
 }
 
 .page-leave-active,
