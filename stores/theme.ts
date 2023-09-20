@@ -21,17 +21,18 @@ export interface ThemeStoreState {
 
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
+    // TODO: This is still terrible
     bgPrimary: '#f4f4f4',
     accent: '#e74c3c',
     text: '#333',
     highlight: '#3468ab',
     neutral: '#95a5a6',
-    base: '#fff',
-    mix: '#27ae60',
+    base: '#ecceab',
+    mix: '#275ea0',
     opposite: '#f39c12',
   },
   night: {
-    bgPrimary: '#ecf39e',
+    bgPrimary: '#0a192f',
     accent: '#00b894',
     text: '#f4f4f4',
     highlight: '#f39c12',

@@ -23,7 +23,7 @@ watch(themeSelected, (val) =>
       <AccountInputsLabel>Color theme</AccountInputsLabel>
     </template>
     <template #item="{ item }">
-      <AccountInputsLabel>{{ item.id }}</AccountInputsLabel>
+      <AccountInputsItem>{{ item.id }}</AccountInputsItem>
     </template>
   </BaseMultiSelect>
 </template>

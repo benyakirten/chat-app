@@ -50,7 +50,7 @@ onMounted(() => {
       labels: ['My average message length', "Others' average message length"],
       datasets: [
         {
-          label: 'Number of conversations',
+          label: 'Message length',
           data: [myMessageLength.value, otherMessageLength.value],
           backgroundColor: ['#3abff8', '#f87272'],
         },

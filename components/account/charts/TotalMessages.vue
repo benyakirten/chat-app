@@ -1,17 +1,21 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import Chart from 'chart.js/auto'
 
-const props = defineProps<{ private: number; group: number }>()
-const canvas = ref<HTMLCanvasElement | null>(null)
+// TODO: Generalize these functions
+
+const props = defineProps<{ myMessages: ConversationMessage[]; otherMessages: ConversationMessage[] }>()
 const themeStore = useThemeStore()
+
+const canvas = ref<HTMLCanvasElement | null>(null)
 let chart: Chart<'doughnut', number[], string>
 
-watch([() => props.private, () => props.group], ([privateChats, groupChats]) => {
+watch([() => props.myMessages, () => props.otherMessages], ([myMessages, otherMessages]) => {
   if (!chart) {
     return
   }
-  chart.data.datasets[0].data[0] = privateChats
-  chart.data.datasets[0].data[1] = groupChats
+
+  chart.data.datasets[0].data[0] = myMessages.length
+  chart.data.datasets[0].data[1] = otherMessages.length
   chart.update()
 })
 
@@ -39,11 +43,11 @@ onMounted(() => {
       maintainAspectRatio: false,
     },
     data: {
-      labels: ['Number of private conversions', 'Number of group conversations'],
+      labels: ["Number of messages I've sent", "Number of messages I've received"],
       datasets: [
         {
-          label: 'Number of conversations',
-          data: [props.private, props.group],
+          label: 'Number of messages',
+          data: [props.myMessages.length, props.otherMessages.length],
           backgroundColor: ['#3abff8', '#f87272'],
         },
       ],

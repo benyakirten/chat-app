@@ -65,6 +65,10 @@ const otherMessages = computed(() => messages.value.filter((message) => message.
     <div class="row-block">
       <AccountChartsMessageLength :my-messages="myMessages" :other-messages="otherMessages" />
     </div>
+
+    <div class="row-block">
+      <AccountChartsTotalMessages :my-messages="myMessages" :other-messages="otherMessages" />
+    </div>
   </div>
 </template>
 
@@ -75,9 +79,14 @@ const otherMessages = computed(() => messages.value.filter((message) => message.
   gap: 4rem;
   flex-wrap: wrap;
 
+  @media (width < 800px) {
+    flex-direction: column;
+  }
+
   &-block {
     flex: 1;
-    max-width: 50%;
+    max-width: 40rem;
+    max-height: 40rem;
   }
 }
 </style>

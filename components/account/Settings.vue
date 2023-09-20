@@ -7,11 +7,14 @@ const props = defineProps<{ me: Me; profile: User }>()
     <AccountSection title="Change Settings">
       <AccountInputs v-bind="props" />
     </AccountSection>
-    <!-- TODO: Figure out why this is erroring -->
-    <!-- <ClientOnly>
+    <ClientOnly>
+      <!--
+        TODO: Figure out why this is erroring 
+        It seems to have to do with layout with grid/flexbox
+      -->
       <AccountSection title="Statistics" />
       <AccountStatistics v-bind="props" />
-    </ClientOnly> -->
+    </ClientOnly>
   </div>
 </template>
 
