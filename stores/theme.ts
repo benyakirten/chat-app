@@ -22,16 +22,16 @@ export interface ThemeStoreState {
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
     bgPrimary: '#f4f4f4',
-    accent: '#27ae60',
-    text: '#333333',
-    highlight: '#d32f2f',
-    neutral: '#dcdcdc',
+    accent: '#e74c3c',
+    text: '#333',
+    highlight: '#3468ab',
+    neutral: '#95a5a6',
     base: '#fff',
-    mix: '#000',
-    opposite: '#000',
+    mix: '#27ae60',
+    opposite: '#f39c12',
   },
   night: {
-    bgPrimary: '#0a192f',
+    bgPrimary: '#ecf39e',
     accent: '#00b894',
     text: '#f4f4f4',
     highlight: '#f39c12',
