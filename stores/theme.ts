@@ -28,7 +28,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     highlight: '#3468ab',
     neutral: '#95a5a6',
     base: '#ecceab',
-    mix: '#275ea0',
+    mix: '#875ea0',
     opposite: '#f39c12',
   },
   night: {

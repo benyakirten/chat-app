@@ -60,7 +60,7 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<UsersStoreState['users']>(PROP_USERS)
   const me = ref<UsersStoreState['me']>({
     id: 'u1',
-    colorTheme: 'night',
+    colorTheme: 'auto',
     textSizeMagnification: 1,
     hidden: false,
     block: new Set(),

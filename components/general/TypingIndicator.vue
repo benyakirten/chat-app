@@ -51,6 +51,12 @@ withDefaults(defineProps<{ size?: string }>(), { size: '1rem' })
     opacity: 0.5;
   }
 
+  33%,
+  66% {
+    scale: 1.07;
+    opacity: 0.7;
+  }
+
   50% {
     scale: 1.15;
     opacity: 0.9;
