@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { doesNotNeedLogin } from '@/utils/auth'
+
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
 const route = useRoute()
@@ -6,6 +8,8 @@ const userStore = useUsersStore()
 
 const title = computed(() => titleStore.title(route.path, route.params['id']))
 const textMagnification = computed(() => userStore.me?.textSizeMagnification ?? 1)
+
+const showNav = computed(() => !doesNotNeedLogin(route.fullPath))
 </script>
 
 <template>
@@ -13,8 +17,8 @@ const textMagnification = computed(() => userStore.me?.textSizeMagnification ?? 
     <Title>{{ title }}</Title>
     <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${textMagnification}`"></Body>
   </Head>
-  <NavHeader />
-  <NavTheSidebar />
+  <NavHeader v-if="showNav" />
+  <NavTheSidebar v-if="showNav" />
   <ToasterComponent />
   <main>
     <slot></slot>
@@ -53,7 +57,7 @@ body {
 }
 
 main {
-  height: calc(100vh - var(--header-height));
+  height: 100%;
 }
 
 .page-leave-active,

@@ -50,10 +50,10 @@ export const useThemeStore = defineStore('theme', () => {
   const themeQuery = globalThis.matchMedia?.('(prefers-color-scheme: light)')
   themeQuery?.addEventListener('change', (e) => (computerTheme.value = e.matches ? 'day' : 'night'))
 
-  const computerTheme = ref<ThemeStoreState['active']>(themeQuery?.matches ? 'day' : 'night')
+  const computerTheme = ref<ThemeStoreState['active']>()
 
   const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
-  const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value))
+  const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value) ?? 'night')
   const activeTheme = computed(() => themes.value[activeThemeName.value])
 
   const activeThemeVariables = computed(() => {

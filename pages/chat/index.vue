@@ -25,24 +25,9 @@ definePageMeta({
 //       console.log(msg)
 //     })
 // })
-
-async function clickMe() {
-  const res = await useFetch('/auth/login', {
-    method: 'POST',
-    body: {
-      email: 'a@a.com',
-      password: 'bb',
-    },
-  })
-  if (res.error.value) {
-    console.log(res.error.value.data)
-    return
-  }
-}
 </script>
 
 <template>
-  <button @click="clickMe">CLICK ME</button>
   <ChatLayout><p class="no-conversation">Select a conversation to see messages.</p> </ChatLayout>
 </template>
 

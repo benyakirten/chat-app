@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { LOGIN_SHAPE } from '~/utils/api'
+
+import { LOGIN_SHAPE } from '@/utils/api'
 
 export default defineEventHandler(async (event) => {
-  const backendUrl = process.env['A']
+  const backendUrl = process.env['BACKEND_URL']
   if (!backendUrl) {
     setResponseStatus(event, 500)
     return { errors: 'Server is missing the following configuration option: BACKEND_URL' }

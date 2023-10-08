@@ -1,0 +1,70 @@
+<script lang="ts" setup>
+const loginMode = ref(true)
+
+function alternateMode() {
+  loginMode.value = !loginMode.value
+}
+
+async function handleSubmit(e: Event) {
+  //
+}
+</script>
+
+<template>
+  <div class="login-page">
+    <h1>{{ loginMode ? 'login' : 'register' }}</h1>
+    <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
+    <form @submit.prevent="handleSubmit">
+      <label>
+        Email
+        <input type="email" />
+      </label>
+      <label>
+        Password
+        <input type="password" />
+      </label>
+      <Transition name="display-mode">
+        <label v-if="!loginMode">
+          Display Name
+          <input type="string" />
+        </label>
+      </Transition>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</template>
+
+<style scoped>
+.login-page {
+  --header-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  padding: 8rem 4rem;
+
+  .alternate-mode {
+    text-decoration: underline;
+  }
+
+  h1 {
+    text-transform: capitalize;
+  }
+
+  form {
+    label {
+      display: block;
+    }
+  }
+}
+
+.dispaly-mode-enter-active,
+.dispaly-mode-leave-active {
+  transition: translate 100ms ease-in-out 100ms, opacity 200ms ease-in;
+}
+
+.dispaly-mode-enter-from,
+.dispaly-mode-leave-to {
+  translate: 0 -100%;
+  opacity: 0;
+}
+</style>
