@@ -36,12 +36,13 @@ export interface User {
 export interface Me {
   id: UserId
   textSizeMagnification: number
-  // TODO: Other accessibility options
   colorTheme: 'day' | 'night' | 'auto'
-  // TODO: Other customization options
   hidden: boolean
   // TODO: Consider how a block list will work
   block: Set<string>
+  token: string
+  refresh: string
+  refreshTimeout: NodeJS.Timeout
 }
 
 export type MutableOptions = Omit<Me, 'id'>
@@ -58,13 +59,7 @@ export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
 
   const users = ref<UsersStoreState['users']>(PROP_USERS)
-  const me = ref<UsersStoreState['me']>({
-    id: 'u1',
-    colorTheme: 'auto',
-    textSizeMagnification: 1,
-    hidden: false,
-    block: new Set(),
-  })
+  const me = ref<UsersStoreState['me']>(null)
 
   function addUser(user: User) {
     users.value.set(user.id, user)
