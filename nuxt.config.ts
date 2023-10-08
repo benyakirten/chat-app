@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+const MS_IN_ONE_DAY = 1_000 * 60 * 60 * 24
+const MS_IN_ONE_WEEK = MS_IN_ONE_DAY * 7
+
 export default defineNuxtConfig({
   devtools: {
     enabled: true,
@@ -18,5 +22,11 @@ export default defineNuxtConfig({
     plugins: {
       'postcss-nested': {},
     },
+  },
+  runtimeConfig: {
+    cookieName: process.env.COOKIE_NAME || '__session',
+    cookieSecret: process.env.COOKIE_SECRET || 'secret',
+    cookieExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || MS_IN_ONE_DAY.toString()),
+    cookieRememberMeExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || MS_IN_ONE_WEEK.toString()),
   },
 })
