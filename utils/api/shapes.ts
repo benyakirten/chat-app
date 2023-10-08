@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+// TODO: Restrictions on display name
+// emails can be longer than 20 characters so we may want to reconsider restrictions
 const ACCOUNT_SHAPE = z.object({
   email: z.string().email(),
   password: z.string(),
@@ -47,6 +49,7 @@ export const REGISTER_SHAPE = ACCOUNT_SHAPE.extend({
     .regex(/[a-z]/, 'Password must contain at least one lower case character')
     .regex(/[A-Z]/, 'Password must contain at least one upper case character')
     .regex(/[!@#$%^&*+`~']/, "Password must contain at least one of the following characters: !@#$%^&*+`~'"),
+  displayName: z.union([z.undefined(), z.string()]),
 })
 
 export const LOGIN_SHAPE = ACCOUNT_SHAPE.extend({

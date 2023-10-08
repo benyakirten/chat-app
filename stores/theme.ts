@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, skipHydrate } from 'pinia'
 
 export interface ColorTheme {
   bgPrimary: string
@@ -62,5 +62,13 @@ export const useThemeStore = defineStore('theme', () => {
     }, '')
   })
 
-  return { themes, active, activeThemeVariables, computerTheme, themeQuery, activeThemeName, activeTheme }
+  return {
+    themes,
+    active,
+    activeThemeVariables,
+    computerTheme,
+    themeQuery,
+    activeThemeName,
+    activeTheme,
+  }
 })

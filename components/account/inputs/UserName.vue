@@ -9,6 +9,6 @@ watch(userName, (val) => val && debouncer(val))
 
 <template>
   <GeneralInputText v-model="userName" style="max-width: 25rem" placeholder="Choose a username">
-    <template #label><AccountInputsLabel>Display Name </AccountInputsLabel></template>
+    <template #label><AccountInputsLabel>Display Name</AccountInputsLabel></template>
   </GeneralInputText>
 </template>

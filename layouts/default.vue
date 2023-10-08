@@ -7,15 +7,16 @@ const route = useRoute()
 const userStore = useUsersStore()
 
 const title = computed(() => titleStore.title(route.path, route.params['id']))
-const textMagnification = computed(() => userStore.me?.textSizeMagnification ?? 1)
+const magnification = computed(() => userStore.me?.magnification ?? 1)
 
 const showNav = computed(() => !doesNotNeedLogin(route.fullPath))
 </script>
 
 <template>
   <Head>
+    <Html :style="`--magnification: ${magnification}`"></Html>
     <Title>{{ title }}</Title>
-    <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${textMagnification}`"></Body>
+    <Body :style="`${themeStore.activeThemeVariables};`"></Body>
   </Head>
   <NavHeader v-if="showNav" />
   <NavTheSidebar v-if="showNav" />
@@ -26,6 +27,10 @@ const showNav = computed(() => !doesNotNeedLogin(route.fullPath))
 </template>
 
 <style>
+html {
+  font-size: calc(var(--base-size) * var(--magnification, 1));
+}
+
 body {
   --bg-alt1: color-mix(in srgb, var(--bg-primary) 95%, var(--mix));
   --bg-alt2: color-mix(in srgb, var(--bg-primary) 91%, var(--mix));
@@ -47,13 +52,7 @@ body {
   background: var(--body-bg);
   color: var(--text);
 
-  --text-xxl: calc(var(--size-xxl) * var(--magnification, 1));
-  --text-xl: calc(var(--size-xl) * var(--magnification, 1));
-  --text-lg: calc(var(--size-lg) * var(--magnification, 1));
-  --text-md: calc(var(--size-md) * var(--magnification, 1));
-  --text-sm: calc(var(--size-sm) * var(--magnification, 1));
-
-  font-size: var(--text-lg);
+  font-size: var(--size-lg);
 }
 
 main {

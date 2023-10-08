@@ -323,7 +323,7 @@ label {
 
       cursor: default;
 
-      font-size: var(--text-xl);
+      font-size: var(--size-xl);
 
       &:hover {
         background-color: var(--bg-primary);

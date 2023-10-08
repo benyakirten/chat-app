@@ -35,7 +35,7 @@ export interface User {
 
 export interface Me {
   id: UserId
-  textSizeMagnification: number
+  magnification: number
   colorTheme: 'day' | 'night' | 'auto'
   hidden: boolean
   // TODO: Consider how a block list will work

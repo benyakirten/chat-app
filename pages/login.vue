@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 const loginMode = ref(true)
+const email = ref('')
+const password = ref('')
+const displayName = ref('')
 
 function alternateMode() {
   loginMode.value = !loginMode.value
 }
 
 async function handleSubmit(e: Event) {
-  //
+  const res = useFetch('/auth/login')
 }
 </script>
 
@@ -17,16 +20,16 @@ async function handleSubmit(e: Event) {
     <form @submit.prevent="handleSubmit">
       <label>
         Email
-        <input type="email" />
+        <input v-model="email" type="email" />
       </label>
       <label>
         Password
-        <input type="password" />
+        <input v-model="password" type="password" />
       </label>
       <Transition name="display-mode">
         <label v-if="!loginMode">
           Display Name
-          <input type="string" />
+          <input v-model="displayName" type="string" />
         </label>
       </Transition>
       <button type="submit">Submit</button>

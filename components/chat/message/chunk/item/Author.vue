@@ -8,7 +8,7 @@ const { name, justify } = defineProps<{ name?: string; justify: 'flex-end' | 'fl
 
 <style scoped>
 .author {
-  font-size: var(--text-xl);
+  font-size: var(--size-xl);
   color: var(--highlight);
   justify-self: v-bind(justify);
 }

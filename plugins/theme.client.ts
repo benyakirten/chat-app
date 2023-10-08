@@ -3,7 +3,7 @@ export default defineNuxtPlugin({
   enforce: 'pre',
   hooks: {
     'app:beforeMount'() {
-      // TODO: Figure out why this is being called after render
+      // TODO: Figure out how to make sure the right theme is applied before render
       const themeStore = useThemeStore()
       const theme = themeStore.themeQuery.matches ? 'day' : 'night'
 

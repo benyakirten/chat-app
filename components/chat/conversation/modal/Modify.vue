@@ -145,7 +145,7 @@ const userOptions = computed(() =>
 
       &-multiselect {
         &-noone {
-          font-size: var(--text-xl);
+          font-size: var(--size-xl);
         }
 
         &-users {
@@ -159,7 +159,7 @@ const userOptions = computed(() =>
 
       &-alias {
         &-label {
-          font-size: var(--text-xl);
+          font-size: var(--size-xl);
           padding-bottom: 0.5rem;
         }
       }
