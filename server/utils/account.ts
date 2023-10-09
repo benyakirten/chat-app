@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import { COMPLETE_AUTH_SHAPE } from '@/utils/api/shapes'
 import { MS_IN_ONE_MINUTE } from '@/utils/constants'
-import { sign, serialize } from './cookies'
+import { sign, serialize, setRefreshCookie } from './cookies'
 
 export async function sendAuthRequest(
   event: H3Event<EventHandlerRequest>,
@@ -34,17 +34,7 @@ export async function sendAuthRequest(
   const { auth_token, refresh_token, users, conversations, user } = dataRes.data
 
   const config = useRuntimeConfig()
-  const expiresMs = body.rememberMe ? config.cookieExpires : MS_IN_ONE_MINUTE * 30
-  const payload = serialize({ rememberMe: !!body.rememberMe, refreshToken: refresh_token })
-  const signedPayload = sign(payload, config.cookieSecret)
-
-  setCookie(event, config.cookieName, signedPayload, {
-    httpOnly: true,
-    path: '/',
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
-    expires: new Date(Date.now() + expiresMs),
-  })
+  setRefreshCookie(event, config, !!body.rememberMe, refresh_token)
 
   return { user, conversations, users, auth_token }
 }

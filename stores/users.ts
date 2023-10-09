@@ -170,6 +170,8 @@ export const useUsersStore = defineStore('users', () => {
       })
     }
 
+    performRefresh()
+
     const { user } = data
     const refreshTimeout = setTimeout(() => {
       performRefresh()

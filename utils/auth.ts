@@ -5,5 +5,5 @@ export function doesNotNeedLogin(path: string): boolean {
 }
 
 export async function performRefresh() {
-  // TODO:
+  const res = await useFetch('/auth/refresh', { method: 'POST' })
 }

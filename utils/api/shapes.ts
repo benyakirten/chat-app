@@ -67,3 +67,8 @@ export const PARTIAL_AUTH_SHAPE = z.object({
 export const COMPLETE_AUTH_SHAPE = PARTIAL_AUTH_SHAPE.extend({
   refresh_token: z.string(),
 })
+
+export const REFRESH_TOKEN_RESPONSE = z.object({
+  auth_token: z.string(),
+  refresh_token: z.string(),
+})

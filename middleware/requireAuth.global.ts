@@ -1,4 +1,4 @@
-import { doesNotNeedLogin } from '~/utils/auth'
+import { doesNotNeedLogin } from '@/utils/auth'
 
 export default defineNuxtRouteMiddleware((to) => {
   const userStore = useUsersStore()
