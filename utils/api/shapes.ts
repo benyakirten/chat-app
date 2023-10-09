@@ -38,10 +38,7 @@ export const userMe = user.extend({
 export const profile = z.object({
   hidden: z.boolean(),
   theme: themeOption,
-  magnification: z.preprocess(
-    (magnification) => parseFloat(z.string().parse(magnification)),
-    z.number().min(0.7).max(1.4)
-  ),
+  magnification: z.number().min(0.7).max(1.4),
   recents: z.array(z.string()),
 })
 

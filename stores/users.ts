@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
+import { z } from 'zod'
 
 import { ConversationMessage, UserConversationState, UserId } from './messages'
-import { PARTIAL_AUTH_SHAPE } from '~/utils/api/shapes'
+import { PARTIAL_AUTH_SHAPE } from '@/utils/api/shapes'
+import { performRefresh } from '@/utils/auth'
 
 // const PROP_USERS = new Map<UserId, User>()
 // PROP_USERS.set('u1', {
@@ -36,13 +38,13 @@ export interface User {
 
 export interface Me {
   id: UserId
+  email: string
   magnification: number
   colorTheme: 'day' | 'night' | 'auto'
   hidden: boolean
   // TODO: Consider how a block list will work
   block: Set<string>
   token: string
-  refresh: string
   refreshTimeout: NodeJS.Timeout
 }
 
@@ -58,8 +60,9 @@ export interface UsersStoreState {
 
 export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
+  const messageStore = useMessageStore()
 
-  const users = ref<UsersStoreState['users']>([])
+  const users = ref<UsersStoreState['users']>(new Map())
   const me = ref<UsersStoreState['me']>(null)
 
   function addUser(user: User) {
@@ -158,8 +161,37 @@ export const useUsersStore = defineStore('users', () => {
     return otherUsers
   })
 
-  function processAuthData(data: typeof PARTIAL_AUTH_SHAPE) {
-    // Assign data to appropriate stores
+  function processAuthData(data: z.infer<typeof PARTIAL_AUTH_SHAPE>) {
+    for (const user of data.users) {
+      users.value.set(user.id, {
+        id: user.id,
+        name: user.display_name,
+        online: false,
+      })
+    }
+
+    const { user } = data
+    const refreshTimeout = setTimeout(() => {
+      performRefresh()
+    }, REFRESH_TIMEOUT)
+    me.value = {
+      block: new Set(),
+      token: data.auth_token,
+      colorTheme: user.theme,
+      id: user.id,
+      magnification: user.magnification,
+      email: user.email,
+      hidden: user.hidden,
+      refreshTimeout,
+    }
+
+    messageStore.conversations = data.conversations.map((conversation) => ({
+      id: conversation.id,
+      members: new Map(),
+      messages: new Map(),
+      isPrivate: conversation.private,
+      alias: conversation.alias,
+    }))
   }
 
   return {

@@ -312,6 +312,7 @@ const conversation1: Conversation = {
     [conversation1message22.id, conversation1message22],
   ]),
   isPrivate: true,
+  alias: null,
 }
 
 export interface UserConversationState {
@@ -325,7 +326,7 @@ export interface Conversation {
   messages: Map<MessageId, ConversationMessage>
   isPrivate: boolean
   typingTimeout?: NodeJS.Timeout
-  alias?: string
+  alias: string | null
   draft?: string
 }
 
@@ -342,7 +343,7 @@ export interface ConversationMessage {
 export type UserReadTimes = Record<UserId, Date>
 
 export const useMessageStore = defineStore('messages', () => {
-  const conversations = ref([conversation1, conversation2])
+  const conversations = ref<Conversation[]>([])
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
@@ -664,6 +665,7 @@ export const useMessageStore = defineStore('messages', () => {
         [otherUser, { state: 'idle', lastRead: new Date(0) }],
       ]),
       messages: new Map(),
+      alias: null,
     }
 
     conversations.value.unshift(newConvo)
@@ -702,6 +704,7 @@ export const useMessageStore = defineStore('messages', () => {
       id: uuid(),
       members,
       messages: new Map(),
+      alias: null,
     }
     conversations.value.unshift(newConvo)
     addMessage(newConvo.id, {
