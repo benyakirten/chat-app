@@ -1,6 +1,4 @@
-import { type KeyObject, createHmac, timingSafeEqual } from 'node:crypto'
-
-export type CookieSecret = string | Buffer | KeyObject
+import { createHmac, timingSafeEqual } from 'node:crypto'
 
 // https://github.com/damien-hl/nuxt3-auth-example
 export function serialize(obj: object) {
@@ -21,13 +19,13 @@ export function deserialize(value: string) {
   return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'))
 }
 
-export function sign(value: string, secret: CookieSecret) {
+export function sign(value: string, secret: string) {
   const signature = createHmac('sha256', secret).update(value).digest('base64').replace(/=+$/, '')
 
   return `${value}.${signature}`
 }
 
-export function unsign(input: string, secret: CookieSecret) {
+export function unsign(input: string, secret: string) {
   const value = input.slice(0, input.lastIndexOf('.'))
   const expectedInput = sign(value, secret)
   const expectedBuffer = Buffer.from(expectedInput)

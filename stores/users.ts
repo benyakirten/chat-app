@@ -1,28 +1,29 @@
 import { defineStore } from 'pinia'
 
 import { ConversationMessage, UserConversationState, UserId } from './messages'
+import { PARTIAL_AUTH_SHAPE } from '~/utils/api/shapes'
 
-const PROP_USERS = new Map<UserId, User>()
-PROP_USERS.set('u1', {
-  name: 'Cool Person',
-  id: 'u1',
-  online: true,
-})
-PROP_USERS.set('u2', {
-  name: 'Completed User',
-  id: 'u2',
-  online: false,
-})
-PROP_USERS.set('u3', {
-  name: 'Pending User',
-  id: 'u3',
-  online: true,
-})
-PROP_USERS.set('u4', {
-  name: 'Failed User',
-  id: 'u4',
-  online: true,
-})
+// const PROP_USERS = new Map<UserId, User>()
+// PROP_USERS.set('u1', {
+//   name: 'Cool Person',
+//   id: 'u1',
+//   online: true,
+// })
+// PROP_USERS.set('u2', {
+//   name: 'Completed User',
+//   id: 'u2',
+//   online: false,
+// })
+// PROP_USERS.set('u3', {
+//   name: 'Pending User',
+//   id: 'u3',
+//   online: true,
+// })
+// PROP_USERS.set('u4', {
+//   name: 'Failed User',
+//   id: 'u4',
+//   online: true,
+// })
 
 // TODO: Add details for a user
 export interface User {
@@ -58,7 +59,7 @@ export interface UsersStoreState {
 export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
 
-  const users = ref<UsersStoreState['users']>(PROP_USERS)
+  const users = ref<UsersStoreState['users']>([])
   const me = ref<UsersStoreState['me']>(null)
 
   function addUser(user: User) {
@@ -157,6 +158,10 @@ export const useUsersStore = defineStore('users', () => {
     return otherUsers
   })
 
+  function processAuthData(data: typeof PARTIAL_AUTH_SHAPE) {
+    // Assign data to appropriate stores
+  }
+
   return {
     users,
     me,
@@ -170,5 +175,6 @@ export const useUsersStore = defineStore('users', () => {
     allOtherUsers,
     setAccountOption,
     setUserName,
+    processAuthData,
   }
 })

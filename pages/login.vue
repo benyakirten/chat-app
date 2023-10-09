@@ -1,5 +1,9 @@
 <script lang="ts" setup>
+import { formatAuthErrors } from '@/utils/api/error'
+import { PARTIAL_AUTH_SHAPE } from '@/utils/api/shapes'
+
 const toastStore = useToastStore()
+const userStore = useUsersStore()
 
 const loginMode = ref(true)
 const email = ref('')
@@ -21,13 +25,11 @@ async function handleSubmit(e: Event) {
   })
 
   if (res.error.value) {
-    // TODO: Make this better/standardize
-    console.log(res.error.value.data)
-    // toastStore.add(res.error.value.data.error.message, { type: 'error' })
+    toastStore.add(formatAuthErrors(res.error.value.data), { type: 'error', timeout: null })
     return
   }
 
-  console.log(res.data)
+  userStore.processAuthData(res.data.value)
 }
 </script>
 

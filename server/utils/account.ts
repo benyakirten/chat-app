@@ -2,7 +2,7 @@ import type { H3Event, EventHandlerRequest } from 'h3'
 import { ZodObject } from 'zod'
 import axios from 'axios'
 
-import { ACCOUNT_SHAPE } from '@/utils/api/shapes'
+import { COMPLETE_AUTH_SHAPE } from '@/utils/api/shapes'
 import { MS_IN_ONE_MINUTE } from '@/utils/constants'
 import { sign, serialize } from './cookies'
 
@@ -13,9 +13,10 @@ export async function sendAuthRequest(
 ) {
   const body = await readBody(event)
   const parseRes = shape.safeParse(body)
+  // TODO: Standardize error response/shape
   if (!parseRes.success) {
     setResponseStatus(event, 400)
-    return { errors: parseRes.error.errors }
+    return { error: parseRes.error.errors }
   }
 
   const res = await axios.post(`/auth/${endpoint}`, parseRes.data)
@@ -24,11 +25,10 @@ export async function sendAuthRequest(
     return res.data
   }
 
-  const dataRes = ACCOUNT_SHAPE.safeParse(res.data)
+  const dataRes = COMPLETE_AUTH_SHAPE.safeParse(res.data)
   if (!dataRes.success) {
-    console.log(dataRes.error)
     setResponseStatus(event, 500)
-    return { error: { message: 'Data returned from response in unexpected shape. Please contact Ben.' } }
+    return { error: { message: 'Data returned from server does not conform to known standards.' } }
   }
 
   const { auth_token, refresh_token, users, conversations, user } = dataRes.data
