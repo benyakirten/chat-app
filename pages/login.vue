@@ -8,6 +8,7 @@ const loginMode = ref(true)
 const email = ref('')
 const password = ref('')
 const displayName = ref('')
+const rememberMe = ref(true)
 
 function alternateMode() {
   loginMode.value = !loginMode.value
@@ -19,6 +20,7 @@ async function handleSubmit(e: Event) {
     body: {
       email: email.value,
       password: password.value,
+      rememberMe: rememberMe.value,
       displayName: loginMode.value === false && displayName.value ? displayName.value : undefined,
     },
   })
@@ -46,6 +48,7 @@ async function handleSubmit(e: Event) {
         Password
         <input v-model="password" type="password" />
       </label>
+      <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
       <Transition name="display-mode">
         <label v-if="!loginMode">
           Display Name

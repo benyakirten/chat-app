@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     // TODO: Find the appropriate header
     // No remember me cookie - no login
     setResponseStatus(event, 406)
-    return
+    return { error: { message: 'Cookie unavailable' } }
   }
 
   const { email, password } = rememberMeCookie

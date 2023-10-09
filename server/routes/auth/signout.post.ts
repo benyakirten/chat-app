@@ -7,8 +7,7 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, config.rememberMeCookieName)
   deleteCookie(event, config.refreshCookieName)
 
-  const res = await axios.post('/auth/signout', { token: refreshToken })
+  await axios.post('/auth/signout', { token: refreshToken })
 
-  setResponseStatus(event, res.status)
-  return res.data
+  await sendRedirect(event, '/login')
 })

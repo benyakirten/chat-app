@@ -50,6 +50,7 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
       </NavSection>
       <div class="recent">
         <h4>Recently Viewed</h4>
+        <button @click="userStore.signout()">CLICK ME TO SIGNOUT</button>
         <div v-if="recentsStore.allLRU.cache.length === 0">No recently viewed pages.</div>
         <ul v-else>
           <li v-for="recent of recentsStore.allLRU.cache" :key="recent">
