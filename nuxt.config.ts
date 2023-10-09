@@ -24,7 +24,8 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    cookieName: process.env.COOKIE_NAME || '__session',
+    refreshCookieName: process.env.REFRESH_COOKIE_NAME || '__session',
+    rememberMeCookieName: process.env.REMEMBER_ME_COOKIE_NAME || '__remember_me',
     cookieSecret: process.env.COOKIE_SECRET || 'secret',
     cookieExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || MS_IN_ONE_DAY.toString()),
     cookieRememberMeExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || MS_IN_ONE_WEEK.toString()),

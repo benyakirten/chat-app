@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { setApiUrl } from '../utils/axios'
+
 export default defineEventHandler(() => {
   if (axios.defaults.baseURL) {
     return
@@ -10,6 +12,5 @@ export default defineEventHandler(() => {
     throw new Error('API_BASE_URL environment variable must be defined')
   }
 
-  axios.defaults.baseURL = apiUrl
-  axios.defaults.validateStatus = () => true
+  setApiUrl(apiUrl)
 })

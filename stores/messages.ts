@@ -343,7 +343,7 @@ export interface ConversationMessage {
 export type UserReadTimes = Record<UserId, Date>
 
 export const useMessageStore = defineStore('messages', () => {
-  const conversations = ref<Conversation[]>([])
+  const conversations = ref<Conversation[]>([conversation1, conversation2])
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
@@ -739,6 +739,13 @@ export const useMessageStore = defineStore('messages', () => {
     // TODO: Transmit that we have left the conversation
   }
 
+  function reset() {
+    conversations.value = []
+    filteredConversationIds.value = []
+    editedMessage.value = null
+    // TODO: Transmit that typing has ended
+  }
+
   return {
     conversations: skipHydrate(conversations),
     visibleConversations,
@@ -760,5 +767,6 @@ export const useMessageStore = defineStore('messages', () => {
     leaveConversation,
     moveConversationToTop,
     conversation,
+    reset,
   }
 })

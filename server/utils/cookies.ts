@@ -54,38 +54,62 @@ export function unsign(input: string, secret: string) {
 }
 
 type RuntimeConfig = ReturnType<typeof useRuntimeConfig>
-export function setRefreshCookie(
-  event: H3Event<EventHandlerRequest>,
-  config: RuntimeConfig,
-  rememberMe: boolean,
-  refreshToken: string
-) {
-  const expiresMs = rememberMe ? config.cookieExpires : MS_IN_ONE_MINUTE * 30
-  const payload = serialize({ rememberMe: !!rememberMe, refreshToken })
-  const signedPayload = sign(payload, config.cookieSecret)
+export function setRefreshCookie(event: H3Event<EventHandlerRequest>, config: RuntimeConfig, refreshToken: string) {
+  const signedPayload = sign(refreshToken, config.cookieSecret)
 
-  setCookie(event, config.cookieName, signedPayload, {
+  setCookie(event, config.refreshCookieName, signedPayload, {
     httpOnly: true,
     path: '/',
     sameSite: 'strict',
     secure: process.env.NODE_ENV === 'production',
-    expires: new Date(Date.now() + expiresMs),
+    expires: new Date(Date.now() + config.cookieExpires),
   })
 }
 
-export function getRefreshCookie(
-  event: H3Event<EventHandlerRequest>,
-  config: RuntimeConfig
-): { rememberMe: boolean; refreshToken: string } {
-  const cookie = getCookie(event, config.cookieName)
+function unsafeGetCookie(event: H3Event<EventHandlerRequest>, cookieName: string, errorMessage: string): string {
+  const cookie = getCookie(event, cookieName)
   if (!cookie) {
     throw createError({
-      statusCode: 400,
-      statusMessage: 'Bad request',
-      message: 'Refresh token cookie absent',
+      statusCode: 500,
+      message: errorMessage,
     })
   }
 
-  const parsed = unsign(cookie, config.cookieSecret)
-  return deserialize(parsed)
+  return cookie
+}
+
+export function getRefreshCookie(event: H3Event<EventHandlerRequest>, config: RuntimeConfig): string {
+  const cookie = unsafeGetCookie(event, config.refreshCookieName, 'Refresh token cookie absent')
+  return unsign(cookie, config.cookieSecret)
+}
+
+export function setRememberMeCookie(
+  event: H3Event<EventHandlerRequest>,
+  config: RuntimeConfig,
+  email: string,
+  password: string
+) {
+  const serialized = serialize({ email, password })
+  const signedPayload = sign(serialized, config.cookieSecret)
+
+  setCookie(event, config.rememberMeCookieName, signedPayload, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    expires: new Date(Date.now() + config.cookieExpires),
+  })
+}
+
+export function getRememberMeCookie(
+  event: H3Event<EventHandlerRequest>,
+  config: RuntimeConfig
+): { email: string; password: string } | null {
+  const cookie = getCookie(event, config.rememberMeCookieName)
+  if (!cookie) {
+    return null
+  }
+
+  const serializedPayload = unsign(cookie, config.cookieSecret)
+  return deserialize(serializedPayload)
 }

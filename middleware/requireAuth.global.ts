@@ -14,5 +14,5 @@ export default defineNuxtRouteMiddleware((to) => {
   //    if present, attempt to use thpse
   // 3. If both are false, redirect to the login page for manual logging in
 
-  return navigateTo('/login')
+  // return navigateTo('/login')
 })

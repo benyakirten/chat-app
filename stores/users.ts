@@ -4,29 +4,6 @@ import { z } from 'zod'
 import { ConversationMessage, UserConversationState, UserId } from './messages'
 import { PARTIAL_AUTH_SHAPE } from '@/utils/shapes'
 
-// const PROP_USERS = new Map<UserId, User>()
-// PROP_USERS.set('u1', {
-//   name: 'Cool Person',
-//   id: 'u1',
-//   online: true,
-// })
-// PROP_USERS.set('u2', {
-//   name: 'Completed User',
-//   id: 'u2',
-//   online: false,
-// })
-// PROP_USERS.set('u3', {
-//   name: 'Pending User',
-//   id: 'u3',
-//   online: true,
-// })
-// PROP_USERS.set('u4', {
-//   name: 'Failed User',
-//   id: 'u4',
-//   online: true,
-// })
-
-// TODO: Add details for a user
 export interface User {
   id: UserId
   name: string
@@ -49,9 +26,6 @@ export interface Me {
 
 export type MutableOptions = Omit<Me, 'id'>
 
-// Users can be retrieved individually
-// and will probably be batch added
-// after the user logs in
 export interface UsersStoreState {
   users: Map<UserId, User>
   me: Me | null
@@ -60,6 +34,7 @@ export interface UsersStoreState {
 export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
   const messageStore = useMessageStore()
+  const recentsStore = useRecentsStore()
 
   const users = ref<UsersStoreState['users']>(new Map())
   const me = ref<UsersStoreState['me']>(null)
@@ -174,6 +149,7 @@ export const useUsersStore = defineStore('users', () => {
     const refreshTimeout = setTimeout(() => {
       performRefresh()
     }, REFRESH_TIMEOUT)
+
     me.value = {
       block: new Set(),
       token: data.auth_token,
@@ -192,6 +168,8 @@ export const useUsersStore = defineStore('users', () => {
       isPrivate: conversation.private,
       alias: conversation.alias,
     }))
+
+    //
   }
 
   async function performRefresh() {
@@ -213,7 +191,19 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   async function signout() {
-    // TODO
+    if (me.value) {
+      clearTimeout(me.value.refreshTimeout)
+      me.value = null
+    }
+    users.value = new Map()
+
+    messageStore.reset()
+    recentsStore.reset()
+
+    const res = await useFetch('/auth/signout', { method: 'POST' })
+    if (res.error) {
+      toastStore.add('A problem occurred signing you out, 🤷', { type: 'error' })
+    }
   }
 
   return {

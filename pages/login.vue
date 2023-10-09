@@ -29,6 +29,7 @@ async function handleSubmit(e: Event) {
   }
 
   userStore.processAuthData(res.data.value)
+  await navigateTo('/chat')
 }
 </script>
 
