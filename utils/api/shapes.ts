@@ -2,10 +2,15 @@ import { z } from 'zod'
 
 // TODO: Restrictions on display name
 // emails can be longer than 20 characters so we may want to reconsider restrictions
-const ACCOUNT_SHAPE = z.object({
+export const LOGIN_SHAPE = z.object({
   email: z.string().email(),
-  password: z.string(),
-  remember_me: z.boolean().optional(),
+  password: z
+    .string()
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[a-z]/, 'Password must contain at least one lower case character')
+    .regex(/[A-Z]/, 'Password must contain at least one upper case character')
+    .regex(/[!@#$%^&*+`~']/, "Password must contain at least one of the following characters: !@#$%^&*+`~'"),
+  rememberMe: z.boolean().optional(),
 })
 
 export const themeOption = z.union([z.literal('day'), z.literal('night'), z.literal('auto')])
@@ -33,7 +38,10 @@ export const userMe = user.extend({
 export const profile = z.object({
   hidden: z.boolean(),
   theme: themeOption,
-  magnification: z.number().min(0.7).max(1.4),
+  magnification: z.preprocess(
+    (magnification) => parseFloat(z.string().parse(magnification)),
+    z.number().min(0.7).max(1.4)
+  ),
   recents: z.array(z.string()),
 })
 
@@ -42,26 +50,17 @@ export const message = timestamped.extend({
   content: z.string(),
 })
 
-export const REGISTER_SHAPE = ACCOUNT_SHAPE.extend({
+export const REGISTER_SHAPE = LOGIN_SHAPE.extend({
+  displayName: z.union([z.undefined(), z.string()]),
   password: z
     .string()
     .regex(/[0-9]/, 'Password must contain at least one number')
     .regex(/[a-z]/, 'Password must contain at least one lower case character')
     .regex(/[A-Z]/, 'Password must contain at least one upper case character')
     .regex(/[!@#$%^&*+`~']/, "Password must contain at least one of the following characters: !@#$%^&*+`~'"),
-  displayName: z.union([z.undefined(), z.string()]),
 })
 
-export const LOGIN_SHAPE = ACCOUNT_SHAPE.extend({
-  password: z
-    .string()
-    .regex(/[0-9]/, 'Password is invalid')
-    .regex(/[a-z]/, 'Password is invalid')
-    .regex(/[A-Z]/, 'Password is invalid')
-    .regex(/[!@#$%^&*+`~']/, 'Password is invalid'),
-})
-
-export const ACCOUNT_RESPONSE = z.object({
+export const ACCOUNT_SHAPE = z.object({
   user: z.intersection(userMe, profile),
   users: z.array(user),
   conversations: z.array(conversation),

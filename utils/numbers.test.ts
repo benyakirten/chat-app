@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { clamp, withinRange, mod } from './numbers'
+import { clamp, withinRange, rem } from './numbers'
 
 describe('clamp', () => {
   it('should return the minimum value if the value is less than the minimum', () => {
@@ -36,14 +36,14 @@ describe('withinRange', () => {
   })
 })
 
-describe('mod', () => {
+describe('rem', () => {
   it('should return the normal value of modulus if the value is positive', () => {
-    const got = mod(9, 5)
+    const got = rem(9, 5)
     expect(got).toEqual(9 % 5)
   })
 
   it('should work wrap correctly around if provided a negative number', () => {
-    const got = mod(-8, 5)
+    const got = rem(-8, 5)
     expect(got).toEqual(2)
   })
 })

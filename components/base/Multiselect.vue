@@ -84,7 +84,7 @@ function handleArrow(direction: 1 | -1, altKey: boolean) {
     return
   }
 
-  const idx = mod(focusIdx.value + direction, shownOptions.value.length)
+  const idx = rem(focusIdx.value + direction, shownOptions.value.length)
   focusIdx.value = idx
   itemRefs.value[idx].scrollIntoView({ behavior: 'smooth' })
 }

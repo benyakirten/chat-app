@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+const toastStore = useToastStore()
+
 const loginMode = ref(true)
 const email = ref('')
 const password = ref('')
@@ -9,7 +11,23 @@ function alternateMode() {
 }
 
 async function handleSubmit(e: Event) {
-  const res = useFetch('/auth/login')
+  const res = await useFetch(`/auth/${loginMode.value ? 'login' : 'register'}`, {
+    method: 'POST',
+    body: {
+      email: email.value,
+      password: password.value,
+      displayName: loginMode.value === false && displayName.value ? displayName.value : undefined,
+    },
+  })
+
+  if (res.error.value) {
+    // TODO: Make this better/standardize
+    console.log(res.error.value.data)
+    // toastStore.add(res.error.value.data.error.message, { type: 'error' })
+    return
+  }
+
+  console.log(res.data)
 }
 </script>
 
