@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { formatAuthErrors } from '@/utils/api/error'
+import { formatAuthErrors } from '@/utils/auth'
 
 const toastStore = useToastStore()
 const userStore = useUsersStore()

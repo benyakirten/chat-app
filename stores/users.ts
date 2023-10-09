@@ -2,8 +2,7 @@ import { defineStore } from 'pinia'
 import { z } from 'zod'
 
 import { ConversationMessage, UserConversationState, UserId } from './messages'
-import { PARTIAL_AUTH_SHAPE } from '@/utils/api/shapes'
-import { performRefresh } from '@/utils/auth'
+import { PARTIAL_AUTH_SHAPE } from '@/utils/shapes'
 
 // const PROP_USERS = new Map<UserId, User>()
 // PROP_USERS.set('u1', {
@@ -162,6 +161,7 @@ export const useUsersStore = defineStore('users', () => {
   })
 
   function processAuthData(data: z.infer<typeof PARTIAL_AUTH_SHAPE>) {
+    // TODO: Clean this up
     for (const user of data.users) {
       users.value.set(user.id, {
         id: user.id,
@@ -169,8 +169,6 @@ export const useUsersStore = defineStore('users', () => {
         online: false,
       })
     }
-
-    performRefresh()
 
     const { user } = data
     const refreshTimeout = setTimeout(() => {
@@ -196,6 +194,28 @@ export const useUsersStore = defineStore('users', () => {
     }))
   }
 
+  async function performRefresh() {
+    if (!me.value) {
+      toastStore.add('Unable to refresh authentication token if you are not logged in.', { type: 'error' })
+      return
+    }
+
+    const res = await useFetch('/auth/refresh', { method: 'POST' })
+    if (res.error.value) {
+      toastStore.add('Unable to refresh authentication token. You will be automatically logged out..', {
+        type: 'error',
+      })
+      signout()
+      return
+    }
+
+    me.value.token = res.data.value.token
+  }
+
+  async function signout() {
+    // TODO
+  }
+
   return {
     users,
     me,
@@ -210,5 +230,7 @@ export const useUsersStore = defineStore('users', () => {
     setAccountOption,
     setUserName,
     processAuthData,
+    performRefresh,
+    signout,
   }
 })
