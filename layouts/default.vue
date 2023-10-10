@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { doesNotNeedLogin } from '@/utils/auth'
-
 const themeStore = useThemeStore()
 const titleStore = useTitleStore()
 const route = useRoute()
@@ -8,8 +6,6 @@ const userStore = useUsersStore()
 
 const title = computed(() => titleStore.title(route.path, route.params['id']))
 const magnification = computed(() => userStore.me?.magnification ?? 1)
-
-const showNav = computed(() => route.fullPath !== '/' && !doesNotNeedLogin(route.fullPath))
 </script>
 
 <template>
@@ -18,8 +14,8 @@ const showNav = computed(() => route.fullPath !== '/' && !doesNotNeedLogin(route
     <Title>{{ title }}</Title>
     <Body :style="`${themeStore.activeThemeVariables};`"></Body>
   </Head>
-  <NavHeader v-if="showNav" />
-  <NavTheSidebar v-if="showNav" />
+  <NavHeader />
+  <NavTheSidebar />
   <ToasterComponent />
   <main>
     <slot></slot>

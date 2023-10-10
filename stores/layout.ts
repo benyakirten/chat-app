@@ -27,5 +27,13 @@ export const useLayoutStore = defineStore('layout', () => {
 
   const isOpen = computed(() => (tab: LayoutState['sidebarTabOpened']) => sidebarTabOpened.value === tab)
 
-  return { sidebarOpen, sidebarTabOpened, toggleOpen, setSidebarState, setTabOpened, toggleTabOpened, isOpen }
+  return {
+    sidebarOpen,
+    sidebarTabOpened,
+    toggleOpen,
+    setSidebarState,
+    setTabOpened,
+    toggleTabOpened,
+    isOpen,
+  }
 })

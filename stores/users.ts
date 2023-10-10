@@ -35,6 +35,7 @@ export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
   const messageStore = useMessageStore()
   const recentsStore = useRecentsStore()
+  const route = useRoute()
 
   const users = ref<UsersStoreState['users']>(new Map())
   const me = ref<UsersStoreState['me']>(null)
@@ -204,7 +205,9 @@ export const useUsersStore = defineStore('users', () => {
     recentsStore.reset()
 
     useFetch('/auth/signout', { method: 'POST' })
-    // await navigateTo('/login')
+    if (!doesNotNeedLogin(route.fullPath)) {
+      await navigateTo('/login')
+    }
   }
 
   return {

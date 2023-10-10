@@ -1,3 +1,7 @@
 <script lang="ts" setup>
-// await navigateTo('/chat')
+//
 </script>
+
+<template>
+  <h1>ABOUT PAGE TODO</h1>
+</template>
