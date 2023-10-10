@@ -2,13 +2,14 @@ import type { H3Event, EventHandlerRequest } from 'h3'
 import type { z } from 'zod'
 import axios from 'axios'
 
-import { COMPLETE_AUTH_SHAPE, LOGIN_SHAPE, REGISTER_SHAPE } from '@/utils/shapes'
-import { setRefreshCookie, setRememberMeCookie } from './cookies'
+import { COMPLETE_AUTH_SHAPE, LOGIN_SHAPE, REGISTER_SHAPE, conversation, user } from '@/utils/shapes'
+import { setRefreshCookie } from './cookies'
 import { setAuthToken } from './axios'
 
+type ServerEvent = H3Event<EventHandlerRequest>
 type AuthRequestData<T extends 'login' | 'register'> = T extends 'login' ? typeof LOGIN_SHAPE : typeof REGISTER_SHAPE
 export async function sendAuthRequest(
-  event: H3Event<EventHandlerRequest>,
+  event: ServerEvent,
   endpoint: 'login' | 'register',
   data: z.infer<AuthRequestData<typeof endpoint>>
 ) {
@@ -32,14 +33,15 @@ export async function sendAuthRequest(
     setResponseStatus(event, 500)
     return { error: { message: 'Data returned from server does not conform to known standards.' } }
   }
-  const { email, password, rememberMe } = parseRes.data
-  const { auth_token, refresh_token, users, conversations, user } = dataRes.data
 
+  return setAuthData(event, dataRes.data, !!parseRes.data.rememberMe)
+}
+
+type AuthData = z.infer<typeof COMPLETE_AUTH_SHAPE>
+export function setAuthData(event: ServerEvent, data: AuthData, rememberMe: boolean) {
   const config = useRuntimeConfig()
-  if (rememberMe) {
-    setRememberMeCookie(event, config, email, password)
-  }
-  setRefreshCookie(event, config, refresh_token)
+  const { auth_token, refresh_token, users, conversations, user } = data
+  setRefreshCookie(event, config, rememberMe, refresh_token)
   setAuthToken(auth_token)
 
   return { user, conversations, users, auth_token }

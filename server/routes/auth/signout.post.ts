@@ -1,13 +1,14 @@
 import axios from 'axios'
 
+import { getRefreshCookie } from '@/server/utils/cookies'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const refreshToken = getRefreshCookie(event, config)
+  const refreshCookie = getRefreshCookie(event, config)
 
-  deleteCookie(event, config.rememberMeCookieName)
-  deleteCookie(event, config.refreshCookieName)
+  deleteCookie(event, config.cookieName)
 
-  await axios.post('/auth/signout', { token: refreshToken })
+  if (refreshCookie) [axios.post('/auth/signout', { token: refreshCookie.refreshToken })]
 
   await sendRedirect(event, '/login')
 })
