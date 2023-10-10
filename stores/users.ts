@@ -200,10 +200,8 @@ export const useUsersStore = defineStore('users', () => {
     messageStore.reset()
     recentsStore.reset()
 
-    const res = await useFetch('/auth/signout', { method: 'POST' })
-    if (res.error) {
-      toastStore.add('A problem occurred signing you out, 🤷', { type: 'error' })
-    }
+    useFetch('/auth/signout', { method: 'POST' })
+    await navigateTo('/login')
   }
 
   return {

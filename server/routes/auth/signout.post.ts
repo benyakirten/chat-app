@@ -9,6 +9,4 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, config.cookieName)
 
   if (refreshCookie) [axios.post('/auth/signout', { token: refreshCookie.refreshToken })]
-
-  await sendRedirect(event, '/login')
 })
