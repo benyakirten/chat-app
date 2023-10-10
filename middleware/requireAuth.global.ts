@@ -1,18 +1,11 @@
 import { doesNotNeedLogin } from '@/utils/auth'
 
-let lastVisitedRoute: string | null = null
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (!process.server) {
+  if (process.server) {
     return
   }
 
-  if (to.path === lastVisitedRoute) {
-    return
-  }
-
-  lastVisitedRoute = to.path
   const userStore = useUsersStore()
-
   if (userStore.me) {
     if (to.path === '/login') {
       return navigateTo('/chat')
@@ -22,7 +15,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   const silentLogin = await useFetch('/auth/silent', { method: 'POST' })
-
   if (silentLogin.error.value) {
     if (doesNotNeedLogin(to.path)) {
       return

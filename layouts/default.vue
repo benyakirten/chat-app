@@ -9,7 +9,7 @@ const userStore = useUsersStore()
 const title = computed(() => titleStore.title(route.path, route.params['id']))
 const magnification = computed(() => userStore.me?.magnification ?? 1)
 
-const showNav = computed(() => !doesNotNeedLogin(route.fullPath))
+const showNav = computed(() => route.fullPath !== '/' && !doesNotNeedLogin(route.fullPath))
 </script>
 
 <template>
@@ -56,7 +56,7 @@ body {
 }
 
 main {
-  height: 100%;
+  min-height: 100vh;
 }
 
 .page-leave-active,

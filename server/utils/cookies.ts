@@ -61,8 +61,6 @@ export function setRefreshCookie(
   const serialized = serialize({ rememberMe, refreshToken })
   const signedPayload = sign(serialized, config.cookieSecret)
 
-  console.log('ABOUT TO SET COOKIE')
-  console.log(refreshToken)
   setCookie(event, config.cookieName, signedPayload, {
     httpOnly: true,
     path: '/',

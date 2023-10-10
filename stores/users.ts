@@ -136,7 +136,6 @@ export const useUsersStore = defineStore('users', () => {
   })
 
   function processAuthData(data: z.infer<typeof PARTIAL_AUTH_SHAPE>) {
-    // TODO: Clean this up
     for (const user of data.users) {
       users.value.set(user.id, {
         id: user.id,
@@ -174,8 +173,6 @@ export const useUsersStore = defineStore('users', () => {
       isPrivate: conversation.private,
       alias: conversation.alias,
     }))
-
-    //
   }
 
   async function performRefresh() {
@@ -207,7 +204,7 @@ export const useUsersStore = defineStore('users', () => {
     recentsStore.reset()
 
     useFetch('/auth/signout', { method: 'POST' })
-    await navigateTo('/login')
+    // await navigateTo('/login')
   }
 
   return {
