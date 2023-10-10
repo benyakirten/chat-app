@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <h1>ABOUT PAGE TODO</h1>
+  <h1>THE HOME PAGE</h1>
 </template>

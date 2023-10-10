@@ -3,6 +3,7 @@ import { formatAuthErrors } from '@/utils/auth'
 
 const toastStore = useToastStore()
 const userStore = useUsersStore()
+const authStore = useAuthStore()
 
 const loginMode = ref(true)
 const email = ref('')
@@ -33,6 +34,16 @@ async function handleSubmit(e: Event) {
   userStore.processAuthData(res.data.value)
   await navigateTo('/chat')
 }
+
+onMounted(async () => {
+  if (authStore.state) {
+    await authStore.state
+  }
+
+  if (userStore.me) {
+    await navigateTo('/chat')
+  }
+})
 </script>
 
 <template>
