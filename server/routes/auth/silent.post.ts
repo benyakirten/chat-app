@@ -6,22 +6,20 @@ import { setAuthData } from '~/server/utils/account'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const refreshCookie = getRefreshCookie(event, config)
 
+  const refreshCookie = getRefreshCookie(event, config)
   if (!refreshCookie || !refreshCookie.rememberMe) {
     // TODO: Find the appropriate header for this:
     // No remember me cookie/don't remember me - no login
     setResponseStatus(event, 406)
     return { error: { message: 'Cookie unavailable' } }
   }
-
   const { rememberMe, refreshToken } = refreshCookie
-
   const result = await axios.post('/auth/refresh', {
     token: refreshToken,
   })
 
-  if (result.status > 400) {
+  if (result.status >= 400) {
     setResponseStatus(event, result.status)
     return result.data
   }

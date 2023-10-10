@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    cookieName: process.env.REFRESH_COOKIE_NAME || '__session',
+    cookieName: process.env.COOKIE_NAME || '__session',
     cookieSecret: process.env.COOKIE_SECRET || 'secret',
     cookieExpires: parseInt(process.env.COOKIE_EXPIRES || MS_IN_ONE_WEEK.toString()),
   },

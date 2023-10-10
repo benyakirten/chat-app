@@ -146,6 +146,12 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const { user } = data
+    users.value.set(data.user.id, {
+      name: user.display_name,
+      id: user.id,
+      online: true,
+    })
+
     const refreshTimeout = setTimeout(() => {
       performRefresh()
     }, REFRESH_TIMEOUT)

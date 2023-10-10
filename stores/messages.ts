@@ -343,7 +343,7 @@ export interface ConversationMessage {
 export type UserReadTimes = Record<UserId, Date>
 
 export const useMessageStore = defineStore('messages', () => {
-  const conversations = ref<Conversation[]>([conversation1, conversation2])
+  const conversations = ref<Conversation[]>([])
   const filteredConversationIds = ref<ConversationId[] | null>(null)
   const editedMessage = ref<{ conversationId: ConversationId; messageId: MessageId } | null>(null)
 
