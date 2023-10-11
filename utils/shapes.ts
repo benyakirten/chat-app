@@ -83,5 +83,5 @@ export const CHANNEL_JOIN_SHAPE = z.object({
   conversation,
   users: z.array(user),
   messages: z.array(message),
-  read_times: z.record(z.string(), z.string().datetime()),
+  read_times: z.record(z.string().uuid(), z.string().datetime()),
 })
