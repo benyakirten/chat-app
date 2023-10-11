@@ -72,3 +72,9 @@ export const RECENTS_DATA_SHAPE = z.object({
   recents: z.array(z.string()),
   id: z.string(),
 })
+
+export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
+  magnification: z.union([z.undefined(), z.number()]),
+  theme: z.union([z.undefined(), themeOption]),
+  hidden: z.union([z.undefined(), z.boolean()]),
+})

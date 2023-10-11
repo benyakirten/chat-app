@@ -56,7 +56,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   const computerTheme = ref<ThemeStoreState['active']>(useCookie(config.public.themeCookieName).value as any)
 
-  const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
+  const active = computed(() => userStore.me?.theme ?? computerTheme.value)
   const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value) ?? 'night')
   const activeTheme = computed(() => themes.value[activeThemeName.value])
   watchEffect(() => {

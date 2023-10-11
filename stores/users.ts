@@ -16,7 +16,7 @@ export interface Me {
   id: UserId
   email: string
   magnification: number
-  colorTheme: 'day' | 'night' | 'auto'
+  theme: 'day' | 'night' | 'auto'
   hidden: boolean
   // TODO: Consider how a block list will work
   block: Set<string>
@@ -97,7 +97,10 @@ export const useUsersStore = defineStore('users', () => {
 
     // Not sure why the type isn't narrowing
     me.value[option] = value as any
-    // TODO: Transmit details
+    const res = await useFetch('/api/profile', { method: 'PATCH', body: { [option]: value } })
+    if (res.error.value) {
+      toastStore.add(`Unable to update profile: ${res.error.value}`, { type: 'error' })
+    }
   }
 
   async function setUserName(name: string) {
@@ -159,7 +162,7 @@ export const useUsersStore = defineStore('users', () => {
     me.value = {
       block: new Set(),
       token: data.auth_token,
-      colorTheme: user.theme,
+      theme: user.theme,
       id: user.id,
       magnification: user.magnification,
       email: user.email,
