@@ -7,8 +7,5 @@ export default defineNuxtRouteMiddleware((to) => {
   const recentsStore = useRecentsStore()
   recentsStore.visit(to.path)
 
-  useFetch('/api/recents', {
-    method: 'POST',
-    body: { recents: recentsStore.allLRU.cache, id: userStore.me.id },
-  })
+  useAuthedFetch('/api/recents', 'POST', { recents: recentsStore.allLRU.cache })
 })

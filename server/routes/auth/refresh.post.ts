@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import { getRefreshCookie, setRefreshCookie } from '@/server/utils/cookies'
-import { setAuthToken } from '@/server/utils/axios'
 import { COMPLETE_AUTH_SHAPE } from '@/utils/shapes'
 
 export default defineEventHandler(async (event) => {
@@ -31,7 +30,6 @@ export default defineEventHandler(async (event) => {
   const { auth_token, refresh_token } = dataRes.data
 
   setRefreshCookie(event, config, rememberMe, refresh_token)
-  setAuthToken(auth_token)
 
   return { token: auth_token }
 })

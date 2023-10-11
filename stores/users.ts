@@ -97,7 +97,7 @@ export const useUsersStore = defineStore('users', () => {
 
     // Not sure why the type isn't narrowing
     me.value[option] = value as any
-    const res = await useFetch('/api/profile', { method: 'PATCH', body: { [option]: value } })
+    const res = await useAuthedFetch('/api/profile', 'PATCH', { [option]: value })
     if (res.error.value) {
       toastStore.add(`Unable to update profile: ${res.error.value}`, { type: 'error' })
     }
@@ -177,6 +177,10 @@ export const useUsersStore = defineStore('users', () => {
       isPrivate: conversation.private,
       alias: conversation.alias,
     }))
+
+    for (const recent of data.user.recents.toReversed()) {
+      recentsStore.visit(recent)
+    }
   }
 
   async function performRefresh() {

@@ -2,11 +2,10 @@ import type { H3Event, EventHandlerRequest } from 'h3'
 import type { z } from 'zod'
 import axios from 'axios'
 
-import { COMPLETE_AUTH_SHAPE, LOGIN_SHAPE, REGISTER_SHAPE, conversation, user } from '@/utils/shapes'
+import { COMPLETE_AUTH_SHAPE, LOGIN_SHAPE, REGISTER_SHAPE } from '@/utils/shapes'
 import { setRefreshCookie } from './cookies'
-import { setAuthToken } from './axios'
 
-type ServerEvent = H3Event<EventHandlerRequest>
+export type ServerEvent = H3Event<EventHandlerRequest>
 type AuthRequestData<T extends 'login' | 'register'> = T extends 'login' ? typeof LOGIN_SHAPE : typeof REGISTER_SHAPE
 export async function sendAuthRequest(
   event: ServerEvent,
@@ -16,7 +15,6 @@ export async function sendAuthRequest(
   const shape = endpoint === 'login' ? LOGIN_SHAPE : REGISTER_SHAPE
   const parseRes = shape.safeParse(data)
 
-  // TODO: Standardize error response/shape
   if (!parseRes.success) {
     setResponseStatus(event, 400)
     return { error: parseRes.error.errors }
@@ -42,7 +40,6 @@ export function setAuthData(event: ServerEvent, data: AuthData, rememberMe: bool
   const config = useRuntimeConfig()
   const { auth_token, refresh_token, users, conversations, user } = data
   setRefreshCookie(event, config, rememberMe, refresh_token)
-  setAuthToken(auth_token)
 
   return { user, conversations, users, auth_token }
 }
