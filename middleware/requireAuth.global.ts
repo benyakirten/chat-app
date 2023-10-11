@@ -44,10 +44,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   // Situation 3
-  if (authStore.silentLoginHasFailed) {
-    return navigateTo('/login')
-  }
-
   const loginSuccess = await authStore.startAuthStatePromise()
   if (!loginSuccess) {
     return navigateTo('/login')

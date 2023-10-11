@@ -43,3 +43,31 @@ export function setAuthData(event: ServerEvent, data: AuthData, rememberMe: bool
 
   return { user, conversations, users, auth_token }
 }
+
+export async function performRefresh(
+  event: ServerEvent
+): Promise<{ error: any; status: number } | { data: z.infer<typeof COMPLETE_AUTH_SHAPE>; rememberMe: boolean }> {
+  const config = useRuntimeConfig()
+
+  const refreshCookie = getRefreshCookie(event, config)
+  if (!refreshCookie || !refreshCookie.rememberMe) {
+    // TODO: Find the appropriate header for this:
+    // No remember me cookie/don't remember me - no login
+    return { error: { message: 'Cookie unavailable' }, status: 406 }
+  }
+  const { rememberMe, refreshToken } = refreshCookie
+  const result = await axios.post('/auth/refresh', {
+    token: refreshToken,
+  })
+
+  if (result.status >= 400) {
+    return { error: result.data, status: 400 }
+  }
+
+  const dataRes = COMPLETE_AUTH_SHAPE.safeParse(result.data)
+  if (!dataRes.success) {
+    return { error: { message: 'Data shape unexpected' }, status: 500 }
+  }
+
+  return { data: dataRes.data, rememberMe }
+}

@@ -195,10 +195,14 @@ export const useUsersStore = defineStore('users', () => {
         type: 'error',
       })
       signout()
+
       return
     }
 
     me.value.token = res.data.value.token
+    me.value.refreshTimeout = setTimeout(() => {
+      performRefresh()
+    }, REFRESH_TIMEOUT)
   }
 
   async function signout() {
@@ -211,7 +215,7 @@ export const useUsersStore = defineStore('users', () => {
     messageStore.reset()
     recentsStore.reset()
 
-    useFetch('/auth/signout', { method: 'POST' })
+    await useFetch('/auth/signout', { method: 'POST' })
     if (!doesNotNeedLogin(route.fullPath)) {
       await navigateTo('/login')
     }

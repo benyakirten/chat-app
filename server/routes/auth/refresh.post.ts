@@ -1,33 +1,16 @@
-import axios from 'axios'
-
-import { getRefreshCookie, setRefreshCookie } from '@/server/utils/cookies'
-import { COMPLETE_AUTH_SHAPE } from '@/utils/shapes'
+import { performRefresh } from '@/server/utils/account'
 
 export default defineEventHandler(async (event) => {
+  const refreshData = await performRefresh(event)
+  if ('error' in refreshData) {
+    setResponseStatus(event, Math.min(400, refreshData.status))
+    return refreshData.error
+  }
+
   const config = useRuntimeConfig()
-  const refreshCookie = getRefreshCookie(event, config)
 
-  if (!refreshCookie) {
-    setResponseStatus(event, 406)
-    return { error: { message: 'Refresh token not stored' } }
-  }
-
-  const { refreshToken, rememberMe } = refreshCookie
-  const result = await axios.post('/auth/refresh', {
-    token: refreshToken,
-  })
-
-  if (result.status > 400) {
-    setResponseStatus(event, result.status)
-    return result.data
-  }
-
-  const dataRes = COMPLETE_AUTH_SHAPE.safeParse(result.data)
-  if (!dataRes.success) {
-    setResponseStatus(event, 500)
-    return { error: { message: 'Data shape unexpected' } }
-  }
-  const { auth_token, refresh_token } = dataRes.data
+  const { data, rememberMe } = refreshData
+  const { auth_token, refresh_token } = data
 
   setRefreshCookie(event, config, rememberMe, refresh_token)
 

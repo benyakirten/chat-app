@@ -1,7 +1,3 @@
 <script lang="ts" setup>
-//
+await navigateTo('/chat')
 </script>
-
-<template>
-  <h1>THE HOME PAGE</h1>
-</template>
