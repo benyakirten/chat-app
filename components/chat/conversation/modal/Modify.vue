@@ -131,7 +131,7 @@ const userOptions = computed(() =>
   width: 80vw;
 
   &-error {
-    font-size: 1.8rem;
+    font-size: var(--text-xxl);
   }
 
   &-form {
@@ -145,7 +145,7 @@ const userOptions = computed(() =>
 
       &-multiselect {
         &-noone {
-          font-size: var(--size-xl);
+          font-size: var(--text-xl);
         }
 
         &-users {
@@ -159,7 +159,7 @@ const userOptions = computed(() =>
 
       &-alias {
         &-label {
-          font-size: var(--size-xl);
+          font-size: var(--text-xl);
           padding-bottom: 0.5rem;
         }
       }

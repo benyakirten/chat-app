@@ -6,7 +6,7 @@ definePageMeta({
 const route = useRoute()
 const messageStore = useMessageStore()
 // TODO: Work on types here
-const id = computed(() => route.params['id'] as string)
+const id = toRef(route.params['id'] as string)
 
 // If the window was hidden then became visible then we want to say the user has viewed the current conversation
 function handleVisibilityChange() {

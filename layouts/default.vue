@@ -10,9 +10,8 @@ const magnification = computed(() => userStore.me?.magnification ?? 1)
 
 <template>
   <Head>
-    <Html :style="`--magnification: ${magnification}`"></Html>
     <Title>{{ title }}</Title>
-    <Body :style="`${themeStore.activeThemeVariables};`"></Body>
+    <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${magnification};`"></Body>
   </Head>
   <NavHeader />
   <NavTheSidebar />
@@ -23,10 +22,6 @@ const magnification = computed(() => userStore.me?.magnification ?? 1)
 </template>
 
 <style>
-html {
-  font-size: calc(var(--base-size) * var(--magnification, 1));
-}
-
 body {
   --bg-alt1: color-mix(in srgb, var(--bg-primary) 95%, var(--mix));
   --bg-alt2: color-mix(in srgb, var(--bg-primary) 91%, var(--mix));
@@ -48,7 +43,13 @@ body {
   background: var(--body-bg);
   color: var(--text);
 
-  font-size: var(--size-lg);
+  --text-xxl: calc(var(--size-xxl) * var(--magnification, 1));
+  --text-xl: calc(var(--size-xl) * var(--magnification, 1));
+  --text-lg: calc(var(--size-lg) * var(--magnification, 1));
+  --text-md: calc(var(--size-md) * var(--magnification, 1));
+  --text-sm: calc(var(--size-sm) * var(--magnification, 1));
+
+  font-size: var(--text-lg);
 }
 
 main {

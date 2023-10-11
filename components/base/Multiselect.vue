@@ -291,7 +291,6 @@ label {
 }
 
 .listbox {
-  z-index: var(--z-high);
   position: absolute;
   width: 100%;
   top: calc(100% + 0.2rem);
@@ -323,7 +322,7 @@ label {
 
       cursor: default;
 
-      font-size: var(--size-xl);
+      font-size: var(--text-xl);
 
       &:hover {
         background-color: var(--bg-primary);

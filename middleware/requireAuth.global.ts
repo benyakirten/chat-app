@@ -8,7 +8,7 @@ import { useAuthStore } from '~/stores/auth'
  * We start with the following premise: the user has visited a route.
  * There are three possible option of what happens
  * 1. They are already logged in - stop, we don't care
- * 2. They are visiting a route that doesn't need auth (login, about)
+ * 2. They are visiting a route that doesn't need auth (login, home)
  * 3. They are visiting a route that needs auth (account, chat)
  *
  * In situation 1, we exit early

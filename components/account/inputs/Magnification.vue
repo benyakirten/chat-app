@@ -17,20 +17,19 @@ watch(magnificationSelected, (val) => {
 
   userStore.setAccountOption('magnification', size)
 })
-//   Magnification should respond to the browser zoom in/out event/level
 </script>
 
 <template>
   <BaseMultiSelect
     :options="magnificationOptions"
     v-model="magnificationSelected"
-    title="Magnification"
-    placeholder="Set magnification..."
+    title="Text Magnification"
+    placeholder="Set text magnification..."
     type="single"
     :search="(item, text) => item.id.includes(text)"
   >
     <template #label>
-      <AccountInputsLabel>Magnification</AccountInputsLabel>
+      <AccountInputsLabel>Text Magnification</AccountInputsLabel>
     </template>
     <template #item="{ item }">
       <AccountInputsItem>{{ item.id }}</AccountInputsItem>

@@ -27,6 +27,6 @@ const props = defineProps<{
 .status {
   width: 100%;
   text-align: v-bind(align);
-  font-size: var(--size-sm);
+  font-size: var(--text-sm);
 }
 </style>

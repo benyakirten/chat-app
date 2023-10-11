@@ -5,7 +5,7 @@
 <style scoped>
 .item {
   color: var(--text);
-  font-size: var(--size-xl);
+  font-size: var(--text-xl);
   text-transform: capitalize;
 
   display: flex;

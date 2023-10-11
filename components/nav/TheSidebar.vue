@@ -126,7 +126,7 @@ nav {
     gap: 1rem;
 
     h4 {
-      font-size: var(--size-xxl);
+      font-size: var(--text-xxl);
     }
 
     ul > li {

@@ -7,7 +7,9 @@ const modalStore = useModalStore()
   <div class="conversation-list">
     <!-- TODO (future): Add filters -->
     <div class="conversation-list-conversations">
-      <div v-if="messageStore.visibleConversations.length === 0">No Conversations. Click below to start a new one.</div>
+      <div v-if="messageStore.visibleConversations.length === 0" class="conversation-list-conversations-empty">
+        No Conversations. Click below to start a new one.
+      </div>
       <!--
         TODO: Virtualize the list - either hand rolled or use a library
         The backend will paginate the conversation list
@@ -21,9 +23,9 @@ const modalStore = useModalStore()
         />
       </ul>
     </div>
-    <BaseButton class="conversation-list-new" @click="modalStore.newConversation()"
-      >Start a new conversation</BaseButton
-    >
+    <BaseButton class="conversation-list-new" @click="modalStore.newConversation()">
+      Start a new conversation
+    </BaseButton>
   </div>
 </template>
 
@@ -38,6 +40,11 @@ const modalStore = useModalStore()
 
   &-conversations {
     flex-grow: 1;
+
+    &-empty {
+      font-size: var(--text-xl);
+      padding: 1rem;
+    }
   }
 
   &-new {

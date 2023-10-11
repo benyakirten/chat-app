@@ -67,7 +67,7 @@ const unreadMessages = computed(() => messageStore.unreadMessages(props.conversa
   }
 
   &-unread {
-    font-size: 1rem;
+    font-size: var(--text-lg);
     align-self: center;
     justify-content: center;
     color: var(--highlight);
