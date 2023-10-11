@@ -46,6 +46,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
 export const useThemeStore = defineStore('theme', () => {
   const themes = ref(defaultThemes)
   const userStore = useUsersStore()
+  const config = useRuntimeConfig()
 
   const themeQuery = globalThis.matchMedia?.('(prefers-color-scheme: light)')
   themeQuery?.addEventListener('change', (e) => {
@@ -53,7 +54,14 @@ export const useThemeStore = defineStore('theme', () => {
     computerTheme.value = theme
   })
 
-  const computerTheme = ref<ThemeStoreState['active']>()
+  const computerTheme = ref<ThemeStoreState['active']>(
+    useCookie(config.themeCookieName, {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    }) as any
+  )
 
   const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
   const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value) ?? 'night')

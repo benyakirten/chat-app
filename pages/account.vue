@@ -5,8 +5,10 @@ const profile = computed(() => userStore.users.get(userStore.me?.id ?? ''))
 
 <template>
   <BasePage title="Account">
-    <div v-if="!userStore.me || !profile" class="no-user">You must be logged in to view your account.</div>
-    <AccountSettings v-else :me="userStore.me" :profile="profile" />
+    <FallbackClient>
+      <div v-if="!userStore.me || !profile" class="no-user">You must be logged in to view your account.</div>
+      <AccountSettings v-else :me="userStore.me" :profile="profile" />
+    </FallbackClient>
   </BasePage>
 </template>
 
