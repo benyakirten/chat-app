@@ -29,7 +29,8 @@ export default defineNuxtConfig({
     cookieShortExpires: MS_IN_ONE_MINUTE * 30,
     public: {
       themeCookieName: process.env.THEME_COOKIE_NAME || '__theme',
-      backendUrl: process.env.BACKEND_URL,
+      apiUrl: process.env.API_BASE_URL,
+      wsUrl: process.env.WS_URL,
     },
   },
 })

@@ -1,11 +1,6 @@
 import axios from 'axios'
 import { ServerEvent } from './account'
 
-export function setApiUrl(url: string) {
-  axios.defaults.baseURL = url
-  axios.defaults.validateStatus = () => true
-}
-
 export function sendAuthedRequest(
   event: ServerEvent,
   method: 'get' | 'post' | 'patch' | 'delete',

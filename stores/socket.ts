@@ -5,6 +5,8 @@ import { ConversationId } from './messages'
 export const useSocketStore = defineStore('socket', () => {
   const config = useRuntimeConfig()
   const messageStore = useMessageStore()
+  const toastStore = useToastStore()
+  const userStore = useUsersStore()
 
   let socket: Socket | null = null
   let systemChannel: Channel | null = null
@@ -12,7 +14,14 @@ export const useSocketStore = defineStore('socket', () => {
   let conversationChannels: Map<ConversationId, Channel> = new Map()
 
   function init() {
-    //
+    if (!config.public.wsUrl) {
+      throw new Error('WS_URL environment variable has not been set')
+    }
+    if (!userStore.me) {
+      toastStore.add('Unable to initiate live connection with backend.', { type: 'error' })
+      return
+    }
+    // const _socket = new Socket()
   }
 
   function joinConversation(conversationId: ConversationId) {
