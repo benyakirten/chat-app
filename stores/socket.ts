@@ -74,6 +74,26 @@ export const useSocketStore = defineStore('socket', () => {
             parsedData.error,
             `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
           )
+          return
+        }
+
+        for (const member of parsedData.data.users) {
+          const readTime = parsedData.data.read_times[member.id]
+          conversation.members.set(member.id, {
+            state: 'idle',
+            lastRead: new Date(readTime),
+          })
+        }
+
+        for (const message of parsedData.data.messages) {
+          conversation.messages.set(message.id, {
+            id: message.id,
+            content: message.content,
+            sender: message.sender,
+            createTime: new Date(message.inserted_at),
+            updateTime: new Date(message.updated_at),
+            status: 'complete',
+          })
         }
       })
       .receive('error', (error) => {
