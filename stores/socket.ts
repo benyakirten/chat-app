@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
 import { ConversationId } from './messages'
+import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
   const config = useRuntimeConfig()
@@ -14,18 +15,70 @@ export const useSocketStore = defineStore('socket', () => {
   let conversationChannels: Map<ConversationId, Channel> = new Map()
 
   function init() {
-    if (!config.public.wsUrl) {
-      throw new Error('WS_URL environment variable has not been set')
-    }
     if (!userStore.me) {
       toastStore.add('Unable to initiate live connection with backend.', { type: 'error' })
       return
     }
-    // const _socket = new Socket()
+    const { token, hidden, id } = userStore.me
+
+    socket = new Socket(config.public.wsUrl)
+    socket.onError((err) => addErrorToast(err))
+
+    // TODO: Abstract this and handle errors better?
+    systemChannel = socket.channel('system:general', { token, hidden })
+    systemChannel.onError((reason) => addErrorToast(reason))
+    systemChannel.join().receive('error', (reason) => addErrorToast(reason))
+
+    userChannel = socket.channel(`system:${id}`, { token })
+    userChannel.onError((reason) => addErrorToast(reason))
+    userChannel.join().receive('error', (reason) => addErrorToast(reason))
+
+    for (const conversation of messageStore.conversations) {
+      joinConversation(conversation)
+    }
   }
 
-  function joinConversation(conversationId: ConversationId) {
+  function addErrorToast(
+    err: any,
+    msg: string = 'Unable to connect to system channel. Please attempt to reload the page or log out then back in'
+  ) {
+    toastStore.add(msg, {
+      type: 'error',
+      timeout: null,
+    })
+
+    if (err) {
+      console.error(err)
+    }
+  }
+
+  function changeMyName(newName: string) {
     //
+  }
+
+  function joinConversation(conversation: Conversation) {
+    const conversationName = conversation.alias ?? conversation.id
+    if (!socket) {
+      addErrorToast(`Unable to join ${conversation}`, `Unable to join conversation ${conversationName}.`)
+      return
+    }
+
+    const channel = socket.channel(`conversation:${conversation}`)
+    channel
+      .join()
+      .receive('ok', (data) => {
+        const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
+        conversationChannels.set(conversation.id, channel)
+        if (!parsedData.success) {
+          addErrorToast(
+            parsedData.error,
+            `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
+          )
+        }
+      })
+      .receive('error', (error) => {
+        addErrorToast(error, `Unable to join conversation ${conversationName}.`)
+      })
   }
 
   function leaveConversation(conversationId: ConversationId) {
@@ -35,6 +88,9 @@ export const useSocketStore = defineStore('socket', () => {
   function disconnect() {
     socket?.disconnect()
     socket = null
+    userChannel = null
+    systemChannel = null
+    conversationChannels = new Map()
   }
   // onMounted(() => {
   //   const token =

@@ -77,3 +77,10 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
   theme: z.union([z.undefined(), themeOption]),
   hidden: z.union([z.undefined(), z.boolean()]),
 })
+
+export const CHANNEL_JOIN_SHAPE = z.object({
+  conversation,
+  users: z.array(user),
+  messages: z.array(message),
+  read_times: z.map(z.string(), z.string().datetime()),
+})
