@@ -1,5 +1,5 @@
 import { doesNotNeedLogin } from '@/utils/auth'
-import { useAuthStore } from '~/stores/auth'
+import { useAuthStore } from '@/stores/auth'
 
 /**
  * Since this involves setting cookies - we want to limit it to client

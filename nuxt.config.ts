@@ -26,6 +26,8 @@ export default defineNuxtConfig({
     cookieName: process.env.COOKIE_NAME || '__session',
     cookieSecret: process.env.COOKIE_SECRET || 'secret',
     cookieExpires: parseInt(process.env.COOKIE_EXPIRES || MS_IN_ONE_WEEK.toString()),
-    themeCookieName: process.env.THEME_COOKIE_NAME || '__theme',
+    public: {
+      themeCookieName: process.env.THEME_COOKIE_NAME || '__theme',
+    },
   },
 })

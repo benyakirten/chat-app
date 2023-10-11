@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { getRefreshCookie } from '@/server/utils/cookies'
 import { COMPLETE_AUTH_SHAPE } from '@/utils/shapes'
-import { setAuthData } from '~/server/utils/account'
+import { setAuthData } from '@/server/utils/account'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
