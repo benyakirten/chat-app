@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
-import { ConversationId, UserId } from './messages'
+import { z } from 'zod'
+
+import { ConversationId, ConversationMessage, UserId } from './messages'
 import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -68,6 +70,13 @@ export const useSocketStore = defineStore('socket', () => {
     }
 
     const channel = socket.channel(`conversation:${conversation.id}`, { token })
+    setupChannelJoinHandlers(channel, conversation, conversationName)
+
+    channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg))
+  }
+
+  function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
+    // Break this up into smaller functions
     channel
       .join()
       .receive('ok', (data) => {
@@ -129,12 +138,60 @@ export const useSocketStore = defineStore('socket', () => {
     //
   }
 
-  function addMessage(conversationId: ConversationId, message: ConversationMessage) {
-    //
+  async function transmitNewMessage(conversationId: ConversationId, content: string): Promise<z.infer<typeof message>> {
+    const channel = conversationChannels.get(conversationId)
+    const token = userStore.me?.token
+
+    // TODO: Centralize error handling
+    if (!channel || !token) {
+      addErrorToast(null, 'Unable to locate conversation to send message.')
+      return Promise.reject(channel || token)
+    }
+
+    return new Promise((resolve, reject) => {
+      channel
+        .push('send_message', {
+          token,
+          content,
+        })
+        .receive('ok', (res) => {
+          console.log('ok')
+          console.log(res)
+          resolve(res)
+        })
+        .receive('error', (err) => {
+          console.log('error')
+          console.error(err)
+          addErrorToast(null, 'Unable to locate conversation to send message.')
+          reject(err)
+        })
+        .receive('timeout', (err) => {
+          console.log('timeout')
+          console.error(err)
+          addErrorToast(null, 'Unable to locate conversation to send message.')
+          reject(err)
+        })
+    })
   }
 
-  function receiveMessage(conversationId: ConversationId, message: ConversationMessage) {
-    //
+  function receiveNewMessage(conversationId: ConversationId, msg: z.infer<typeof message>) {
+    const messageRes = message.safeParse(msg)
+    if (!messageRes.success) {
+      addErrorToast(messageRes.error, 'Message shape not recognized.')
+      return
+    }
+
+    const { id, sender, updated_at, content, inserted_at } = messageRes.data
+    const conversationMessage: ConversationMessage = {
+      id,
+      sender,
+      content,
+      createTime: new Date(inserted_at),
+      updateTime: new Date(updated_at),
+      status: 'complete',
+    }
+
+    messageStore.addMessage(conversationId, conversationMessage)
   }
 
   function transmitConversationAliasChanged(conversationId: ConversationId, alias: string) {
@@ -169,8 +226,8 @@ export const useSocketStore = defineStore('socket', () => {
     receiveNameChanged,
     transmitConversationRead,
     receiveConversationRead,
-    addMessage,
-    receiveMessage,
+    transmitNewMessage,
+    receiveNewMessage,
     transmitConversationAliasChanged,
     receiveConversationAliasChanged,
   }

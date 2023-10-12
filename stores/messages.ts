@@ -349,6 +349,7 @@ export const useMessageStore = defineStore('messages', () => {
 
   const userStore = useUsersStore()
   const toastStore = useToastStore()
+  const socketStore = useSocketStore()
   const route = useRoute()
 
   const unreadMessages = computed(() => (conversation?: Conversation) => {
@@ -474,12 +475,10 @@ export const useMessageStore = defineStore('messages', () => {
     convo.typingTimeout = timeout
   }
 
-  function sendMessage(id: ConversationId, message: string) {
+  async function sendMessage(id: ConversationId, message: string) {
     // Conversation ID is in case we want to programmatically send messages
     // outside of the active conversation
     if (!userStore.me) {
-      // TODO: Error handling - this shouldn't be able to happen
-      // If we get to this point there has been an error
       return
     }
 
@@ -510,8 +509,20 @@ export const useMessageStore = defineStore('messages', () => {
 
     addMessage(id, convoMessage)
 
-    // TODO: Encrypt/transmit the message then use the api to update the data
-    // i.e. call synchronizeMessage
+    try {
+      const sentMessage = await socketStore.transmitNewMessage(id, message)
+      synchronizeMessage(
+        id,
+        newId,
+        sentMessage.id,
+        true,
+        new Date(sentMessage.inserted_at),
+        new Date(sentMessage.updated_at)
+      )
+    } catch (e) {
+      console.error(e)
+      synchronizeMessage(id, newId, newId, false)
+    }
   }
 
   /**
@@ -538,8 +549,13 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
+    if (!successful) {
+      message.status = 'error'
+      return
+    }
+
     const newMessage: ConversationMessage = structuredClone(message)
-    newMessage.status = successful ? 'complete' : 'error'
+    newMessage.status = 'complete'
     if (createTime) {
       newMessage.createTime = createTime
     }
