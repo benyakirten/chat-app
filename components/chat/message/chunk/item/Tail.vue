@@ -12,6 +12,7 @@ const { isMine } = defineProps<{ isMine: boolean }>()
   width: 1rem;
   height: 1rem;
   position: absolute;
+  box-shadow: var(--item-box-shadow);
 
   --dist: 1rem;
 

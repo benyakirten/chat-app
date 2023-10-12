@@ -17,7 +17,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
 
 <template>
   <li class="message-group" :class="{ right: isMine }">
-    <ul class="messages">
+    <ul :class="{ messages: true, mine: isMine }">
       <TransitionGroup :name="transitionGroupName">
         <ChatMessageChunkItem
           v-for="(message, i) in chunk"
@@ -57,19 +57,25 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  &.mine {
+    gap: 2.5rem;
+  }
 }
 
 .right {
   align-self: flex-end;
 }
 
-.message-mine-move,
-.message-other-move,
 .message-mine-enter-active,
-.message-mine-leave-active,
 .message-other-enter-active,
 .message-other-leave-active {
   transition: all 300ms ease;
+}
+
+/* Find a better solution */
+.message-mine-leave-active {
+  transition: none;
 }
 
 .message-mine-enter-from,

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
 import { z } from 'zod'
 
-import { ConversationId, ConversationMessage, UserId } from './messages'
+import { Conversation, ConversationId, ConversationMessage, UserId } from './messages'
 import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -63,9 +63,9 @@ export const useSocketStore = defineStore('socket', () => {
 
   function joinConversation(conversation: Conversation) {
     const token = userStore.me?.token
-    const conversationName = conversation.alias ?? conversation.id
+    const conversationName = messageStore.getConversationName(conversation.id)
     if (!socket) {
-      addErrorToast(`Unable to join ${conversation}`, `Unable to join conversation ${conversationName}.`)
+      addErrorToast(conversation, `Unable to join conversation ${conversationName}.`)
       return
     }
 
@@ -82,6 +82,8 @@ export const useSocketStore = defineStore('socket', () => {
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
 
         if (!parsedData.success) {
+          console.log(data)
+          console.log(parsedData.error)
           addErrorToast(
             parsedData.error,
             `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
@@ -113,13 +115,20 @@ export const useSocketStore = defineStore('socket', () => {
       })
 
     channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg.message))
+    channel.on('read_conversation', (msg) => messageStore.viewConversation(conversation.id, msg.user_id))
+    channel.on('start_typing', ({ conversation_id, user_id }) =>
+      messageStore.setUserTypingState(conversation_id, user_id, 'typing')
+    )
+    channel.on('finish_typing', ({ conversation_id, user_id }) =>
+      messageStore.setUserTypingState(conversation_id, user_id, 'idle')
+    )
   }
 
-  function leaveConversation(conversationId: ConversationId) {
+  function transmitConversationDeparture(conversationId: ConversationId) {
     //
   }
 
-  function receiveConversationLeave(conversationId: ConversationId, user: UserId) {
+  function receiveConversationDeparture(conversationId: ConversationId, user: UserId) {
     //
   }
 
@@ -132,11 +141,16 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitConversationRead(conversationId: ConversationId) {
-    //
-  }
+    const token = userStore.me?.token
+    const channel = conversationChannels.get(conversationId)
+    const conversationName = messageStore.getConversationName(conversationId)
+    const errorToast = `Unable to transmit read status for ${conversationName}`
 
-  function receiveConversationRead(conversationId: ConversationId, userId: UserId) {
-    //
+    if (!channel) {
+      addErrorToast(null, errorToast)
+      return
+    }
+    channel.push('read_conversation', { token }).receive('error', (err) => addErrorToast(err, errorToast))
   }
 
   async function transmitNewMessage(conversationId: ConversationId, content: string): Promise<z.infer<typeof message>> {
@@ -177,7 +191,6 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function receiveNewMessage(conversationId: ConversationId, msg: z.infer<typeof message>) {
-    console.log(msg)
     const messageRes = message.safeParse(msg)
     if (!messageRes.success) {
       addErrorToast(messageRes.error, 'Message shape not recognized.')
@@ -205,7 +218,29 @@ export const useSocketStore = defineStore('socket', () => {
     //
   }
 
-  // function
+  function transmitTypingStarted(conversationId: ConversationId) {
+    transmitTypingStateChange(conversationId, 'start_typing')
+  }
+
+  function transmitTypingEnded(conversationId: ConversationId) {
+    transmitTypingStateChange(conversationId, 'finish_typing')
+  }
+
+  function transmitTypingStateChange(conversationId: ConversationId, eventName: string) {
+    const channel = conversationChannels.get(conversationId)
+    const token = userStore.me?.token
+    const conversationName = messageStore.getConversationName(conversationId)
+    const errorMessage = `People in ${conversationName} don't know you've ${
+      eventName === 'start_typing' ? 'begun' : 'finished'
+    } typing.`
+    // TODO: Centralize error handling
+    if (!channel || !token) {
+      addErrorToast(null, errorMessage)
+      return
+    }
+
+    channel.push(eventName, {}).receive('error', (error) => addErrorToast(error, errorMessage))
+  }
 
   function disconnect() {
     socket?.disconnect()
@@ -223,15 +258,16 @@ export const useSocketStore = defineStore('socket', () => {
     init,
     disconnect,
     joinConversation,
-    leaveConversation,
-    receiveConversationLeave,
+    transmitConversationDeparture,
+    receiveConversationDeparture,
     transmitNameChanged,
     receiveNameChanged,
     transmitConversationRead,
-    receiveConversationRead,
     transmitNewMessage,
     receiveNewMessage,
     transmitConversationAliasChanged,
     receiveConversationAliasChanged,
+    transmitTypingStarted,
+    transmitTypingEnded,
   }
 })

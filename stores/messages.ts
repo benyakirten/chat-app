@@ -10,311 +10,6 @@ export type UserId = string
 
 export const TYPING_TIMEOUT = 2_000
 
-const conversation2message1: ConversationMessage = {
-  sender: 'u1',
-  id: 'c2m1',
-  content: 'HI AGAIN!',
-  status: 'complete',
-  createTime: new Date('2020-1-1'),
-  updateTime: new Date('2020-1-1'),
-}
-
-const conversation2message2: ConversationMessage = {
-  sender: 'u3',
-  id: 'c2m2',
-  content: 'Hi to you too. Who are you AGAIN?',
-  status: 'complete',
-  createTime: new Date('2020-1-2'),
-  updateTime: new Date('2020-1-2'),
-}
-
-const conversation2message3: ConversationMessage = {
-  sender: 'u3',
-  id: 'c2m3',
-  content: 'Interested in knowing?',
-  status: 'complete',
-  createTime: new Date('2020-1-2'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation2message4: ConversationMessage = {
-  sender: 'u1',
-  id: 'c2m4',
-  content: "I'm me. Don't you know me AGAIN?",
-  status: 'pending',
-  createTime: new Date('2020-1-4'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation2message5: ConversationMessage = {
-  sender: 'u1',
-  id: 'c2m5',
-  content: 'Everyone knows me AGAIN.',
-  status: 'error',
-  createTime: new Date('2020-1-4'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation2message6: ConversationMessage = {
-  sender: 'u1',
-  id: 'c2m6',
-  content: 'I can assure you AGAIN.',
-  status: 'complete',
-  createTime: new Date('2020-1-5'),
-  updateTime: new Date('2020-1-5'),
-}
-
-const conversation2: Conversation = {
-  members: new Map([
-    ['u1', { state: 'idle', lastRead: new Date('2000-1-1') }],
-    ['u3', { state: 'idle', lastRead: new Date() }],
-  ]),
-  id: 'c2',
-  messages: new Map([
-    [conversation2message1.id, conversation2message1],
-    [conversation2message2.id, conversation2message2],
-    [conversation2message3.id, conversation2message3],
-    [conversation2message4.id, conversation2message4],
-    [conversation2message5.id, conversation2message5],
-    [conversation2message6.id, conversation2message6],
-  ]),
-  isPrivate: false,
-  alias: 'I want to be very clear. I love my wife.',
-}
-
-const conversation1message1: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m1',
-  content: 'HI!',
-  status: 'complete',
-  createTime: new Date('2020-1-1'),
-  updateTime: new Date('2020-1-1'),
-}
-
-const conversation1message2: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m2',
-  content: 'Hi to you too. Who are you?',
-  status: 'complete',
-  createTime: new Date('2020-1-2'),
-  updateTime: new Date('2020-1-2'),
-}
-
-const conversation1message3: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m3',
-  content: 'Interested in knowing?',
-  status: 'complete',
-  createTime: new Date('2020-1-2'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation1message4: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m4',
-  content: "I'm me. Don't you know me?",
-  status: 'pending',
-  createTime: new Date('2020-1-4'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation1message5: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m5',
-  content: 'Everyone knows me.',
-  status: 'error',
-  createTime: new Date('2020-1-4'),
-  updateTime: new Date('2020-1-4'),
-}
-
-const conversation1message6: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m6',
-  content:
-    'I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you. I can assure you.  I can assure you. I can assure you. v I can assure you.I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-5'),
-  updateTime: new Date('2020-1-5'),
-}
-
-const conversation1message7: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m7',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-6'),
-  updateTime: new Date('2020-1-6'),
-}
-
-const conversation1message8: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m8',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-7'),
-  updateTime: new Date('2020-1-7'),
-}
-
-const conversation1message9: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m9',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-8'),
-  updateTime: new Date('2020-1-8'),
-}
-
-const conversation1message10: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m10',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-9'),
-  updateTime: new Date('2020-1-9'),
-}
-
-const conversation1message11: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m11',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-10'),
-  updateTime: new Date('2020-1-10'),
-}
-
-const conversation1message12: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m12',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-12'),
-  updateTime: new Date('2020-1-12'),
-}
-
-const conversation1message13: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m13',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-13'),
-  updateTime: new Date('2020-1-13'),
-}
-
-const conversation1message14: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m14',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-14'),
-  updateTime: new Date('2020-1-14'),
-}
-
-const conversation1message15: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m15',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-15'),
-  updateTime: new Date('2020-1-15'),
-}
-
-const conversation1message16: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m16',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-16'),
-  updateTime: new Date('2020-1-16'),
-}
-
-const conversation1message17: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m17',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-17'),
-  updateTime: new Date('2020-1-17'),
-}
-
-const conversation1message18: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m18',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-18'),
-  updateTime: new Date('2020-1-18'),
-}
-
-const conversation1message19: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m19',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-19'),
-  updateTime: new Date('2020-1-19'),
-}
-
-const conversation1message20: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m20',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-20'),
-  updateTime: new Date('2020-1-20'),
-}
-
-const conversation1message21: ConversationMessage = {
-  sender: 'u2',
-  id: 'c1m21',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-21'),
-  updateTime: new Date('2020-1-21'),
-}
-
-const conversation1message22: ConversationMessage = {
-  sender: 'u1',
-  id: 'c1m22',
-  content: 'I can assure you.',
-  status: 'complete',
-  createTime: new Date('2020-1-22'),
-  updateTime: new Date('2020-1-22'),
-}
-
-const conversation1: Conversation = {
-  members: new Map([
-    ['u1', { state: 'idle', lastRead: new Date() }],
-    ['u2', { state: 'typing', lastRead: new Date() }],
-  ]),
-  id: 'c1',
-  messages: new Map([
-    [conversation1message1.id, conversation1message1],
-    [conversation1message2.id, conversation1message2],
-    [conversation1message3.id, conversation1message3],
-    [conversation1message4.id, conversation1message4],
-    [conversation1message5.id, conversation1message5],
-    [conversation1message6.id, conversation1message6],
-    [conversation1message7.id, conversation1message7],
-    [conversation1message8.id, conversation1message8],
-    [conversation1message9.id, conversation1message9],
-    [conversation1message10.id, conversation1message10],
-    [conversation1message11.id, conversation1message11],
-    [conversation1message12.id, conversation1message12],
-    [conversation1message13.id, conversation1message13],
-    [conversation1message14.id, conversation1message14],
-    [conversation1message15.id, conversation1message15],
-    [conversation1message16.id, conversation1message16],
-    [conversation1message17.id, conversation1message17],
-    [conversation1message18.id, conversation1message18],
-    [conversation1message19.id, conversation1message19],
-    [conversation1message20.id, conversation1message20],
-    [conversation1message21.id, conversation1message21],
-    [conversation1message22.id, conversation1message22],
-  ]),
-  isPrivate: true,
-  alias: null,
-}
-
 export interface UserConversationState {
   state: 'typing' | 'idle'
   lastRead: Date
@@ -426,10 +121,6 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     member.lastRead = new Date()
-
-    if (userStore.me && userStore.me?.id === userId) {
-      // TODO: transmit that the user has read the conversation
-    }
   }
 
   function addMessage(conversationId: ConversationId, message: ConversationMessage) {
@@ -445,9 +136,8 @@ export const useMessageStore = defineStore('messages', () => {
 
     convo.messages.set(message.id, message)
 
-    // TODO: Make this better
     if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
-      viewConversation(conversationId)
+      socketStore.transmitConversationRead(convo.id)
     }
   }
 
@@ -464,15 +154,30 @@ export const useMessageStore = defineStore('messages', () => {
     if (convo.typingTimeout) {
       clearTimeout(convo.typingTimeout)
     } else {
-      // TODO: Transmit that typing has started
+      socketStore.transmitTypingStarted(convo.id)
     }
 
     const timeout = setTimeout(() => {
-      // TODO: Transmit that typing has ended
+      socketStore.transmitTypingEnded(convo.id)
       convo.typingTimeout = undefined
     }, TYPING_TIMEOUT)
 
     convo.typingTimeout = timeout
+  }
+
+  function setUserTypingState(conversationId: ConversationId, userId: UserId, state: UserConversationState['state']) {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      console.error(`Unable to locate conversation with ID ${conversationId}`)
+    }
+
+    const member = convo?.members.get(userId)
+    if (!member) {
+      console.error(`Unable to locate user with ID ${userId} in conversation ${conversationId}`)
+      return
+    }
+
+    member.state = state
   }
 
   async function sendMessage(id: ConversationId, message: string) {
@@ -510,7 +215,8 @@ export const useMessageStore = defineStore('messages', () => {
     addMessage(id, convoMessage)
 
     try {
-      const sentMessage = await socketStore.transmitNewMessage(id, message)
+      socketStore.transmitTypingEnded(convo.id)
+      await socketStore.transmitNewMessage(id, message)
       synchronizeMessage(id, newId, true)
     } catch (e) {
       console.error(e)
@@ -540,6 +246,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
+    // Just remove the temporary message
     convo.messages.delete(messageId)
   }
 
@@ -709,6 +416,33 @@ export const useMessageStore = defineStore('messages', () => {
     return newConvo.id
   }
 
+  function getConversationName(conversationId: ConversationId): string {
+    const convo = conversation.value(conversationId)
+    if (!convo || !userStore.me) {
+      return `Conversation with ID ${conversationId}`
+    }
+
+    if (convo.alias && !convo.isPrivate) {
+      return convo.alias
+    }
+
+    const memberNames: string[] = []
+    for (const userId of convo.members.keys()) {
+      if (userId === userStore.me.id) {
+        continue
+      }
+
+      const username = userStore.users.get(userId)?.name
+      if (!username) {
+        continue
+      }
+
+      memberNames.push(username)
+    }
+
+    return `conversation with ${memberNames.join(', ')}`
+  }
+
   // TODO: This will be completely modified when we have a backend
   async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
     members.forEach((id) => {
@@ -759,5 +493,7 @@ export const useMessageStore = defineStore('messages', () => {
     moveConversationToTop,
     conversation,
     reset,
+    getConversationName,
+    setUserTypingState,
   }
 })

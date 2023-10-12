@@ -7,9 +7,17 @@ const mediaStore = useMediaStore()
 <template>
   <BasePage>
     <FallbackClient>
-      <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
-      <ChatMobileLayout v-else :id="id" />
+      <div class="layout-container">
+        <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
+        <ChatMobileLayout v-else :id="id" />
+      </div>
     </FallbackClient>
     <ChatConversationModal />
   </BasePage>
 </template>
+
+<!-- <style scoped>
+.layout-container {
+  margin-top: var(--header-height);
+} -->
+<!-- </style> -->

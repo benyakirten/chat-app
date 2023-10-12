@@ -13,7 +13,7 @@ export const LOGIN_SHAPE = z.object({
   rememberMe: z.boolean().optional(),
 })
 
-const DATETIME_REGEX = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}Z/
+const DATETIME_REGEX = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?Z/
 // Should these just be strings? I don't imagine we need this sort of validation
 export const timestamp = z.string().refine((time) => DATETIME_REGEX.test(time))
 export const themeOption = z.union([z.literal('day'), z.literal('night'), z.literal('auto')])
