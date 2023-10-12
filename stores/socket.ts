@@ -40,9 +40,10 @@ export const useSocketStore = defineStore('socket', () => {
     userChannel.onError((reason) => addErrorToast(reason))
     userChannel.join().receive('error', (reason) => addErrorToast(reason))
 
-    // for (const conversation of messageStore.conversations) {
-    //   joinConversation(conversation)
-    // }
+    for (const conversation of messageStore.conversations) {
+      joinConversation(conversation)
+      break
+    }
   }
 
   function addErrorToast(
@@ -67,15 +68,14 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
-    const channel = socket.channel(`conversation:${conversation}`, { token })
+    const channel = socket.channel(`conversation:${conversation.id}`, { token })
     channel
       .join()
       .receive('ok', (data) => {
-        console.log('HI!')
-        console.log(data)
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
-        conversationChannels.set(conversation.id, channel)
+
         if (!parsedData.success) {
+          // console.log(parsedData.error)
           addErrorToast(
             parsedData.error,
             `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
@@ -87,7 +87,7 @@ export const useSocketStore = defineStore('socket', () => {
           const readTime = parsedData.data.read_times[member.id]
           conversation.members.set(member.id, {
             state: 'idle',
-            lastRead: new Date(readTime),
+            lastRead: new Date(readTime ?? 0),
           })
         }
 

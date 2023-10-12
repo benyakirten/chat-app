@@ -34,7 +34,7 @@ export const useToastStore = defineStore('toasts', () => {
 
     if (timeout) {
       setTimeout(() => {
-        toasts.value.delete(id)
+        dismiss(id)
       }, timeout)
     }
 
