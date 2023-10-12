@@ -1,4 +1,4 @@
-import { defineStore, skipHydrate } from 'pinia'
+import { defineStore } from 'pinia'
 
 export interface ColorTheme {
   bgPrimary: string
@@ -48,17 +48,12 @@ export const useThemeStore = defineStore('theme', () => {
   const userStore = useUsersStore()
   const config = useRuntimeConfig()
 
-  const themeQuery = globalThis.matchMedia?.('(prefers-color-scheme: light)')
-  themeQuery?.addEventListener('change', (e) => {
-    const theme = e.matches ? 'day' : 'night'
-    computerTheme.value = theme
-  })
-
   const computerTheme = ref<ThemeStoreState['active']>(useCookie(config.public.themeCookieName).value as any)
 
   const active = computed(() => userStore.me?.theme ?? computerTheme.value)
   const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value) ?? 'night')
   const activeTheme = computed(() => themes.value[activeThemeName.value])
+
   watchEffect(() => {
     if (process.server) {
       return
@@ -84,7 +79,6 @@ export const useThemeStore = defineStore('theme', () => {
     active,
     activeThemeVariables,
     computerTheme,
-    themeQuery,
     activeThemeName,
     activeTheme,
   }
