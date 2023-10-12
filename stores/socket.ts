@@ -16,12 +16,19 @@ export const useSocketStore = defineStore('socket', () => {
 
   function init() {
     if (!userStore.me) {
-      toastStore.add('Unable to initiate live connection with backend.', { type: 'error' })
+      toastStore.add('Unable to initiate live connection.', { type: 'error' })
       return
     }
+
+    if (socket) {
+      console.log('the socket has already been initialized - returning early')
+      return
+    }
+
     const { token, hidden, id } = userStore.me
 
-    socket = new Socket(config.public.wsUrl)
+    socket = new Socket(config.public.wsUrl, { params: { token } })
+    socket.connect()
     socket.onError((err) => addErrorToast(err))
 
     // TODO: Abstract this and handle errors better?
@@ -29,13 +36,13 @@ export const useSocketStore = defineStore('socket', () => {
     systemChannel.onError((reason) => addErrorToast(reason))
     systemChannel.join().receive('error', (reason) => addErrorToast(reason))
 
-    userChannel = socket.channel(`system:${id}`, { token })
+    userChannel = socket.channel(`user:${id}`, { token })
     userChannel.onError((reason) => addErrorToast(reason))
     userChannel.join().receive('error', (reason) => addErrorToast(reason))
 
-    for (const conversation of messageStore.conversations) {
-      joinConversation(conversation)
-    }
+    // for (const conversation of messageStore.conversations) {
+    //   joinConversation(conversation)
+    // }
   }
 
   function addErrorToast(
@@ -53,16 +60,19 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function joinConversation(conversation: Conversation) {
+    const token = userStore.me?.token
     const conversationName = conversation.alias ?? conversation.id
     if (!socket) {
       addErrorToast(`Unable to join ${conversation}`, `Unable to join conversation ${conversationName}.`)
       return
     }
 
-    const channel = socket.channel(`conversation:${conversation}`)
+    const channel = socket.channel(`conversation:${conversation}`, { token })
     channel
       .join()
       .receive('ok', (data) => {
+        console.log('HI!')
+        console.log(data)
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
         conversationChannels.set(conversation.id, channel)
         if (!parsedData.success) {

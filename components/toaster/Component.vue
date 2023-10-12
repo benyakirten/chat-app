@@ -4,9 +4,10 @@ const toastStore = useToastStore()
 
 <template>
   <section class="toaster">
-    <TransitionGroup name="toast">
-      <ToasterToast v-for="[id, toast] of toastStore.toasts" :key="id" :toast="toast" />
-    </TransitionGroup>
+    <!-- TODO: Figure out why dismissing a toast with the transition group si causing an error -->
+    <!-- <TransitionGroup name="toast"> -->
+    <ToasterToast v-for="[id, toast] of toastStore.toasts" :key="id" :toast="toast" />
+    <!-- </TransitionGroup> -->
   </section>
 </template>
 

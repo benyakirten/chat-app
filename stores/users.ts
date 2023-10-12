@@ -35,6 +35,7 @@ export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
   const messageStore = useMessageStore()
   const recentsStore = useRecentsStore()
+  const socketStore = useSocketStore()
   const route = useRoute()
 
   const users = ref<UsersStoreState['users']>(new Map())
@@ -181,6 +182,8 @@ export const useUsersStore = defineStore('users', () => {
     for (const recent of data.user.recents.toReversed()) {
       recentsStore.visit(recent)
     }
+
+    socketStore.init()
   }
 
   async function performRefresh() {

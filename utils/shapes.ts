@@ -13,10 +13,13 @@ export const LOGIN_SHAPE = z.object({
   rememberMe: z.boolean().optional(),
 })
 
+const DATETIME_REGEX = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}Z/
+// Should these just be strings? I don't imagine we need this sort of validation
+export const timestamp = z.string().refine((time) => DATETIME_REGEX.test(time))
 export const themeOption = z.union([z.literal('day'), z.literal('night'), z.literal('auto')])
 export const timestamped = z.object({
-  inserted_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  inserted_at: timestamp,
+  updated_at: timestamp,
 })
 
 export const conversation = timestamped.extend({
