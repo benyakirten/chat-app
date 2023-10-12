@@ -42,7 +42,6 @@ export const useSocketStore = defineStore('socket', () => {
 
     for (const conversation of messageStore.conversations) {
       joinConversation(conversation)
-      break
     }
   }
 
@@ -75,7 +74,6 @@ export const useSocketStore = defineStore('socket', () => {
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
 
         if (!parsedData.success) {
-          // console.log(parsedData.error)
           addErrorToast(
             parsedData.error,
             `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
