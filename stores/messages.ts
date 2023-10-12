@@ -511,17 +511,10 @@ export const useMessageStore = defineStore('messages', () => {
 
     try {
       const sentMessage = await socketStore.transmitNewMessage(id, message)
-      synchronizeMessage(
-        id,
-        newId,
-        sentMessage.id,
-        true,
-        new Date(sentMessage.inserted_at),
-        new Date(sentMessage.updated_at)
-      )
+      synchronizeMessage(id, newId, true)
     } catch (e) {
       console.error(e)
-      synchronizeMessage(id, newId, newId, false)
+      synchronizeMessage(id, newId, false)
     }
   }
 
@@ -529,21 +522,14 @@ export const useMessageStore = defineStore('messages', () => {
    * Optimistic updates will add the message with loading
    * However, update/create time and ID will be different and need to be updated
    */
-  function synchronizeMessage(
-    conversationId: ConversationId,
-    oldId: MessageId,
-    newId: MessageId,
-    successful: boolean,
-    createTime?: Date,
-    updateTime?: Date
-  ) {
+  function synchronizeMessage(conversationId: ConversationId, messageId: MessageId, successful: boolean) {
     const convo = conversation.value(conversationId)
     if (!convo) {
       // TODO: Error handling
       return
     }
 
-    const message = convo.messages.get(oldId)
+    const message = convo.messages.get(messageId)
     if (!message) {
       // TODO: Error handling
       return
@@ -554,18 +540,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const newMessage: ConversationMessage = structuredClone(message)
-    newMessage.status = 'complete'
-    if (createTime) {
-      newMessage.createTime = createTime
-    }
-
-    if (updateTime) {
-      newMessage.updateTime = updateTime
-    }
-
-    convo.messages.delete(oldId)
-    convo.messages.set(newId, newMessage)
+    convo.messages.delete(messageId)
   }
 
   function resendMessage(message: ConversationMessage) {

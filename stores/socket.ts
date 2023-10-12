@@ -70,9 +70,8 @@ export const useSocketStore = defineStore('socket', () => {
     }
 
     const channel = socket.channel(`conversation:${conversation.id}`, { token })
+    conversationChannels.set(conversation.id, channel)
     setupChannelJoinHandlers(channel, conversation, conversationName)
-
-    channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg))
   }
 
   function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
@@ -112,6 +111,8 @@ export const useSocketStore = defineStore('socket', () => {
       .receive('error', (error) => {
         addErrorToast(error, `Unable to join conversation ${conversationName}.`)
       })
+
+    channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg.message))
   }
 
   function leaveConversation(conversationId: ConversationId) {
@@ -148,6 +149,7 @@ export const useSocketStore = defineStore('socket', () => {
       return Promise.reject(channel || token)
     }
 
+    // TODO: Replace this with ts-results
     return new Promise((resolve, reject) => {
       channel
         .push('send_message', {
@@ -175,6 +177,7 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function receiveNewMessage(conversationId: ConversationId, msg: z.infer<typeof message>) {
+    console.log(msg)
     const messageRes = message.safeParse(msg)
     if (!messageRes.success) {
       addErrorToast(messageRes.error, 'Message shape not recognized.')
