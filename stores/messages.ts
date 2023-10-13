@@ -141,9 +141,9 @@ export const useMessageStore = defineStore('messages', () => {
     }
   }
 
-  function startTyping(id: ConversationId) {
+  function startTyping(conversationId: ConversationId) {
     // Users should only be able to type in their active conversation
-    const convo = conversation.value(id)
+    const convo = conversation.value(conversationId)
     // TODO: Analyze: can this situation arise? How? Do we need to handle it?
     // Presumably it will be an error state
     if (!convo) {

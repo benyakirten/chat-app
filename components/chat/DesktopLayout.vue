@@ -18,7 +18,7 @@ defineProps<{ id?: ConversationId }>()
 <style scoped>
 .messages {
   display: grid;
-  grid-template-columns: 16rem 1fr;
+  grid-template-columns: 24rem 1fr;
   height: calc(100vh - var(--header-height));
 }
 

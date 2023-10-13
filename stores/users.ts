@@ -224,6 +224,15 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
 
+  function setUserOnlineState(userId: UserId, online: boolean) {
+    const user = users.value.get(userId)
+    if (!user) {
+      return
+    }
+
+    user.online = online
+  }
+
   return {
     users,
     me,
@@ -240,5 +249,6 @@ export const useUsersStore = defineStore('users', () => {
     processAuthData,
     performRefresh,
     signout,
+    setUserOnlineState,
   }
 })

@@ -15,6 +15,7 @@ export const useSocketStore = defineStore('socket', () => {
   let systemChannel: Channel | null = null
   let userChannel: Channel | null = null
   let conversationChannels: Map<ConversationId, Channel> = new Map()
+  let presence: Presence | null = null
 
   function init() {
     if (!userStore.me) {
@@ -37,6 +38,12 @@ export const useSocketStore = defineStore('socket', () => {
     systemChannel = socket.channel('system:general', { token, hidden })
     systemChannel.onError((reason) => addErrorToast(reason))
     systemChannel.join().receive('error', (reason) => addErrorToast(reason))
+    systemChannel.on('user_disconnect', ({ user_id }) => userStore.setUserOnlineState(user_id, false))
+
+    let presence = new Presence(systemChannel)
+    presence.onSync(() => {
+      presence.list((id) => userStore.setUserOnlineState(id, true))
+    })
 
     userChannel = socket.channel(`user:${id}`, { token })
     userChannel.onError((reason) => addErrorToast(reason))
@@ -53,7 +60,7 @@ export const useSocketStore = defineStore('socket', () => {
   ) {
     toastStore.add(msg, {
       type: 'error',
-      timeout: null,
+      timeout: 1800,
     })
 
     if (err) {
@@ -170,21 +177,14 @@ export const useSocketStore = defineStore('socket', () => {
           token,
           content,
         })
-        .receive('ok', (res) => {
-          console.log('ok')
-          console.log(res)
-          resolve(res)
-        })
+        .receive('ok', (res) => resolve(res))
         .receive('error', (err) => {
-          console.log('error')
-          console.error(err)
-          addErrorToast(null, 'Unable to locate conversation to send message.')
+          addErrorToast(err, 'Unable to locate conversation to send message.')
           reject(err)
         })
         .receive('timeout', (err) => {
           console.log('timeout')
-          console.error(err)
-          addErrorToast(null, 'Unable to locate conversation to send message.')
+          addErrorToast(err, 'Unable to locate conversation to send message.')
           reject(err)
         })
     })
@@ -239,7 +239,7 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
-    channel.push(eventName, {}).receive('error', (error) => addErrorToast(error, errorMessage))
+    channel.push(eventName, { token }).receive('error', (error) => addErrorToast(error, errorMessage))
   }
 
   function disconnect() {

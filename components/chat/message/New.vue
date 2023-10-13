@@ -21,6 +21,7 @@ function sendMessage(conversationId: string, val: string) {
   <GeneralInputAutosize
     placeholder="Write a message..."
     label="New Message"
+    @input="messageStore.startTyping(conversationId)"
     @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
   />
