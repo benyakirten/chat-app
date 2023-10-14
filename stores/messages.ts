@@ -278,8 +278,12 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    // TODO: Transmit that the message has been deleted
-    convo.messages.delete(messageId)
+    socketStore.transmitDeleteMessage(conversationId, messageId)
+  }
+
+  function removeMessage(conversationId: ConversationId, messageId: MessageId) {
+    const convo = conversation.value(conversationId)
+    convo?.messages.delete(messageId)
   }
 
   function startMessageEdit(conversationId: ConversationId, message: ConversationMessage) {
@@ -291,7 +295,7 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = { conversationId, messageId: message.id }
   }
 
-  function editMessage(content: string) {
+  async function editMessage(content: string) {
     if (!editedMessage.value) {
       // TODO: Error handling
       return
@@ -316,14 +320,19 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     // TODO: Transmit new message content - if successful, we'll get a new update time
-    message.content = content
-    message.updateTime = new Date()
-
-    stopMessageEdit()
+    const result = await socketStore.transmitEditMessage(conversationId, messageId, content)
+    if (result) {
+      stopMessageEdit()
+    }
   }
 
   function stopMessageEdit() {
     editedMessage.value = null
+  }
+
+  function updateMessage(conversationId: ConversationId, message: ConversationMessage) {
+    const convo = conversation.value(conversationId)
+    convo?.messages.set(message.id, message)
   }
 
   // TODO: The backend will do pretty much all of this - if we don't find a local conversation
@@ -457,11 +466,21 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   async function leaveConversation(conversation: Conversation) {
+    const result = await socketStore.transmitConversationDeparture(conversation.id)
+    if (!result) {
+      return
+    }
+
     const idx = conversations.value.findIndex((convo) => convo.id === conversation.id)
     if (idx !== -1) {
       conversations.value.splice(idx, 1)
     }
-    // TODO: Transmit that we have left the conversation
+  }
+
+  function removeUserFromConversation(conversationId: ConversationId, userId: UserId) {
+    const convo = conversation.value(conversationId)
+    convo?.members.delete(userId)
+    // Should this have error handling and/or tell the user something went wrong?
   }
 
   function reset() {
@@ -495,5 +514,8 @@ export const useMessageStore = defineStore('messages', () => {
     reset,
     getConversationName,
     setUserTypingState,
+    removeUserFromConversation,
+    updateMessage,
+    removeMessage,
   }
 })

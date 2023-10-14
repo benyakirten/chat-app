@@ -49,5 +49,16 @@ export const useToastStore = defineStore('toasts', () => {
     toasts.value = new Map()
   }
 
-  return { toasts, add, dismiss, clear }
+  function addErrorToast(err: any, msg: string) {
+    add(msg, {
+      type: 'error',
+      timeout: 1800,
+    })
+
+    if (err) {
+      console.error(err)
+    }
+  }
+
+  return { toasts, add, dismiss, clear, addErrorToast }
 })

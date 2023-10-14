@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
 import { z } from 'zod'
 
-import { Conversation, ConversationId, ConversationMessage, UserId } from './messages'
+import { Conversation, ConversationId, ConversationMessage, MessageId, UserId } from './messages'
 import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -32,39 +32,30 @@ export const useSocketStore = defineStore('socket', () => {
 
     socket = new Socket(config.public.wsUrl, { params: { token } })
     socket.connect()
-    socket.onError((err) => addErrorToast(err))
+    socket.onError((err) =>
+      toastStore.addErrorToast(
+        err,
+        'Unable to connect to system channel. Please attempt to reload the page or log out then back in'
+      )
+    )
 
     // TODO: Abstract this and handle errors better?
     systemChannel = socket.channel('system:general', { token, hidden })
-    systemChannel.onError((reason) => addErrorToast(reason))
-    systemChannel.join().receive('error', (reason) => addErrorToast(reason))
+    systemChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
+    systemChannel.join().receive('error', (reason) => toastStore.addErrorToast(reason, reason))
     systemChannel.on('user_disconnect', ({ user_id }) => userStore.setUserOnlineState(user_id, false))
 
-    let presence = new Presence(systemChannel)
+    presence = new Presence(systemChannel)
     presence.onSync(() => {
-      presence.list((id) => userStore.setUserOnlineState(id, true))
+      presence!.list((id) => userStore.setUserOnlineState(id, true))
     })
 
     userChannel = socket.channel(`user:${id}`, { token })
-    userChannel.onError((reason) => addErrorToast(reason))
-    userChannel.join().receive('error', (reason) => addErrorToast(reason))
+    userChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
+    userChannel.join().receive('error', (reason) => toastStore.addErrorToast(reason, reason))
 
     for (const conversation of messageStore.conversations) {
       joinConversation(conversation)
-    }
-  }
-
-  function addErrorToast(
-    err: any,
-    msg: string = 'Unable to connect to system channel. Please attempt to reload the page or log out then back in'
-  ) {
-    toastStore.add(msg, {
-      type: 'error',
-      timeout: 1800,
-    })
-
-    if (err) {
-      console.error(err)
     }
   }
 
@@ -72,7 +63,7 @@ export const useSocketStore = defineStore('socket', () => {
     const token = userStore.me?.token
     const conversationName = messageStore.getConversationName(conversation.id)
     if (!socket) {
-      addErrorToast(conversation, `Unable to join conversation ${conversationName}.`)
+      toastStore.addErrorToast(conversation, `Unable to join ${conversationName}.`)
       return
     }
 
@@ -91,9 +82,9 @@ export const useSocketStore = defineStore('socket', () => {
         if (!parsedData.success) {
           console.log(data)
           console.log(parsedData.error)
-          addErrorToast(
+          toastStore.addErrorToast(
             parsedData.error,
-            `Unexpected data shape for conversation ${conversationName}. Details for this conversation may be missing`
+            `Unexpected data shape for ${conversationName}. Details for this conversation may be missing`
           )
           return
         }
@@ -118,25 +109,21 @@ export const useSocketStore = defineStore('socket', () => {
         }
       })
       .receive('error', (error) => {
-        addErrorToast(error, `Unable to join conversation ${conversationName}.`)
+        toastStore.addErrorToast(error, `Unable to join ${conversationName}.`)
       })
 
     channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg.message))
     channel.on('read_conversation', (msg) => messageStore.viewConversation(conversation.id, msg.user_id))
-    channel.on('start_typing', ({ conversation_id, user_id }) =>
-      messageStore.setUserTypingState(conversation_id, user_id, 'typing')
-    )
-    channel.on('finish_typing', ({ conversation_id, user_id }) =>
-      messageStore.setUserTypingState(conversation_id, user_id, 'idle')
-    )
+    channel.on('start_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'typing'))
+    channel.on('finish_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'idle'))
+    channel.on('leave_conversation', ({ user_id }) => messageStore.removeUserFromConversation(conversation.id, user_id))
+    channel.on('update_message', ({ message }) => receiveMessageUpdate(conversation.id, message))
   }
 
-  function transmitConversationDeparture(conversationId: ConversationId) {
-    //
-  }
-
-  function receiveConversationDeparture(conversationId: ConversationId, user: UserId) {
-    //
+  function transmitConversationDeparture(conversationId: ConversationId): Promise<boolean> {
+    const conversationName = messageStore.getConversationName(conversationId)
+    const errorMessage = `Unable to leave channel ${conversationName}.`
+    return transmitBasicEvent(conversationId, 'leave_channel', {}, errorMessage)
   }
 
   function transmitNameChanged(newName: string) {
@@ -148,29 +135,20 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitConversationRead(conversationId: ConversationId) {
-    const token = userStore.me?.token
-    const channel = conversationChannels.get(conversationId)
     const conversationName = messageStore.getConversationName(conversationId)
-    const errorToast = `Unable to transmit read status for ${conversationName}`
-
-    if (!channel) {
-      addErrorToast(null, errorToast)
-      return
-    }
-    channel.push('read_conversation', { token }).receive('error', (err) => addErrorToast(err, errorToast))
+    const errorMessage = `Unable to transmit read status for ${conversationName}`
+    return transmitBasicEvent(conversationId, 'read_conversation', {}, errorMessage)
   }
 
   async function transmitNewMessage(conversationId: ConversationId, content: string): Promise<z.infer<typeof message>> {
-    const channel = conversationChannels.get(conversationId)
-    const token = userStore.me?.token
+    // This can throw because the payload is more complicated than a boolean
+    const { channel, token } = getChannelAndToken(conversationId, 'Unable to locate conversation to send message.')
 
     // TODO: Centralize error handling
     if (!channel || !token) {
-      addErrorToast(null, 'Unable to locate conversation to send message.')
       return Promise.reject(channel || token)
     }
 
-    // TODO: Replace this with ts-results
     return new Promise((resolve, reject) => {
       channel
         .push('send_message', {
@@ -179,21 +157,29 @@ export const useSocketStore = defineStore('socket', () => {
         })
         .receive('ok', (res) => resolve(res))
         .receive('error', (err) => {
-          addErrorToast(err, 'Unable to locate conversation to send message.')
+          toastStore.addErrorToast(err, 'Unable to send message.')
           reject(err)
         })
         .receive('timeout', (err) => {
-          console.log('timeout')
-          addErrorToast(err, 'Unable to locate conversation to send message.')
+          toastStore.addErrorToast(err, 'Unable to communicate with server. Please try again.')
           reject(err)
         })
     })
   }
 
   function receiveNewMessage(conversationId: ConversationId, msg: z.infer<typeof message>) {
+    const conversationMessage = parseMessage(msg)
+    if (!conversationMessage) {
+      return
+    }
+
+    messageStore.addMessage(conversationId, conversationMessage)
+  }
+
+  function parseMessage(msg: z.infer<typeof message>) {
     const messageRes = message.safeParse(msg)
     if (!messageRes.success) {
-      addErrorToast(messageRes.error, 'Message shape not recognized.')
+      toastStore.addErrorToast(messageRes.error, 'Message shape not recognized.')
       return
     }
 
@@ -207,7 +193,7 @@ export const useSocketStore = defineStore('socket', () => {
       status: 'complete',
     }
 
-    messageStore.addMessage(conversationId, conversationMessage)
+    return conversationMessage
   }
 
   function transmitConversationAliasChanged(conversationId: ConversationId, alias: string) {
@@ -227,19 +213,77 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitTypingStateChange(conversationId: ConversationId, eventName: string) {
-    const channel = conversationChannels.get(conversationId)
-    const token = userStore.me?.token
     const conversationName = messageStore.getConversationName(conversationId)
     const errorMessage = `People in ${conversationName} don't know you've ${
       eventName === 'start_typing' ? 'begun' : 'finished'
     } typing.`
-    // TODO: Centralize error handling
-    if (!channel || !token) {
-      addErrorToast(null, errorMessage)
+    return transmitBasicEvent(conversationId, 'start_typing', {}, errorMessage)
+  }
+
+  function transmitEditMessage(
+    conversationId: ConversationId,
+    messageId: MessageId,
+    content: string
+  ): Promise<boolean> {
+    return transmitBasicEvent(
+      conversationId,
+      'edit_message',
+      { message_id: messageId, content },
+      'Unable to edit message.'
+    )
+  }
+
+  function receiveMessageUpdate(conversationId: ConversationId, msg: z.infer<typeof message>) {
+    const conversationMessage = parseMessage(msg)
+    if (!conversationMessage) {
       return
     }
 
-    channel.push(eventName, { token }).receive('error', (error) => addErrorToast(error, errorMessage))
+    messageStore.updateMessage(conversationId, conversationMessage)
+  }
+
+  function transmitDeleteMessage(conversationId: ConversationId, messageId: MessageId): Promise<boolean> {
+    //
+  }
+
+  function transmitBasicEvent(conversationId: ConversationId, event: string, payload: object, errorMessage: string) {
+    const conversationName = messageStore.getConversationName(conversationId)
+    const { channel, token } = getChannelAndToken(conversationId, `Unable to locate ${conversationName}`)
+    if (!channel || !token) {
+      return Promise.resolve(false)
+    }
+
+    return transmitToBooleanPromise(channel, event, { token, ...payload }, errorMessage)
+  }
+
+  function transmitToBooleanPromise(
+    channel: Channel,
+    event: string,
+    payload: object,
+    errorMessage: string
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      channel
+        .push(event, payload)
+        .receive('ok', () => resolve(true))
+        .receive('error', (err) => {
+          toastStore.addErrorToast(err, errorMessage)
+          resolve(false)
+        })
+        .receive('timeout', (err) => {
+          toastStore.addErrorToast(err, 'Unable to communicate with server. Please try again.')
+          resolve(false)
+        })
+    })
+  }
+
+  function getChannelAndToken(conversationId: ConversationId, errorMessage: string) {
+    const channel = conversationChannels.get(conversationId)
+    const token = userStore.me?.token
+    if (!channel || !token) {
+      toastStore.addErrorToast(null, errorMessage)
+    }
+    return { channel, token }
   }
 
   function disconnect() {
@@ -259,7 +303,6 @@ export const useSocketStore = defineStore('socket', () => {
     disconnect,
     joinConversation,
     transmitConversationDeparture,
-    receiveConversationDeparture,
     transmitNameChanged,
     receiveNameChanged,
     transmitConversationRead,
@@ -269,5 +312,11 @@ export const useSocketStore = defineStore('socket', () => {
     receiveConversationAliasChanged,
     transmitTypingStarted,
     transmitTypingEnded,
+    transmitEditMessage,
+    transmitDeleteMessage,
+    getChannelAndToken,
+    transmitBasicEvent,
+    transmitToBooleanPromise,
+    receiveMessageUpdate,
   }
 })
