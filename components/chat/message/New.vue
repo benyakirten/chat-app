@@ -15,13 +15,19 @@ function sendMessage(conversationId: string, val: string) {
   // Some reason await next tick doesn't wait for value to be replaced with \n
   requestAnimationFrame(() => (value.value = ''))
 }
+
+function startTyping(e: Event) {
+  if (e.target instanceof HTMLTextAreaElement && e.target.value) {
+    messageStore.startTyping(conversationId)
+  }
+}
 </script>
 
 <template>
   <GeneralInputAutosize
     placeholder="Write a message..."
     label="New Message"
-    @input="messageStore.startTyping(conversationId)"
+    @input="startTyping"
     @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
   />
