@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 
+// TODO: Add possibility to set an alias
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
   if (isPrivate) {
     const otherUser = getFirstSetItem(selected)
     if (!otherUser) {
       throw new Error('A conversation must involve one other person.')
     }
-    return messageStore.startPrivateConversation(otherUser, message)
+    return messageStore.startConversation(true, [otherUser], message)
   }
-  return messageStore.startGroupConversation(selected, message)
+  return messageStore.startConversation(false, [...selected], message)
 })
 
 const messageStore = useMessageStore()
@@ -71,6 +72,7 @@ async function handleSubmit() {
       </GeneralInputCheckbox>
     </div>
     <GeneralInputAutosize class="new-autosize" placeholder="Write a message..." label="New Message" v-model="message" />
+    <!-- TODO: Add input for alias for group conversations -->
     <div class="new-submit">
       <div class="new-submit-error" v-if="displayedErrorMessage">{{ displayedErrorMessage }}</div>
       <div class="new-submit-icon">
@@ -79,7 +81,7 @@ async function handleSubmit() {
           :icon="PaperAirplaneIcon"
           size="2.5rem"
           type="submit"
-          :disabled="loading || !!displayedErrorMessage"
+          :disabled="loading"
           tooltipDirection="left"
         />
       </div>

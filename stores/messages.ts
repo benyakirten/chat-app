@@ -333,94 +333,23 @@ export const useMessageStore = defineStore('messages', () => {
     convo?.messages.set(message.id, message)
   }
 
-  // TODO: The backend will do pretty much all of this - if we don't find a local conversation
-  // we'll need to query the backend - though we may need it
-  async function startPrivateConversation(otherUser: string, message: string): Promise<string> {
-    if (!userStore.me) {
-      throw new Error('You must be logged in to start a conversation')
-    }
-
-    for (const conversation of conversations.value) {
-      if (conversation.members.size !== 2) {
-        continue
-      }
-
-      // If we already have a private conversation then
-      // just add the message to that conversation
-      if (conversation.members.get(otherUser)) {
-        addMessage(conversation.id, {
-          sender: userStore.me.id,
-          id: uuid(),
-          content: message,
-          status: 'pending',
-          createTime: new Date(),
-          updateTime: new Date(),
-        })
-        return conversation.id
+  async function startConversation(
+    isPrivate: boolean,
+    members: UserId[],
+    firstMessage: string,
+    alias?: string
+  ): Promise<string> {
+    if (isPrivate) {
+      for (const conversation of conversations.value) {
+        if (isPrivate && conversation.members.has(members[0])) {
+          sendMessage(conversation.id, firstMessage)
+          return conversation.id
+        }
       }
     }
 
-    // No existing conversation between the user and someone else
-    // So we create a new conversation and message
-    const newConvo: Conversation = {
-      isPrivate: true,
-      id: uuid(),
-      members: new Map([
-        [userStore.me?.id, { state: 'idle', lastRead: new Date() }],
-        [otherUser, { state: 'idle', lastRead: new Date(0) }],
-      ]),
-      messages: new Map(),
-      alias: null,
-    }
-
-    conversations.value.unshift(newConvo)
-    addMessage(newConvo.id, {
-      sender: userStore.me?.id,
-      id: uuid(),
-      content: message,
-      status: 'pending',
-      createTime: new Date(),
-      updateTime: new Date(),
-    })
-
-    return newConvo.id
-  }
-
-  async function startGroupConversation(otherUsers: Set<string>, message: string): Promise<string> {
-    if (!userStore.me) {
-      throw new Error('You must be logged in to start a conversation')
-    }
-
-    if (!otherUsers || otherUsers.size === 0) {
-      throw new Error('A conversation must have at least 1 other person in it')
-    }
-
-    let members: Map<UserId, UserConversationState> = new Map()
-    otherUsers.forEach((userId) => {
-      const user: UserConversationState = {
-        state: 'idle',
-        lastRead: userId === userStore.me?.id ? new Date() : new Date(0),
-      }
-      members.set(userId, user)
-    })
-
-    const newConvo: Conversation = {
-      isPrivate: false,
-      id: uuid(),
-      members,
-      messages: new Map(),
-      alias: null,
-    }
-    conversations.value.unshift(newConvo)
-    addMessage(newConvo.id, {
-      sender: userStore.me.id,
-      id: uuid(),
-      content: message,
-      status: 'pending',
-      createTime: new Date(),
-      updateTime: new Date(),
-    })
-    return newConvo.id
+    const conversationId = await socketStore.transmitNewConversation(isPrivate, members, firstMessage, alias)
+    return conversationId
   }
 
   function getConversationName(conversationId: ConversationId): string {
@@ -495,8 +424,7 @@ export const useMessageStore = defineStore('messages', () => {
     editMessage,
     stopMessageEdit,
     unreadMessages,
-    startGroupConversation,
-    startPrivateConversation,
+    startConversation,
     modifyConversation,
     leaveConversation,
     moveConversationToTop,

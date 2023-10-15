@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
 import { z } from 'zod'
 
-import { Conversation, ConversationId, ConversationMessage, MessageId, UserId } from './messages'
+import { Conversation, ConversationId, ConversationMessage, MessageId, UserConversationState, UserId } from './messages'
 import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -60,7 +60,7 @@ export const useSocketStore = defineStore('socket', () => {
     }
   }
 
-  function joinConversation(conversation: Conversation) {
+  async function joinConversation(conversation: Conversation) {
     if (conversationChannels.has(conversation.id)) {
       return
     }
@@ -74,10 +74,10 @@ export const useSocketStore = defineStore('socket', () => {
 
     const channel = socket.channel(`conversation:${conversation.id}`, { token })
     conversationChannels.set(conversation.id, channel)
-    setupChannelJoinHandlers(channel, conversation, conversationName)
+    await setupChannelJoinHandlers(channel, conversation, conversationName)
   }
 
-  function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
+  async function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
     // Break this up into smaller functions
     channel
       .join()
@@ -311,7 +311,33 @@ export const useSocketStore = defineStore('socket', () => {
     )
   }
 
+  async function transmitNewConversation(
+    isPrivate: boolean,
+    members: UserId[],
+    message: string,
+    alias?: string
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!userStore.me || !systemChannel) {
+        return reject('Token or system channel unavailable.')
+      }
+
+      const { token } = userStore.me
+      systemChannel
+        .push('start_conversation', {
+          token,
+          private: isPrivate,
+          message: message,
+          alias: alias ?? null,
+          user_ids: members,
+        })
+        .receive('ok', (id) => resolve(id))
+        .receive('error', (error) => reject(error))
+    })
+  }
+
   function receiveNewConversation(_conversation: z.infer<typeof conversation>, userIds: string[]) {
+    console.log('CALLED', _conversation, userIds)
     const parseRes = conversation.safeParse(_conversation)
     if (!parseRes.success) {
       // TODO: Error handling?
@@ -329,10 +355,15 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
+    const members = new Map<UserId, UserConversationState>()
+    for (const userId of userIds) {
+      members.set(userId, { state: 'idle', lastRead: new Date(0) })
+    }
+
     const convo: Conversation = {
       id: parseRes.data.id,
       alias: parseRes.data.alias,
-      members: new Map(),
+      members,
       messages: new Map(),
       isPrivate: parseRes.data.private,
     }
@@ -383,5 +414,6 @@ export const useSocketStore = defineStore('socket', () => {
     receiveMessageUpdate,
     transmitConversationEdit,
     transmitHiddenStatusChange,
+    transmitNewConversation,
   }
 })
