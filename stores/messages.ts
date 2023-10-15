@@ -320,10 +320,8 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     // TODO: Transmit new message content - if successful, we'll get a new update time
-    const result = await socketStore.transmitEditMessage(conversationId, messageId, content)
-    if (result) {
-      stopMessageEdit()
-    }
+    stopMessageEdit()
+    socketStore.transmitEditMessage(conversationId, messageId, content)
   }
 
   function stopMessageEdit() {

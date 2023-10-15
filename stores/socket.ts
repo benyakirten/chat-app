@@ -19,7 +19,9 @@ export const useSocketStore = defineStore('socket', () => {
 
   function init() {
     if (!userStore.me) {
-      toastStore.add('Unable to initiate live connection.', { type: 'error' })
+      toastStore.add('Unable to initiate live connection without current user. Please attempt to log in.', {
+        type: 'error',
+      })
       return
     }
 
@@ -32,12 +34,7 @@ export const useSocketStore = defineStore('socket', () => {
 
     socket = new Socket(config.public.wsUrl, { params: { token } })
     socket.connect()
-    socket.onError((err) =>
-      toastStore.addErrorToast(
-        err,
-        'Unable to connect to system channel. Please attempt to reload the page or log out then back in'
-      )
-    )
+    socket.onError((err) => console.error(err))
 
     // TODO: Abstract this and handle errors better?
     systemChannel = socket.channel('system:general', { token, hidden })
@@ -171,10 +168,6 @@ export const useSocketStore = defineStore('socket', () => {
           toastStore.addErrorToast(err, 'Unable to send message.')
           reject(err)
         })
-        .receive('timeout', (err) => {
-          toastStore.addErrorToast(err, 'Unable to communicate with server. Please try again.')
-          reject(err)
-        })
     })
   }
 
@@ -300,10 +293,6 @@ export const useSocketStore = defineStore('socket', () => {
         .receive('ok', () => resolve(true))
         .receive('error', (err) => {
           toastStore.addErrorToast(err, errorMessage)
-          resolve(false)
-        })
-        .receive('timeout', (err) => {
-          toastStore.addErrorToast(err, 'Unable to communicate with server. Please try again.')
           resolve(false)
         })
     })
