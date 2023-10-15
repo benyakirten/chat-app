@@ -454,15 +454,7 @@ export const useMessageStore = defineStore('messages', () => {
 
   // TODO: This will be completely modified when we have a backend
   async function modifyConversation(conversation: Conversation, members: Set<string>, alias?: string) {
-    members.forEach((id) => {
-      if (!conversation.members.has(id)) {
-        conversation.members.set(id, { state: 'idle', lastRead: new Date(0) })
-      }
-    })
-
-    if (alias) {
-      conversation.alias = alias
-    }
+    socketStore.transmitConversationEdit(conversation.id, [...members], alias)
   }
 
   async function leaveConversation(conversation: Conversation) {

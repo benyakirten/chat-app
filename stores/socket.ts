@@ -24,7 +24,7 @@ export const useSocketStore = defineStore('socket', () => {
     }
 
     if (socket) {
-      console.log('the socket has already been initialized - returning early')
+      console.log('the socket has already been initialized.')
       return
     }
 
@@ -44,6 +44,9 @@ export const useSocketStore = defineStore('socket', () => {
     systemChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
     systemChannel.join().receive('error', (reason) => toastStore.addErrorToast(reason, reason))
     systemChannel.on('user_disconnect', ({ user_id }) => userStore.setUserOnlineState(user_id, false))
+    systemChannel.on('update_display_name', ({ user_id, display_name }) =>
+      userStore.updateUser(user_id, { name: display_name })
+    )
 
     presence = new Presence(systemChannel)
     presence.onSync(() => {
@@ -53,6 +56,7 @@ export const useSocketStore = defineStore('socket', () => {
     userChannel = socket.channel(`user:${id}`, { token })
     userChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
     userChannel.join().receive('error', (reason) => toastStore.addErrorToast(reason, reason))
+    userChannel.on('new_conversation', ({ conversation, user_ids }) => receiveNewConversation(conversation, user_ids))
 
     for (const conversation of messageStore.conversations) {
       joinConversation(conversation)
@@ -60,6 +64,10 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function joinConversation(conversation: Conversation) {
+    if (conversationChannels.has(conversation.id)) {
+      return
+    }
+
     const token = userStore.me?.token
     const conversationName = messageStore.getConversationName(conversation.id)
     if (!socket) {
@@ -80,8 +88,6 @@ export const useSocketStore = defineStore('socket', () => {
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
 
         if (!parsedData.success) {
-          console.log(data)
-          console.log(parsedData.error)
           toastStore.addErrorToast(
             parsedData.error,
             `Unexpected data shape for ${conversationName}. Details for this conversation may be missing`
@@ -118,6 +124,8 @@ export const useSocketStore = defineStore('socket', () => {
     channel.on('finish_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'idle'))
     channel.on('leave_conversation', ({ user_id }) => messageStore.removeUserFromConversation(conversation.id, user_id))
     channel.on('update_message', ({ message }) => receiveMessageUpdate(conversation.id, message))
+    channel.on('delete_message', ({ message_id }) => messageStore.removeMessage(conversation.id, message_id))
+    channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
   }
 
   function transmitConversationDeparture(conversationId: ConversationId): Promise<boolean> {
@@ -127,11 +135,14 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitNameChanged(newName: string) {
-    //
-  }
+    const token = userStore.me?.token
+    const errorMessage = 'Unable to update name'
+    if (!token || !systemChannel) {
+      toastStore.addErrorToast(null, errorMessage)
+      return Promise.resolve(false)
+    }
 
-  function receiveNameChanged(userId: UserId, newName: string) {
-    //
+    return transmitToBooleanPromise(systemChannel, 'set_display_name', { token, display_name: newName }, errorMessage)
   }
 
   function transmitConversationRead(conversationId: ConversationId) {
@@ -197,11 +208,32 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitConversationAliasChanged(conversationId: ConversationId, alias: string) {
-    //
+    return transmitBasicEvent(
+      conversationId,
+      'change_alias',
+      { alias },
+      `Unable to rename ${messageStore.getConversationName(conversationId)}`
+    )
   }
 
-  function receiveConversationAliasChanged(conversationId: ConversationId, alias: string) {
-    //
+  function transmitHiddenStatusChange(hidden: boolean) {
+    const token = userStore.me?.token
+    const errorMessage = 'Unable to update user preference'
+    if (!token || !systemChannel) {
+      toastStore.addErrorToast(null, errorMessage)
+      return Promise.resolve(false)
+    }
+
+    return transmitToBooleanPromise(systemChannel, 'set_hidden', { token, hidden }, errorMessage)
+  }
+
+  function receiveConversationAliasChanged(convo: z.infer<typeof conversation>) {
+    const _conversation = messageStore.conversation(convo.id)
+    if (!_conversation) {
+      return
+    }
+
+    _conversation.alias = convo.alias
   }
 
   function transmitTypingStarted(conversationId: ConversationId) {
@@ -243,7 +275,7 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   function transmitDeleteMessage(conversationId: ConversationId, messageId: MessageId): Promise<boolean> {
-    //
+    return transmitBasicEvent(conversationId, 'delete_message', { message_id: messageId }, 'Unable to delete message.')
   }
 
   function transmitBasicEvent(conversationId: ConversationId, event: string, payload: object, errorMessage: string) {
@@ -277,6 +309,49 @@ export const useSocketStore = defineStore('socket', () => {
     })
   }
 
+  function transmitConversationEdit(
+    conversationId: ConversationId,
+    new_members: UserId[] = [],
+    alias: string | null = null
+  ) {
+    return transmitBasicEvent(
+      conversationId,
+      'modify_conversation',
+      { new_members, alias },
+      'Unable to modify conversation.'
+    )
+  }
+
+  function receiveNewConversation(_conversation: z.infer<typeof conversation>, userIds: string[]) {
+    const parseRes = conversation.safeParse(_conversation)
+    if (!parseRes.success) {
+      // TODO: Error handling?
+      return
+    }
+
+    const existingConversation = messageStore.conversation(parseRes.data.id)
+    if (existingConversation) {
+      for (const userId of userIds) {
+        if (!existingConversation.members.has(userId)) {
+          existingConversation.members.set(userId, { state: 'idle', lastRead: new Date(0) })
+        }
+      }
+      existingConversation.alias = parseRes.data.alias
+      return
+    }
+
+    const convo: Conversation = {
+      id: parseRes.data.id,
+      alias: parseRes.data.alias,
+      members: new Map(),
+      messages: new Map(),
+      isPrivate: parseRes.data.private,
+    }
+
+    messageStore.conversations.push(convo)
+    joinConversation(convo)
+  }
+
   function getChannelAndToken(conversationId: ConversationId, errorMessage: string) {
     const channel = conversationChannels.get(conversationId)
     const token = userStore.me?.token
@@ -304,7 +379,6 @@ export const useSocketStore = defineStore('socket', () => {
     joinConversation,
     transmitConversationDeparture,
     transmitNameChanged,
-    receiveNameChanged,
     transmitConversationRead,
     transmitNewMessage,
     receiveNewMessage,
@@ -318,5 +392,7 @@ export const useSocketStore = defineStore('socket', () => {
     transmitBasicEvent,
     transmitToBooleanPromise,
     receiveMessageUpdate,
+    transmitConversationEdit,
+    transmitHiddenStatusChange,
   }
 })
