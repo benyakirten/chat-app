@@ -60,7 +60,7 @@ export const useSocketStore = defineStore('socket', () => {
     }
   }
 
-  async function joinConversation(conversation: Conversation) {
+  function joinConversation(conversation: Conversation) {
     if (conversationChannels.has(conversation.id)) {
       return
     }
@@ -74,10 +74,10 @@ export const useSocketStore = defineStore('socket', () => {
 
     const channel = socket.channel(`conversation:${conversation.id}`, { token })
     conversationChannels.set(conversation.id, channel)
-    await setupChannelJoinHandlers(channel, conversation, conversationName)
+    setupChannelJoinHandlers(channel, conversation, conversationName)
   }
 
-  async function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
+  function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
     // Break this up into smaller functions
     channel
       .join()
@@ -328,16 +328,16 @@ export const useSocketStore = defineStore('socket', () => {
           token,
           private: isPrivate,
           message: message,
-          alias: alias ?? null,
+          alias,
           user_ids: members,
         })
         .receive('ok', (id) => resolve(id))
         .receive('error', (error) => reject(error))
+        .receive('timeout', (error) => reject(error))
     })
   }
 
   function receiveNewConversation(_conversation: z.infer<typeof conversation>, userIds: string[]) {
-    console.log('CALLED', _conversation, userIds)
     const parseRes = conversation.safeParse(_conversation)
     if (!parseRes.success) {
       // TODO: Error handling?

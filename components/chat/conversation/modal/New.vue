@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
+import { retry } from '~/utils/misc'
 
 // TODO: Add possibility to set an alias
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
@@ -16,6 +17,7 @@ const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const modalStore = useModalStore()
+const socketStore = useSocketStore()
 
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
@@ -47,8 +49,13 @@ async function handleSubmit() {
   errorMessage.value = null
   const res = await invoke(isPrivate.value, selected.value, message.value)
   if (typeof res === 'string') {
+    const channelSocketPresent = await retry(() => socketStore.conversationChannels.has(res), 100, 20)
     modalStore.close()
-    await navigateTo(`/chat/${res}`)
+
+    if (channelSocketPresent) {
+      await navigateTo(`/chat/${res}`)
+    }
+
     return
   }
 
