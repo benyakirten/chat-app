@@ -334,7 +334,7 @@ export const useSocketStore = defineStore('socket', () => {
           private: isPrivate,
           message: message,
           alias,
-          user_ids: members,
+          user_ids: [...members, userStore.me.id],
         })
         .receive('ok', (id) => resolve(id))
         .receive('error', (error) => resolve(error))
