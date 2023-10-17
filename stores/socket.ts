@@ -126,10 +126,20 @@ export const useSocketStore = defineStore('socket', () => {
     channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
   }
 
-  function transmitConversationDeparture(conversationId: ConversationId): Promise<boolean> {
+  async function transmitConversationDeparture(conversationId: ConversationId): Promise<boolean> {
     const conversationName = messageStore.getConversationName(conversationId)
-    const errorMessage = `Unable to leave channel ${conversationName}.`
-    return transmitBasicEvent(conversationId, 'leave_channel', {}, errorMessage)
+    const errorMessage = `Unable to leave ${conversationName}.`
+    const res = await transmitBasicEvent(conversationId, 'leave_conversation', {}, errorMessage)
+
+    if (res) {
+      const channel = conversationChannels.get(conversationId)
+      if (channel) {
+        channel.leave()
+        conversationChannels.delete(conversationId)
+      }
+    }
+
+    return res
   }
 
   function transmitNameChanged(newName: string) {

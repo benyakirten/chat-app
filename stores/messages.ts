@@ -391,13 +391,15 @@ export const useMessageStore = defineStore('messages', () => {
   async function leaveConversation(conversation: Conversation) {
     const result = await socketStore.transmitConversationDeparture(conversation.id)
     if (!result) {
-      return
+      return false
     }
 
     const idx = conversations.value.findIndex((convo) => convo.id === conversation.id)
     if (idx !== -1) {
       conversations.value.splice(idx, 1)
     }
+
+    return true
   }
 
   function removeUserFromConversation(conversationId: ConversationId, userId: UserId) {

@@ -41,22 +41,9 @@ async function leaveConversation() {
     // TODO: Error handling
     return
   }
-
-  // The conversation might be deleted if the user leaves
-  // In which case, we need to check now, before it's deleted
-  // whether the user might have to navigate away
-  const needReroute = route.params['id'] === conversation.value.id
-
-  const res = await leave.invoke(conversation.value)
+  leave.invoke(conversation.value)
   modalStore.close()
-  // TODO: Error handling
-  if (res instanceof Error) {
-    toastStore.add(res.message, { type: 'error' })
-  }
-
-  if (needReroute) {
-    await navigateTo('/chat')
-  }
+  await navigateTo('/chat')
 }
 
 const userOptions = computed(() =>
