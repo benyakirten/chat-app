@@ -347,7 +347,12 @@ export const useMessageStore = defineStore('messages', () => {
         }
       }
     }
+
     const conversationId = await socketStore.transmitNewConversation(isPrivate, members, firstMessage, alias)
+    if (typeof conversationId !== 'string') {
+      throw conversationId
+    }
+
     return conversationId
   }
 

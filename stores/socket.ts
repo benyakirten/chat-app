@@ -114,6 +114,7 @@ export const useSocketStore = defineStore('socket', () => {
       .receive('error', (error) => {
         toastStore.addErrorToast(error, `Unable to join ${conversationName}.`)
       })
+      .receive('timeout', (err) => console.error(err))
 
     channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg.message))
     channel.on('read_conversation', (msg) => messageStore.viewConversation(conversation.id, msg.user_id))
@@ -166,6 +167,10 @@ export const useSocketStore = defineStore('socket', () => {
         .receive('ok', (res) => resolve(res))
         .receive('error', (err) => {
           toastStore.addErrorToast(err, 'Unable to send message.')
+          reject(err)
+        })
+        .receive('timeout', (err) => {
+          toastStore.addErrorToast(err, 'Unable to send message')
           reject(err)
         })
     })
@@ -332,8 +337,8 @@ export const useSocketStore = defineStore('socket', () => {
           user_ids: members,
         })
         .receive('ok', (id) => resolve(id))
-        .receive('error', (error) => reject(error))
-        .receive('timeout', (error) => reject(error))
+        .receive('error', (error) => resolve(error))
+        .receive('timeout', (error) => resolve(error))
     })
   }
 
