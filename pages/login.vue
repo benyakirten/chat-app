@@ -47,36 +47,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="login-page">
-    <FallbackClient>
-      <h1>{{ loginMode ? 'login' : 'register' }}</h1>
-      <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
-      <form @submit.prevent="handleSubmit">
-        <label>
-          Email
-          <input v-model="email" type="email" />
+  <div class="page">
+    <h1>{{ loginMode ? 'login' : 'register' }}</h1>
+    <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
+    <form @submit.prevent="handleSubmit">
+      <label>
+        Email
+        <input v-model="email" type="email" />
+      </label>
+      <label>
+        Password
+        <input v-model="password" type="password" />
+      </label>
+      <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
+      <Transition name="display-mode">
+        <label v-if="!loginMode">
+          Display Name
+          <input v-model="displayName" type="string" />
         </label>
-        <label>
-          Password
-          <input v-model="password" type="password" />
-        </label>
-        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
-        <Transition name="display-mode">
-          <label v-if="!loginMode">
-            Display Name
-            <input v-model="displayName" type="string" />
-          </label>
-        </Transition>
-        <button type="submit">Submit</button>
-      </form>
-    </FallbackClient>
+      </Transition>
+      <button type="submit">Submit</button>
+    </form>
   </div>
 </template>
 
 <style scoped>
-.login-page {
-  --header-height: 0;
-
+.page {
   display: flex;
   flex-direction: column;
   padding: 8rem 4rem;
