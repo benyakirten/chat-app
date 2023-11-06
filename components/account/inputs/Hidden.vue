@@ -6,11 +6,7 @@ const isHidden = ref(props.hidden)
 </script>
 
 <template>
-  <GeneralInputCheckbox
-    class="hidden"
-    :model-value="isHidden"
-    @update:model-value="userStore.setAccountOption('hidden', $event)"
-  >
+  <GeneralInputCheckbox class="hidden" :model-value="isHidden" @update:model-value="userStore.setHidden($event)">
     Do not let other users know when you log in:
   </GeneralInputCheckbox>
 </template>

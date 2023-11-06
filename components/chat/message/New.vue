@@ -17,7 +17,7 @@ function sendMessage(conversationId: string, val: string) {
 }
 
 function startTyping(e: Event) {
-  if (e.target instanceof HTMLTextAreaElement && e.target.value) {
+  if (e.target instanceof HTMLTextAreaElement && e.target.value.trim()) {
     messageStore.startTyping(conversationId)
   }
 }

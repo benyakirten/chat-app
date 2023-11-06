@@ -104,6 +104,16 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
 
+  async function setHidden(hidden: boolean) {
+    if (!me.value) {
+      toastStore.addErrorToast(null, 'Unable to change user settings when not logged in')
+      return
+    }
+
+    me.value.hidden = hidden
+    socketStore.transmitHiddenStatusChange(hidden)
+  }
+
   async function setUserName(name: string) {
     // TODO: Add restrictions on usernames - when we have authentication we will add this
 
@@ -250,5 +260,6 @@ export const useUsersStore = defineStore('users', () => {
     performRefresh,
     signout,
     setUserOnlineState,
+    setHidden,
   }
 })

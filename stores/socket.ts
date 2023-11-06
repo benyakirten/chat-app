@@ -257,7 +257,7 @@ export const useSocketStore = defineStore('socket', () => {
     const errorMessage = `People in ${conversationName} don't know you've ${
       eventName === 'start_typing' ? 'begun' : 'finished'
     } typing.`
-    return transmitBasicEvent(conversationId, 'start_typing', {}, errorMessage)
+    return transmitBasicEvent(conversationId, eventName, {}, errorMessage)
   }
 
   function transmitEditMessage(
