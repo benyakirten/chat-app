@@ -387,6 +387,25 @@ export const useSocketStore = defineStore('socket', () => {
     joinConversation(convo)
   }
 
+  function transmitDisplayNameChange(displayName: string) {
+    return new Promise((resolve, reject) => {
+      const token = userStore.me?.token
+
+      if (!token) {
+        return reject('Unable to get user token')
+      }
+      if (!systemChannel) {
+        return reject('Unable to get system channel')
+      }
+
+      console.log(displayName)
+      systemChannel
+        .push('set_display_name', { token, display_name: displayName })
+        .receive('ok', () => resolve(true))
+        .receive('error', (e) => reject(e))
+    })
+  }
+
   function getChannelAndToken(conversationId: ConversationId, errorMessage: string) {
     const channel = conversationChannels.get(conversationId)
     const token = userStore.me?.token
@@ -430,5 +449,6 @@ export const useSocketStore = defineStore('socket', () => {
     transmitConversationEdit,
     transmitHiddenStatusChange,
     transmitNewConversation,
+    transmitDisplayNameChange,
   }
 })

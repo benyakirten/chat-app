@@ -1,10 +1,16 @@
 <script setup lang="ts">
 const props = defineProps<{ name: string }>()
 const userStore = useUsersStore()
+const socketStore = useSocketStore()
+const toastStore = useToastStore()
 
 const userName = ref(props.name)
 function updateUserName() {
-  // TODO: Add sockets first
+  try {
+    socketStore.transmitDisplayNameChange(userName.value)
+  } catch (e) {
+    toastStore.addErrorToast(e, 'Unable to transmit display name update')
+  }
 }
 </script>
 
