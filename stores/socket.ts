@@ -398,7 +398,6 @@ export const useSocketStore = defineStore('socket', () => {
         return reject('Unable to get system channel')
       }
 
-      console.log(displayName)
       systemChannel
         .push('set_display_name', { token, display_name: displayName })
         .receive('ok', () => resolve(true))
