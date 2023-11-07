@@ -1,8 +1,11 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const recentsStore = useRecentsStore()
-  if (to.path.includes('chat') && to.params['id']) {
-    recentsStore.chatLRU.visit(to.path)
+  const userStore = useUsersStore()
+  if (to.path.includes('/login') || !userStore.me) {
+    return
   }
-  recentsStore.allLRU.visit(to.path)
-  // TODO: Store these values on the server
+
+  const recentsStore = useRecentsStore()
+  recentsStore.visit(to.path)
+
+  useAuthedFetch('/api/recents', 'POST', { recents: recentsStore.allLRU.cache })
 })

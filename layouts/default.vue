@@ -5,13 +5,22 @@ const route = useRoute()
 const userStore = useUsersStore()
 
 const title = computed(() => titleStore.title(route.path, route.params['id']))
-const textMagnification = computed(() => userStore.me?.textSizeMagnification ?? 1)
+const magnification = computed(() => userStore.me?.magnification ?? 1)
+
+onMounted(() => {
+  const themeQuery = matchMedia('(prefers-color-scheme: light)')
+  themeQuery.addEventListener('change', (e) => {
+    const theme = e.matches ? 'day' : 'night'
+    themeStore.computerTheme = theme
+  })
+  themeStore.computerTheme = themeQuery.matches ? 'day' : 'night'
+})
 </script>
 
 <template>
   <Head>
     <Title>{{ title }}</Title>
-    <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${textMagnification}`"></Body>
+    <Body :style="`${themeStore.activeThemeVariables}; --magnification: ${magnification};`"></Body>
   </Head>
   <NavHeader />
   <NavTheSidebar />
@@ -53,7 +62,7 @@ body {
 }
 
 main {
-  height: calc(100vh - var(--header-height));
+  min-height: 100vh;
 }
 
 .page-leave-active,

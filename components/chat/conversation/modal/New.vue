@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
+import { retry } from '~/utils/misc'
 
+// TODO: Add possibility to set an alias
 const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string>, message: string) => {
   if (isPrivate) {
     const otherUser = getFirstSetItem(selected)
     if (!otherUser) {
       throw new Error('A conversation must involve one other person.')
     }
-    return messageStore.startPrivateConversation(otherUser, message)
+    return messageStore.startConversation(true, [otherUser], message)
   }
-  return messageStore.startGroupConversation(selected, message)
+  return messageStore.startConversation(false, [...selected], message)
 })
 
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const modalStore = useModalStore()
+const socketStore = useSocketStore()
 
 const selected = ref<Set<string>>(new Set())
 const message = ref('')
@@ -46,8 +49,13 @@ async function handleSubmit() {
   errorMessage.value = null
   const res = await invoke(isPrivate.value, selected.value, message.value)
   if (typeof res === 'string') {
+    const channelSocketPresent = await retry(() => socketStore.conversationChannels.has(res), 100, 20)
     modalStore.close()
-    await navigateTo(`/chat/${res}`)
+
+    if (channelSocketPresent) {
+      await navigateTo(`/chat/${res}`)
+    }
+
     return
   }
 
@@ -71,6 +79,7 @@ async function handleSubmit() {
       </GeneralInputCheckbox>
     </div>
     <GeneralInputAutosize class="new-autosize" placeholder="Write a message..." label="New Message" v-model="message" />
+    <!-- TODO: Add input for alias for group conversations -->
     <div class="new-submit">
       <div class="new-submit-error" v-if="displayedErrorMessage">{{ displayedErrorMessage }}</div>
       <div class="new-submit-icon">
@@ -79,7 +88,7 @@ async function handleSubmit() {
           :icon="PaperAirplaneIcon"
           size="2.5rem"
           type="submit"
-          :disabled="loading || !!displayedErrorMessage"
+          :disabled="loading"
           tooltipDirection="left"
         />
       </div>

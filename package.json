@@ -41,9 +41,11 @@
   "dependencies": {
     "@heroicons/vue": "^2.0.18",
     "@pinia/nuxt": "^0.4.11",
+    "axios": "^1.5.1",
     "chart.js": "^4.4.0",
     "phoenix": "^1.7.7",
     "pinia": "^2.1.6",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.22.4"
   }
 }

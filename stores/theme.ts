@@ -46,15 +46,27 @@ const defaultThemes: ThemeStoreState['themes'] = {
 export const useThemeStore = defineStore('theme', () => {
   const themes = ref(defaultThemes)
   const userStore = useUsersStore()
+  const config = useRuntimeConfig()
 
-  const themeQuery = globalThis.matchMedia?.('(prefers-color-scheme: light)')
-  themeQuery?.addEventListener('change', (e) => (computerTheme.value = e.matches ? 'day' : 'night'))
+  const computerTheme = ref<ThemeStoreState['active']>(useCookie(config.public.themeCookieName).value as any)
 
-  const computerTheme = ref<ThemeStoreState['active']>(themeQuery?.matches ? 'day' : 'night')
-
-  const active = computed(() => userStore.me?.colorTheme ?? computerTheme.value)
-  const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value))
+  const active = computed(() => userStore.me?.theme ?? computerTheme.value)
+  const activeThemeName = computed(() => (active.value === 'auto' ? computerTheme.value : active.value) ?? 'night')
   const activeTheme = computed(() => themes.value[activeThemeName.value])
+
+  watchEffect(() => {
+    if (process.server) {
+      return
+    }
+
+    const cookie = useCookie(config.public.themeCookieName, {
+      path: '/',
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    })
+
+    cookie.value = activeThemeName.value
+  })
 
   const activeThemeVariables = computed(() => {
     return Object.entries(themes.value[activeThemeName.value]).reduce<string>((acc, [key, value]) => {
@@ -62,5 +74,12 @@ export const useThemeStore = defineStore('theme', () => {
     }, '')
   })
 
-  return { themes, active, activeThemeVariables, computerTheme, themeQuery, activeThemeName, activeTheme }
+  return {
+    themes,
+    active,
+    activeThemeVariables,
+    computerTheme,
+    activeThemeName,
+    activeTheme,
+  }
 })

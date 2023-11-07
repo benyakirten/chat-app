@@ -5,7 +5,7 @@ useHead({
   },
 })
 
-defineProps<{ id: ConversationId }>()
+defineProps<{ id?: ConversationId }>()
 
 const mediaStore = useMediaStore()
 
@@ -29,7 +29,8 @@ useAddMountedEventCallback('keydown', (e: KeyboardEvent) => {
         </div>
       </div>
     </Transition>
-    <ChatMessageList :conversation-id="id" />
+    <ChatMessageList v-if="id" :conversation-id="id" />
+    <p v-else class="no-conversation">Open the chat sidebar from above and select a conversation to begin</p>
   </div>
 </template>
 
@@ -59,6 +60,11 @@ useAddMountedEventCallback('keydown', (e: KeyboardEvent) => {
       background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
     }
   }
+}
+
+.no-conversation {
+  font-size: var(--text-xl);
+  padding: 1rem;
 }
 
 .conversations-enter-active,

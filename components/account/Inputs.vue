@@ -3,8 +3,8 @@ defineProps<{ me: Me; profile: User }>()
 </script>
 
 <template>
-  <AccountInputsMagnification :magnification="me.textSizeMagnification" />
-  <AccountInputsTheme :theme="me.colorTheme" />
+  <AccountInputsMagnification :magnification="me.magnification" />
+  <AccountInputsTheme :theme="me.theme" />
   <AccountInputsUserName :name="profile.name" />
   <AccountInputsHidden :hidden="me.hidden" />
 </template>

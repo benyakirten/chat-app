@@ -3,10 +3,12 @@ import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 defineProps<{ showEditButton: boolean }>()
 defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
+
+const buttonsContainer = ref<HTMLDivElement | null>(null)
 </script>
 
 <template>
-  <div class="message-buttons">
+  <div ref="buttonsContainer" class="message-buttons">
     <Transition name="fade">
       <GeneralIconButton
         v-if="showEditButton"
@@ -26,19 +28,12 @@ defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
   top: -2rem;
   right: 0.5rem;
   place-self: start;
-  opacity: 0;
 
   display: flex;
-  gap: 0.35rem;
+  gap: 0.75rem;
   color: var(--accent);
   background-color: var(--bg-alt4);
   padding: 0.4rem 0.8rem;
   border-radius: 1rem;
-
-  transition: opacity 200ms ease-out;
-
-  &:hover {
-    opacity: 1;
-  }
 }
 </style>

@@ -1,30 +1,9 @@
 import { defineStore } from 'pinia'
+import { z } from 'zod'
 
 import { ConversationMessage, UserConversationState, UserId } from './messages'
+import { PARTIAL_AUTH_SHAPE } from '@/utils/shapes'
 
-const PROP_USERS = new Map<UserId, User>()
-PROP_USERS.set('u1', {
-  name: 'Cool Person',
-  id: 'u1',
-  online: true,
-})
-PROP_USERS.set('u2', {
-  name: 'Completed User',
-  id: 'u2',
-  online: false,
-})
-PROP_USERS.set('u3', {
-  name: 'Pending User',
-  id: 'u3',
-  online: true,
-})
-PROP_USERS.set('u4', {
-  name: 'Failed User',
-  id: 'u4',
-  online: true,
-})
-
-// TODO: Add details for a user
 export interface User {
   id: UserId
   name: string
@@ -35,20 +14,18 @@ export interface User {
 
 export interface Me {
   id: UserId
-  textSizeMagnification: number
-  // TODO: Other accessibility options
-  colorTheme: 'day' | 'night' | 'auto'
-  // TODO: Other customization options
+  email: string
+  magnification: number
+  theme: 'day' | 'night' | 'auto'
   hidden: boolean
   // TODO: Consider how a block list will work
   block: Set<string>
+  token: string
+  refreshTimeout: NodeJS.Timeout
 }
 
 export type MutableOptions = Omit<Me, 'id'>
 
-// Users can be retrieved individually
-// and will probably be batch added
-// after the user logs in
 export interface UsersStoreState {
   users: Map<UserId, User>
   me: Me | null
@@ -56,15 +33,13 @@ export interface UsersStoreState {
 
 export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
+  const messageStore = useMessageStore()
+  const recentsStore = useRecentsStore()
+  const socketStore = useSocketStore()
+  const route = useRoute()
 
-  const users = ref<UsersStoreState['users']>(PROP_USERS)
-  const me = ref<UsersStoreState['me']>({
-    id: 'u1',
-    colorTheme: 'auto',
-    textSizeMagnification: 1,
-    hidden: false,
-    block: new Set(),
-  })
+  const users = ref<UsersStoreState['users']>(new Map())
+  const me = ref<UsersStoreState['me']>(null)
 
   function addUser(user: User) {
     users.value.set(user.id, user)
@@ -123,7 +98,20 @@ export const useUsersStore = defineStore('users', () => {
 
     // Not sure why the type isn't narrowing
     me.value[option] = value as any
-    // TODO: Transmit details
+    const res = await useAuthedFetch('/api/profile', 'PATCH', { [option]: value })
+    if (res.error.value) {
+      toastStore.add(`Unable to update profile: ${res.error.value}`, { type: 'error' })
+    }
+  }
+
+  async function setHidden(hidden: boolean) {
+    if (!me.value) {
+      toastStore.addErrorToast(null, 'Unable to change user settings when not logged in')
+      return
+    }
+
+    me.value.hidden = hidden
+    socketStore.transmitHiddenStatusChange(hidden)
   }
 
   async function setUserName(name: string) {
@@ -162,6 +150,99 @@ export const useUsersStore = defineStore('users', () => {
     return otherUsers
   })
 
+  function processAuthData(data: z.infer<typeof PARTIAL_AUTH_SHAPE>) {
+    for (const user of data.users) {
+      users.value.set(user.id, {
+        id: user.id,
+        name: user.display_name,
+        online: false,
+      })
+    }
+
+    const { user } = data
+    users.value.set(data.user.id, {
+      name: user.display_name,
+      id: user.id,
+      online: true,
+    })
+
+    const refreshTimeout = setTimeout(() => {
+      performRefresh()
+    }, REFRESH_TIMEOUT)
+
+    me.value = {
+      block: new Set(),
+      token: data.auth_token,
+      theme: user.theme,
+      id: user.id,
+      magnification: user.magnification,
+      email: user.email,
+      hidden: user.hidden,
+      refreshTimeout,
+    }
+
+    messageStore.conversations = data.conversations.map((conversation) => ({
+      id: conversation.id,
+      members: new Map(),
+      messages: new Map(),
+      isPrivate: conversation.private,
+      alias: conversation.alias,
+    }))
+
+    for (const recent of data.user.recents.toReversed()) {
+      recentsStore.visit(recent)
+    }
+
+    socketStore.init()
+  }
+
+  async function performRefresh() {
+    if (!me.value) {
+      toastStore.add('Unable to refresh authentication token if you are not logged in.', { type: 'error' })
+      return
+    }
+
+    const res = await useFetch('/auth/refresh', { method: 'POST' })
+    if (res.error.value) {
+      toastStore.add('Unable to refresh authentication token. You will be automatically logged out..', {
+        type: 'error',
+      })
+      signout()
+
+      return
+    }
+
+    me.value.token = res.data.value.token
+    me.value.refreshTimeout = setTimeout(() => {
+      performRefresh()
+    }, REFRESH_TIMEOUT)
+  }
+
+  async function signout() {
+    if (me.value) {
+      clearTimeout(me.value.refreshTimeout)
+      me.value = null
+    }
+    users.value = new Map()
+
+    messageStore.reset()
+    recentsStore.reset()
+
+    await useFetch('/auth/signout', { method: 'POST' })
+    if (!doesNotNeedLogin(route.fullPath)) {
+      await navigateTo('/login')
+    }
+  }
+
+  function setUserOnlineState(userId: UserId, online: boolean) {
+    const user = users.value.get(userId)
+    if (!user) {
+      return
+    }
+
+    user.online = online
+  }
+
   return {
     users,
     me,
@@ -175,5 +256,10 @@ export const useUsersStore = defineStore('users', () => {
     allOtherUsers,
     setAccountOption,
     setUserName,
+    processAuthData,
+    performRefresh,
+    signout,
+    setUserOnlineState,
+    setHidden,
   }
 })

@@ -1,13 +1,23 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ id?: ConversationId }>(), { id: '' })
+defineProps<{ id?: ConversationId }>()
 
 const mediaStore = useMediaStore()
 </script>
 
 <template>
   <BasePage>
-    <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
-    <ChatMobileLayout v-else :id="id" />
+    <FallbackClient>
+      <div class="layout-container">
+        <ChatDesktopLayout v-if="mediaStore.state === 'desktop'" :id="id" />
+        <ChatMobileLayout v-else :id="id" />
+      </div>
+    </FallbackClient>
     <ChatConversationModal />
   </BasePage>
 </template>
+
+<!-- <style scoped>
+.layout-container {
+  margin-top: var(--header-height);
+} -->
+<!-- </style> -->

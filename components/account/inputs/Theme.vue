@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const props = defineProps<{ theme: Me['colorTheme'] }>()
+const props = defineProps<{ theme: Me['theme'] }>()
 const userStore = useUsersStore()
 
 const themeOptions = [{ id: 'night' }, { id: 'day' }, { id: 'auto' }]
 const themeSelected = ref(new Set([capitalize(props.theme)]))
 watch(themeSelected, (val) =>
-  userStore.setAccountOption('colorTheme', (getFirstSetItem(val) as MutableOptions['colorTheme']) ?? 'night')
+  userStore.setAccountOption('theme', (getFirstSetItem(val) as MutableOptions['theme']) ?? 'night')
 )
 </script>
 

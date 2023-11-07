@@ -1,15 +1,18 @@
 <script setup lang="ts">
-defineProps<{ to: string }>()
+defineProps<{ to?: string }>()
 </script>
 
 <template>
-  <NuxtLink class="router-link" :to="to">
+  <NuxtLink v-if="to" class="link" :to="to">
     <slot></slot>
   </NuxtLink>
+  <button class="link" v-else>
+    <slot></slot>
+  </button>
 </template>
 
 <style scoped>
-.router-link {
+.link {
   cursor: pointer;
 
   position: relative;

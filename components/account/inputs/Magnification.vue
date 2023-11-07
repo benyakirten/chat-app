@@ -15,7 +15,7 @@ watch(magnificationSelected, (val) => {
     toastStore.add('Size value cannot be parsed', { type: 'error' })
   }
 
-  userStore.setAccountOption('textSizeMagnification', size)
+  userStore.setAccountOption('magnification', size)
 })
 </script>
 

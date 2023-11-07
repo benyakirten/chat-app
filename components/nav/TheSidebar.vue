@@ -23,6 +23,11 @@ function getTitle(route: string) {
 }
 
 const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
+
+function signout() {
+  userStore.signout()
+  layoutStore.toggleOpen()
+}
 </script>
 
 <template>
@@ -42,10 +47,16 @@ const me = computed(() => userStore.users.get(userStore.me?.id ?? ''))
           </li>
         </ul>
       </NavSection>
-      <NavSection height="4rem" width="90%" group="account" :z-index="1" background-color="var(--bg-alt3)">
+      <NavSection height="6rem" width="90%" group="account" :z-index="1" background-color="var(--bg-alt3)">
         <BaseLink to="/account">Settings</BaseLink>
         <div class="nav-account">
-          <div>Name: {{ me?.name ?? 'Unknown User' }}</div>
+          <div v-if="me">
+            <p>Name: {{ me?.name ?? 'Unknown User' }}</p>
+            <BaseLink @click="signout()">Sign out</BaseLink>
+          </div>
+          <div v-else>
+            <BaseLink to="/login"> Log in </BaseLink>
+          </div>
         </div>
       </NavSection>
       <div class="recent">

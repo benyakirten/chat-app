@@ -48,6 +48,10 @@ export class LRU {
     this._size = newSize
   }
 
+  public reset() {
+    this._cache = new Set()
+  }
+
   public visit(page: string) {
     if (this._cache.has(page)) {
       this._cache.delete(page)

@@ -25,7 +25,7 @@ const toastStore = useToastStore()
 
 <style scoped>
 .toast {
-  font-size: 1.4rem;
+  font-size: var(--text-xl);
   padding: 1rem 1.5rem;
   border-radius: 2rem;
   width: 80%;

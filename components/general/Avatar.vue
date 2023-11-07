@@ -4,7 +4,7 @@ import { UserIcon } from '@heroicons/vue/24/solid'
 const userStore = useUsersStore()
 const props = withDefaults(defineProps<{ userId: UserId; size?: string; showOnlineIndicator?: boolean }>(), {
   size: '1.8rem',
-  showOnlineIndicator: false,
+  showOnlineIndicator: true,
 })
 const user = computed(() => userStore.users.get(props.userId))
 const name = computed(() => user.value?.name ?? 'Unknown User')
@@ -14,7 +14,7 @@ const name = computed(() => user.value?.name ?? 'Unknown User')
   <div class="avatar">
     <img v-if="user?.image" :src="user.image" :alt="name" />
     <UserIcon v-else :aria-label="name" />
-    <GeneralTooltip class="test" v-if="showOnlineIndicator">
+    <GeneralTooltip class="indicator-container" v-if="showOnlineIndicator">
       <template #content> Status: {{ user?.online ? 'Online' : 'Offline' }} </template>
       <div class="avatar-indicator" :class="{ online: user?.online }"></div>
     </GeneralTooltip>
@@ -22,10 +22,11 @@ const name = computed(() => user.value?.name ?? 'Unknown User')
 </template>
 
 <style scoped>
-.test {
+.indicator-container {
   width: 100%;
   height: 100%;
 }
+
 .avatar {
   position: relative;
   align-self: center;
