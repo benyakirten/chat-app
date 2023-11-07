@@ -4,7 +4,7 @@
 
 <style scoped>
 .label {
-  font-size: var(--text-xl);
+  font-size: var(--text-size-xl);
   padding-bottom: 1rem;
 }
 </style>

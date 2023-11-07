@@ -4,8 +4,8 @@
 
 <style scoped>
 .item {
-  color: var(--text);
-  font-size: var(--text-xl);
+  color: var(--text-color);
+  font-size: var(--text-size-xl);
   text-transform: capitalize;
 
   display: flex;

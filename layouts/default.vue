@@ -50,15 +50,15 @@ body {
   );
 
   background: var(--body-bg);
-  color: var(--text);
+  color: var(--text-color);
 
-  --text-xxl: calc(var(--size-xxl) * var(--magnification, 1));
-  --text-xl: calc(var(--size-xl) * var(--magnification, 1));
-  --text-lg: calc(var(--size-lg) * var(--magnification, 1));
-  --text-md: calc(var(--size-md) * var(--magnification, 1));
-  --text-sm: calc(var(--size-sm) * var(--magnification, 1));
+  --text-size-xxl: calc(var(--size-xxl) * var(--magnification, 1));
+  --text-size-xl: calc(var(--size-xl) * var(--magnification, 1));
+  --text-size-lg: calc(var(--size-lg) * var(--magnification, 1));
+  --text-size-md: calc(var(--size-md) * var(--magnification, 1));
+  --text-size-sm: calc(var(--size-sm) * var(--magnification, 1));
 
-  font-size: var(--text-lg);
+  font-size: var(--text-size-lg);
 }
 
 main {

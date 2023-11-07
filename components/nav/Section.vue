@@ -51,14 +51,14 @@ const id = computed(() => `${props.group}-expadable-content`)
 
     outline: none;
     border: none;
-    color: var(--text);
+    color: var(--text-color);
     background-color: inherit;
     width: 100%;
     height: 100%;
     padding: 0.5rem 0;
 
     h4 {
-      font-size: var(--text-xxl);
+      font-size: var(--text-size-xxl);
       text-transform: capitalize;
     }
   }

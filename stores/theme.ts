@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export interface ColorTheme {
   bgPrimary: string
   accent: string
-  text: string
+  textColor: string
   highlight: string
   neutral: string
   base: string
@@ -24,7 +24,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     // TODO: This is still terrible
     bgPrimary: '#f4f4f4',
     accent: '#e74c3c',
-    text: '#333',
+    textColor: '#333',
     highlight: '#3468ab',
     neutral: '#95a5a6',
     base: '#ecceab',
@@ -34,7 +34,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
   night: {
     bgPrimary: '#0a192f',
     accent: '#00b894',
-    text: '#f4f4f4',
+    textColor: '#f4f4f4',
     highlight: '#f39c12',
     neutral: '#495555',
     base: '#000',

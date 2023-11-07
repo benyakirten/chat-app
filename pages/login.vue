@@ -47,58 +47,76 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="page">
-    <h1>{{ loginMode ? 'login' : 'register' }}</h1>
-    <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
-    <form @submit.prevent="handleSubmit">
-      <label>
-        Email
-        <input v-model="email" type="email" />
-      </label>
-      <label>
-        Password
-        <input v-model="password" type="password" />
-      </label>
-      <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
-      <Transition name="display-mode">
-        <label v-if="!loginMode">
-          Display Name
-          <input v-model="displayName" type="string" />
-        </label>
-      </Transition>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+  <section class="login-page">
+    <div class="content">
+      <!-- TODO: Add animation for changing mode? -->
+      <div class="mode">
+        <h1>{{ loginMode ? 'login' : 'register' }}</h1>
+        <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
+      </div>
+      <form @submit.prevent="handleSubmit">
+        <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
+          <template #label> Email </template>
+        </GeneralInputText>
+        <GeneralInputText
+          v-model="email"
+          type="password"
+          placeholder=">= 12 letters, 1 upper, lower, number and symbol..."
+        >
+          <template #label> Password </template>
+        </GeneralInputText>
+        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
+        <Transition name="display-mode">
+          <GeneralInputText v-if="!loginMode" v-model="displayName" placeholder="Cool Name">
+            <template #label> Display Name </template>
+          </GeneralInputText>
+        </Transition>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  padding: 8rem 4rem;
+.login-page {
+  display: grid;
+  place-items: center;
 
-  .alternate-mode {
-    text-decoration: underline;
+  padding-block: 4rem;
+
+  .content {
+    width: 40%;
   }
 
-  h1 {
-    text-transform: capitalize;
+  .mode {
+    padding-block: var(--size-md);
+
+    h1 {
+      text-transform: capitalize;
+      font-size: calc(2 * var(--text-size-xxl));
+      padding-block-end: calc(0.5 * var(--size-md));
+    }
+
+    .alternate-mode {
+      font-size: var(--text-size-xxl);
+      text-decoration: underline;
+    }
   }
 
   form {
-    label {
-      display: block;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-md);
   }
 }
 
-.dispaly-mode-enter-active,
-.dispaly-mode-leave-active {
+.display-mode-enter-active,
+.display-mode-leave-active {
   transition: translate 100ms ease-in-out 100ms, opacity 200ms ease-in;
 }
 
-.dispaly-mode-enter-from,
-.dispaly-mode-leave-to {
+.display-mode-enter-from,
+.display-mode-leave-to {
   translate: 0 -100%;
   opacity: 0;
 }

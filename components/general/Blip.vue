@@ -17,7 +17,7 @@ const top = computed(() => `${y}px`)
   left: v-bind(left);
 
   border-radius: var(--rounded);
-  background-color: var(--text);
+  background-color: var(--text-color);
   opacity: 0;
 
   height: 0.5rem;

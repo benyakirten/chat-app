@@ -250,7 +250,7 @@ label {
 
       input {
         background-color: var(--bg-primary);
-        color: var(--text);
+        color: var(--text-color);
         outline: none;
         padding: 0.5rem;
         flex: 1;
@@ -271,7 +271,7 @@ label {
 
     &-button {
       background-color: var(--bg-primary);
-      color: var(--text);
+      color: var(--text-color);
       border-left: 1px solid gray;
       position: relative;
       cursor: pointer;
@@ -322,7 +322,7 @@ label {
 
       cursor: default;
 
-      font-size: var(--text-xl);
+      font-size: var(--text-size-xl);
 
       &:hover {
         background-color: var(--bg-primary);

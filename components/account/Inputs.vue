@@ -11,13 +11,13 @@ defineProps<{ me: Me; profile: User }>()
 
 <style scoped>
 .label {
-  font-size: var(--text-xl);
+  font-size: var(--text-size-xl);
   padding-bottom: 1rem;
 }
 
 .item {
-  color: var(--text);
-  font-size: var(--text-xl);
+  color: var(--text-color);
+  font-size: var(--text-size-xl);
 
   display: flex;
   padding-inline: 1rem;

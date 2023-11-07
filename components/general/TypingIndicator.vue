@@ -30,7 +30,7 @@ withDefaults(defineProps<{ size?: string }>(), { size: '1rem' })
     width: v-bind(size);
 
     border-radius: var(--rounded);
-    background-color: var(--text);
+    background-color: var(--text-color);
 
     animation: expand calc(var(--anim-speed)) linear infinite;
 

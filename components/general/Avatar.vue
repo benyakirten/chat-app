@@ -37,7 +37,7 @@ const name = computed(() => user.value?.name ?? 'Unknown User')
   height: v-bind(size);
 
   border-radius: var(--rounded);
-  border: 1px solid var(--text);
+  border: 1px solid var(--text-color);
 
   &-indicator {
     --indicator-bg: var(--error-bg);

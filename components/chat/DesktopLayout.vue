@@ -23,7 +23,7 @@ defineProps<{ id?: ConversationId }>()
 }
 
 .no-conversation {
-  font-size: var(--text-xl);
+  font-size: var(--text-size-xl);
   padding: 1rem;
 }
 </style>

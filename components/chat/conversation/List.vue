@@ -42,7 +42,7 @@ const modalStore = useModalStore()
     flex-grow: 1;
 
     &-empty {
-      font-size: var(--text-xl);
+      font-size: var(--text-size-xl);
       padding: 1rem;
     }
   }
