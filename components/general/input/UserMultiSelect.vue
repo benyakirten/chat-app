@@ -47,7 +47,7 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
 
   cursor: default;
 
-  font-size: var(--text-xl);
+  font-size: var(--text-size-xl);
 
   &:hover {
     background-color: var(--bg-primary);

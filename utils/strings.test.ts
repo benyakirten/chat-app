@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'vitest'
 
-import { camelToKebabCase, titleCase, capitalize } from './strings'
+import { calculateCharactersInCommon, camelToKebabCase, capitalize, titleCase } from './strings'
 
 describe('camelToKebabCase', () => {
   test.each([
@@ -34,5 +34,27 @@ describe('capitalize', () => {
   ])('should return $want given an input of $input', ({ input, want }) => {
     const got = capitalize(input)
     expect(got).toEqual(want)
+  })
+})
+
+describe('calculateCharactersInCommon', () => {
+  it('should return 0 if the strings do not begin with the same letter', () => {
+    const got = calculateCharactersInCommon(' hello there, how are you doing?', 'hello there, how are you doing?')
+    expect(got).toEqual(0)
+  })
+
+  it('should return the length of the string if all characters are the same in the same case if ignore case is false', () => {
+    const got = calculateCharactersInCommon('hello there, HOW ARE you?', 'hello there, HOW ARE you?')
+    expect(got).toEqual(25)
+  })
+
+  it('should return the amount of characters in common case dependent if ignore case is false', () => {
+    const got = calculateCharactersInCommon('hello there, HOW ARE you?', 'hello there, how are you?')
+    expect(got).toEqual(13)
+  })
+
+  it('should return the amount of characters in common independent of case if ignore case is true', () => {
+    const got = calculateCharactersInCommon('èÏ', 'Èï', true)
+    expect(got).toEqual(2)
   })
 })

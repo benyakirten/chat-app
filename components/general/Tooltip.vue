@@ -83,8 +83,8 @@ useAddMountedEventCallback('keydown', tooltipListener)
     position: absolute;
     z-index: var(--z-high);
     background-color: var(--bg-alt3);
-    font-size: var(--text-lg);
-    color: var(--text);
+    font-size: var(--text-size-lg);
+    color: var(--text-color);
 
     padding: 0.4rem 0.5rem;
     width: max-content;

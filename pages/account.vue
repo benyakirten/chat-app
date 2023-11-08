@@ -15,6 +15,6 @@ const profile = computed(() => userStore.users.get(userStore.me?.id ?? ''))
 <style scoped>
 .no-user {
   padding: 2rem;
-  font-size: var(--text-xxl);
+  font-size: var(--text-size-xxl);
 }
 </style>

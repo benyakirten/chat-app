@@ -47,59 +47,88 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="page">
-    <h1>{{ loginMode ? 'login' : 'register' }}</h1>
-    <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
-    <form @submit.prevent="handleSubmit">
-      <label>
-        Email
-        <input v-model="email" type="email" />
-      </label>
-      <label>
-        Password
-        <input v-model="password" type="password" />
-      </label>
-      <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
-      <Transition name="display-mode">
-        <label v-if="!loginMode">
-          Display Name
-          <input v-model="displayName" type="string" />
-        </label>
-      </Transition>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+  <section class="login-page">
+    <div class="content">
+      <div class="mode">
+        <GeneralTypeWriter class="mode-title" :message="loginMode ? 'login' : 'register'" tag="h1" />
+        <button class="mode-alternate" @click="alternateMode">
+          Need to {{ loginMode ? 'register' : 'login' }} instead?
+        </button>
+      </div>
+      <form @submit.prevent="handleSubmit">
+        <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
+          <template #label> Email </template>
+        </GeneralInputText>
+        <GeneralInputText
+          v-model="email"
+          type="password"
+          placeholder=">= 12 letters, 1 upper, lower, number and symbol..."
+        >
+          <template #label> Password </template>
+        </GeneralInputText>
+        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
+        <Transition name="display-mode">
+          <GeneralInputText v-if="!loginMode" v-model="displayName" placeholder="Cool Name">
+            <template #label> Display Name </template>
+          </GeneralInputText>
+        </Transition>
+        <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
+      </form>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  padding: 8rem 4rem;
+.login-page {
+  display: grid;
+  place-items: center;
 
-  .alternate-mode {
-    text-decoration: underline;
+  padding-block-start: 10%;
+
+  .content {
+    width: 40%;
+
+    @media (width <= 700px) {
+      width: 60%;
+    }
+
+    @media (width <= 600px) {
+      width: 70%;
+    }
+
+    @media (width <= 400px) {
+      width: 80%;
+    }
   }
 
-  h1 {
-    text-transform: capitalize;
+  .mode {
+    padding-block: var(--size-md);
+
+    &-title {
+      text-transform: capitalize;
+      font-size: calc(2 * var(--text-size-xxl));
+      padding-block-end: calc(0.5 * var(--size-md));
+
+      @media (width <= 400px) {
+        font-size: calc(var(--text-size-xxl));
+        padding-block-end: calc(0.5 * var(--size-sm));
+      }
+    }
+
+    &-alternate {
+      text-decoration: underline;
+      font-size: var(--text-size-xxl);
+
+      @media (width <= 400px) {
+        font-size: calc(var(--text-size-lg));
+      }
+    }
   }
 
   form {
-    label {
-      display: block;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-md);
   }
-}
-
-.dispaly-mode-enter-active,
-.dispaly-mode-leave-active {
-  transition: translate 100ms ease-in-out 100ms, opacity 200ms ease-in;
-}
-
-.dispaly-mode-enter-from,
-.dispaly-mode-leave-to {
-  translate: 0 -100%;
-  opacity: 0;
 }
 </style>

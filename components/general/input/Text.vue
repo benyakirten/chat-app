@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), { id: uuid() })
 defineOptions({ inheritAttrs: false })
+
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
 function handleInput(e: Event) {
@@ -14,20 +15,20 @@ function handleInput(e: Event) {
 </script>
 
 <template>
-  <div class="text">
-    <label class="text-label" :for="id">
+  <div class="text-input">
+    <label class="text-input-label" :for="id">
       <slot name="label"></slot>
     </label>
-    <div class="text-container">
+    <div class="text-input-container">
       <input
         :id="id"
-        class="text-container-input"
+        class="text-input-container-input"
         :placeholder="placeholder"
         :value="modelValue"
         @input="handleInput"
         v-bind="$attrs"
       />
-      <div class="text-container-icon">
+      <div class="text-input-container-icon">
         <slot name="icon"></slot>
       </div>
     </div>
@@ -35,20 +36,28 @@ function handleInput(e: Event) {
 </template>
 
 <style scoped>
-.text {
+.text-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-sm);
+
+  &-label {
+    font-size: var(--text-size-xl);
+  }
+
   &-container {
-    --padding-x-input: 1rem;
-    --icon: 2rem;
+    --padding-x-input: var(--size-md);
+    --icon: calc(2 * var(--size-md));
 
     position: relative;
     display: flex;
     align-items: center;
 
     &-input {
-      height: calc(var(--icon) + 0.5rem);
+      height: calc(var(--icon) + calc(0.5 * var(--size-md)));
       width: 100%;
 
-      padding: 0.5rem var(--padding-x-input);
+      padding: calc(0.5 * var(--size-md)) var(--padding-x-input);
       padding-right: var(--icon);
       border-radius: 4px;
       border: none;
@@ -56,7 +65,7 @@ function handleInput(e: Event) {
       /* TODO: This is a mess */
       &:disabled {
         background-color: var(--neutral);
-        color: var(--text);
+        color: var(--text-color);
       }
     }
 
@@ -67,7 +76,7 @@ function handleInput(e: Event) {
       height: var(--icon);
       width: var(--icon);
       transform: translateY(-50%);
-      color: var(--text);
+      color: var(--text-color);
     }
   }
 }

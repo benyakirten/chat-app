@@ -18,7 +18,7 @@ defineProps<{ to?: string }>()
   position: relative;
   display: inline-block;
 
-  color: var(--text);
+  color: var(--text-color);
 
   margin-bottom: 4px;
 

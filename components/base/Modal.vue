@@ -64,7 +64,7 @@ useAddMountedEventCallback(
   min-width: 2rem;
 
   background: radial-gradient(circle, var(--bg-primary), var(--bg-alt3), var(--bg-alt5));
-  color: var(--text);
+  color: var(--text-color);
   border: 2px solid var(--neutral);
   overflow-x: hidden;
 

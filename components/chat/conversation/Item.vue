@@ -60,14 +60,14 @@ const unreadMessages = computed(() => messageStore.unreadMessages(props.conversa
   background-size: 200%;
   transition: background-position 250ms ease-out;
 
-  color: var(--text);
+  color: var(--text-color);
 
   &:hover {
     background-position: right;
   }
 
   &-unread {
-    font-size: var(--text-lg);
+    font-size: var(--text-size-lg);
     align-self: center;
     justify-content: center;
     color: var(--highlight);
