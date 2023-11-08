@@ -1,21 +1,26 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ message: string; delay?: number; tag: typeof TEXT_TAGS }>(), { delay: 10 })
+import { TextTag } from '~/utils/types'
+
+const props = withDefaults(defineProps<{ message: string; delay?: number; tag: TextTag }>(), { delay: 10 })
 const displayText = ref('')
-const textInterval = ref<NodeJS.Timeout | null>(null)
+
+const textClearInterval = ref<NodeJS.Timeout | null>()
 const clearingPromise = ref<Promise<void> | null>(null)
+
+const textWriteInterval = ref<NodeJS.Timeout | null>()
+const writingPromise = ref<Promise<void> | null>(null)
 
 watch(
   () => props.message,
   async (newValue, oldValue) => {
-    if (clearingPromise) {
-      clearWorkInProgress()
-    }
+    clearWorkInProgress()
 
     const charactersInCommon = calculateCharactersInCommon(newValue, oldValue)
-    clearingPromise.value = removeEachLetter(charactersInCommon)
+    clearingPromise.value = removeLetters(oldValue.length - charactersInCommon)
     await clearingPromise.value
 
-    //
+    writingPromise.value = buildTo(newValue, charactersInCommon)
+    await writingPromise.value
   }
 )
 
@@ -36,23 +41,20 @@ function calculateCharactersInCommon(newValue: string, oldValue: string): number
   return sameLetterCount
 }
 
-function removeEachLetter(only?: number): Promise<void> {
+function removeLetters(only?: number): Promise<void> {
   return new Promise((resolve) => {
     let count: number = 0
-    function end(interval: NodeJS.Timeout) {
-      clearInterval(interval)
-      return resolve()
-    }
-    textInterval.value = setInterval(() => {
+
+    textClearInterval.value = setInterval(() => {
       if (only) {
         if (only === count) {
-          return end(textInterval.value!)
+          return end(textClearInterval.value!, resolve)
         }
         only++
       }
 
       if (displayText.value === '') {
-        return end(textInterval.value!)
+        return end(textClearInterval.value!, resolve)
       }
 
       displayText.value = displayText.value.slice(0, -1)
@@ -60,10 +62,32 @@ function removeEachLetter(only?: number): Promise<void> {
   })
 }
 
+function buildTo(newValue: string, charactersInCommon: number): Promise<void> {
+  return new Promise((resolve) => {
+    let curIndex = charactersInCommon
+    textWriteInterval.value = setTimeout(() => {
+      if (curIndex === newValue.length) {
+        end(textWriteInterval.value!, resolve)
+      }
+      curIndex++
+      displayText.value += newValue.charAt(curIndex)
+    }, props.delay)
+  })
+}
+
+function end(interval: NodeJS.Timeout, resolve: () => void) {
+  clearInterval(interval)
+  resolve()
+}
+
 function clearWorkInProgress() {
-  clearInterval(textInterval.value!)
-  textInterval.value = null
+  clearInterval(textClearInterval.value!)
+  textClearInterval.value = null
   clearingPromise.value = null
+
+  clearInterval(textWriteInterval.value!)
+  textWriteInterval.value = null
+  writingPromise.value = null
 }
 </script>
 

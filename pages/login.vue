@@ -49,9 +49,8 @@ onMounted(async () => {
 <template>
   <section class="login-page">
     <div class="content">
-      <!-- TODO: Add animation for changing mode? -->
       <div class="mode">
-        <h1>{{ loginMode ? 'login' : 'register' }}</h1>
+        <GeneralTypeWriter :message="loginMode ? 'login' : 'register'" tag="h1" />
         <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
       </div>
       <form @submit.prevent="handleSubmit">
