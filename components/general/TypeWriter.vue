@@ -137,6 +137,10 @@ function clearWorkInProgress() {
 
   min-height: calc(v-bind('$props.placeholderHeight') * var(--magnification, 1));
 
+  @media (width <= 400px) {
+    min-height: calc(v-bind('$props.placeholderHeight') * var(--magnification, 1) * 0.5);
+  }
+
   &-type {
     &::after {
       content: v-bind(afterContent);

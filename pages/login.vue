@@ -87,6 +87,18 @@ onMounted(async () => {
 
   .content {
     width: 40%;
+
+    @media (width <= 700px) {
+      width: 60%;
+    }
+
+    @media (width <= 600px) {
+      width: 70%;
+    }
+
+    @media (width <= 400px) {
+      width: 80%;
+    }
   }
 
   .mode {
@@ -96,11 +108,20 @@ onMounted(async () => {
       text-transform: capitalize;
       font-size: calc(2 * var(--text-size-xxl));
       padding-block-end: calc(0.5 * var(--size-md));
+
+      @media (width <= 400px) {
+        font-size: calc(var(--text-size-xxl));
+        padding-block-end: calc(0.5 * var(--size-sm));
+      }
     }
 
     &-alternate {
-      font-size: var(--text-size-xxl);
       text-decoration: underline;
+      font-size: var(--text-size-xxl);
+
+      @media (width <= 400px) {
+        font-size: calc(var(--text-size-lg));
+      }
     }
   }
 
