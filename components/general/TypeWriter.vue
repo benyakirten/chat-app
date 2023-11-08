@@ -4,13 +4,12 @@ import { TextTag } from '~/utils/types'
 const props = withDefaults(
   defineProps<{
     message: string
-    clearSpeed?: number
-    addSpeed?: number
+    textSpeed?: number
     tag: TextTag
     shareCharacters?: boolean
     placeholderHeight?: string
   }>(),
-  { clearSpeed: 200, addSpeed: 400, shareCharacters: true, placeholderHeight: '7rem' }
+  { textSpeed: 90, shareCharacters: true, placeholderHeight: '7rem' }
 )
 
 const displayText = ref(props.message)
@@ -21,10 +20,19 @@ const clearingPromise = ref<Promise<void> | null>(null)
 const textWriteInterval = ref<NodeJS.Timeout | null>()
 const writingPromise = ref<Promise<void> | null>(null)
 
+const animationInProgress = ref(false)
+
+const afterContent = ref("''")
+watch(animationInProgress, (animationInProgress) => {
+  afterContent.value = animationInProgress ? "'\\005F'" : "''"
+})
+
 watch(
   () => props.message,
   async (newValue, oldValue) => {
     oldValue ??= ''
+    animationInProgress.value = true
+
     clearWorkInProgress()
 
     const charactersInCommon = props.shareCharacters ? calculateCharactersInCommon(newValue, oldValue) : 0
@@ -33,6 +41,10 @@ watch(
 
     writingPromise.value = buildTo(newValue, charactersInCommon)
     await writingPromise.value
+
+    animationInProgress.value = false
+
+    clearWorkInProgress()
   }
 )
 
@@ -70,7 +82,7 @@ function removeLetters(only?: number): Promise<void> {
       }
 
       displayText.value = displayText.value.slice(0, -1)
-    }, props.clearSpeed)
+    }, props.textSpeed)
   })
 }
 
@@ -86,7 +98,7 @@ function buildTo(newValue: string, charactersInCommon: number): Promise<void> {
       _displayText += newValue.charAt(currIndex)
       displayText.value = _displayText
       currIndex++
-    }, props.addSpeed)
+    }, props.textSpeed)
   })
 }
 
@@ -108,14 +120,38 @@ function clearWorkInProgress() {
 
 <template>
   <div class="type-container">
-    <component :is="props.tag" v-if="displayText">
-      {{ displayText ?? '&nbsp;' }}
+    <component class="type-container-type" :is="props.tag" v-if="displayText">
+      {{ displayText }}
     </component>
   </div>
 </template>
 
 <style scoped>
 .type-container {
+  display: flex;
+
   min-height: calc(v-bind('$props.placeholderHeight') * var(--magnification, 1));
+
+  &-type {
+    &::after {
+      content: v-bind(afterContent);
+
+      margin-inline-start: 0.5rem;
+      display: inline-block;
+
+      animation: blink infinite 0.8 cubic-bezier(1, 0, 0, 1);
+    }
+  }
+}
+
+@keyframes blink {
+  to,
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 </style>

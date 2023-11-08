@@ -51,7 +51,9 @@ onMounted(async () => {
     <div class="content">
       <div class="mode">
         <GeneralTypeWriter class="mode-title" :message="loginMode ? 'login' : 'register'" tag="h1" />
-        <div class="mode-alternate" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
+        <button class="mode-alternate" @click="alternateMode">
+          Need to {{ loginMode ? 'register' : 'login' }} instead?
+        </button>
       </div>
       <form @submit.prevent="handleSubmit">
         <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
