@@ -2,10 +2,18 @@
 import { TextTag } from '~/utils/types'
 
 const props = withDefaults(
-  defineProps<{ message: string; clearSpeed?: number; addSpeed?: number; tag: TextTag; shareCharacters?: boolean }>(),
-  { clearSpeed: 100, addSpeed: 400, shareCharacters: true }
+  defineProps<{
+    message: string
+    clearSpeed?: number
+    addSpeed?: number
+    tag: TextTag
+    shareCharacters?: boolean
+    placeholderHeight?: string
+  }>(),
+  { clearSpeed: 200, addSpeed: 400, shareCharacters: true, placeholderHeight: '7rem' }
 )
-const displayText = ref('')
+
+const displayText = ref(props.message)
 
 const textClearInterval = ref<NodeJS.Timeout | null>()
 const clearingPromise = ref<Promise<void> | null>(null)
@@ -17,7 +25,6 @@ watch(
   () => props.message,
   async (newValue, oldValue) => {
     oldValue ??= ''
-    displayText.value ??= ''
     clearWorkInProgress()
 
     const charactersInCommon = props.shareCharacters ? calculateCharactersInCommon(newValue, oldValue) : 0
@@ -26,8 +33,7 @@ watch(
 
     writingPromise.value = buildTo(newValue, charactersInCommon)
     await writingPromise.value
-  },
-  { immediate: true }
+  }
 )
 
 /**
@@ -101,5 +107,15 @@ function clearWorkInProgress() {
 </script>
 
 <template>
-  <component :is="props.tag"> <!-- {{ displayText }} -->HELLO </component>
+  <div class="type-container">
+    <component :is="props.tag" v-if="displayText">
+      {{ displayText ?? '&nbsp;' }}
+    </component>
+  </div>
 </template>
+
+<style scoped>
+.type-container {
+  min-height: calc(v-bind('$props.placeholderHeight') * var(--magnification, 1));
+}
+</style>
