@@ -50,8 +50,8 @@ onMounted(async () => {
   <section class="login-page">
     <div class="content">
       <div class="mode">
-        <GeneralTypeWriter :message="loginMode ? 'login' : 'register'" tag="h1" />
-        <div class="alternate-mode" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
+        <GeneralTypeWriter class="mode-title" :message="loginMode ? 'login' : 'register'" tag="h1" />
+        <div class="mode-alternate" @click="alternateMode">Need to {{ loginMode ? 'register' : 'login' }} instead?</div>
       </div>
       <form @submit.prevent="handleSubmit">
         <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
@@ -90,13 +90,13 @@ onMounted(async () => {
   .mode {
     padding-block: var(--size-md);
 
-    h1 {
+    &-title {
       text-transform: capitalize;
       font-size: calc(2 * var(--text-size-xxl));
       padding-block-end: calc(0.5 * var(--size-md));
     }
 
-    .alternate-mode {
+    &-alternate {
       font-size: var(--text-size-xxl);
       text-decoration: underline;
     }

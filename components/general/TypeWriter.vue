@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { TextTag } from '~/utils/types'
 
-const props = withDefaults(defineProps<{ message: string; delay?: number; tag: TextTag }>(), { delay: 10 })
+const props = withDefaults(
+  defineProps<{ message: string; clearSpeed?: number; addSpeed?: number; tag: TextTag; shareCharacters?: boolean }>(),
+  { clearSpeed: 100, addSpeed: 400, shareCharacters: true }
+)
 const displayText = ref('')
 
 const textClearInterval = ref<NodeJS.Timeout | null>()
@@ -13,15 +16,18 @@ const writingPromise = ref<Promise<void> | null>(null)
 watch(
   () => props.message,
   async (newValue, oldValue) => {
+    oldValue ??= ''
+    displayText.value ??= ''
     clearWorkInProgress()
 
-    const charactersInCommon = calculateCharactersInCommon(newValue, oldValue)
+    const charactersInCommon = props.shareCharacters ? calculateCharactersInCommon(newValue, oldValue) : 0
     clearingPromise.value = removeLetters(oldValue.length - charactersInCommon)
     await clearingPromise.value
 
     writingPromise.value = buildTo(newValue, charactersInCommon)
     await writingPromise.value
-  }
+  },
+  { immediate: true }
 )
 
 /**
@@ -58,20 +64,23 @@ function removeLetters(only?: number): Promise<void> {
       }
 
       displayText.value = displayText.value.slice(0, -1)
-    }, props.delay)
+    }, props.clearSpeed)
   })
 }
 
 function buildTo(newValue: string, charactersInCommon: number): Promise<void> {
   return new Promise((resolve) => {
-    let curIndex = charactersInCommon
-    textWriteInterval.value = setTimeout(() => {
-      if (curIndex === newValue.length) {
-        end(textWriteInterval.value!, resolve)
+    let currIndex = charactersInCommon
+    let _displayText: string = ''
+    textWriteInterval.value = setInterval(() => {
+      if (currIndex === newValue.length) {
+        return end(textWriteInterval.value!, resolve)
       }
-      curIndex++
-      displayText.value += newValue.charAt(curIndex)
-    }, props.delay)
+
+      _displayText += newValue.charAt(currIndex)
+      displayText.value = _displayText
+      currIndex++
+    }, props.addSpeed)
   })
 }
 
@@ -92,7 +101,5 @@ function clearWorkInProgress() {
 </script>
 
 <template>
-  <component :is="props.tag">
-    {{ displayText }}
-  </component>
+  <component :is="props.tag"> <!-- {{ displayText }} -->HELLO </component>
 </template>
