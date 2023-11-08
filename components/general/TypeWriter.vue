@@ -30,6 +30,11 @@ watch(animationInProgress, (animationInProgress) => {
 watch(
   () => props.message,
   async (newValue, oldValue) => {
+    if (window?.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      displayText.value = newValue
+      return
+    }
+
     oldValue ??= ''
     animationInProgress.value = true
 

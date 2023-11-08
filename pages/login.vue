@@ -72,7 +72,7 @@ onMounted(async () => {
             <template #label> Display Name </template>
           </GeneralInputText>
         </Transition>
-        <button type="submit">Submit</button>
+        <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
       </form>
     </div>
   </section>
@@ -83,7 +83,7 @@ onMounted(async () => {
   display: grid;
   place-items: center;
 
-  padding-block: 4rem;
+  padding-block-start: 10%;
 
   .content {
     width: 40%;
@@ -109,16 +109,5 @@ onMounted(async () => {
     flex-direction: column;
     gap: var(--size-md);
   }
-}
-
-.display-mode-enter-active,
-.display-mode-leave-active {
-  transition: translate 100ms ease-in-out 100ms, opacity 200ms ease-in;
-}
-
-.display-mode-enter-from,
-.display-mode-leave-to {
-  translate: 0 -100%;
-  opacity: 0;
 }
 </style>
