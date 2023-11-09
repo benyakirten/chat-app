@@ -69,9 +69,14 @@ onMounted(async () => {
         >
           <template #label> Password </template>
           <template #error>
-            Password must have the following characteristics: 1. be at least 12 letters long 2. have at least 1
-            uppercase letter 3. have at least 1 lowercase letter 4. have at least 1 number 5. have at least one of the
-            following characters: !@#$%^&*+`~'
+            <p>Password must have the following characteristics:</p>
+            <ol>
+              <li>be at least 12 letters long</li>
+              <li>have at least 1 uppercase letter</li>
+              <li>have at least 1 lowercase letter</li>
+              <li>have at least 1 number</li>
+              <li>have at least one of the following characters: !@#$%^&*+`~'</li>
+            </ol>
           </template>
         </GeneralInputText>
         <Transition name="display-mode">
@@ -137,6 +142,16 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: var(--size-md);
+  }
+
+  ol {
+    list-style: decimal;
+    li {
+      &::first-letter {
+        text-transform: capitalize;
+      }
+      margin-inline-start: var(--size-lg);
+    }
   }
 }
 </style>
