@@ -147,20 +147,7 @@ function clearWorkInProgress() {
 
       margin-inline-start: 0.5rem;
       display: inline-block;
-
-      animation: blink infinite 0.8 cubic-bezier(1, 0, 0, 1);
     }
-  }
-}
-
-@keyframes blink {
-  to,
-  from {
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
   }
 }
 </style>

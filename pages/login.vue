@@ -56,22 +56,30 @@ onMounted(async () => {
         </button>
       </div>
       <form @submit.prevent="handleSubmit">
-        <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
+        <GeneralInputText v-model="email" type="email" placeholder="you@example.com" required>
+          <template #error>Email must be a valid email</template>
           <template #label> Email </template>
         </GeneralInputText>
         <GeneralInputText
-          v-model="email"
+          v-model="password"
           type="password"
-          placeholder=">= 12 letters, 1 upper, lower, number and symbol..."
+          placeholder="At least 12 letters, 1 upper, lower, number and special character..."
+          required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+`~'])[A-Za-z\d!@#$%^&*+`~']{12,}$"
         >
           <template #label> Password </template>
+          <template #error>
+            Password must have the following characteristics: 1. be at least 12 letters long 2. have at least 1
+            uppercase letter 3. have at least 1 lowercase letter 4. have at least 1 number 5. have at least one of the
+            following characters: !@#$%^&*+`~'
+          </template>
         </GeneralInputText>
-        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
         <Transition name="display-mode">
           <GeneralInputText v-if="!loginMode" v-model="displayName" placeholder="Cool Name">
             <template #label> Display Name </template>
           </GeneralInputText>
         </Transition>
+        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
         <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
       </form>
     </div>
