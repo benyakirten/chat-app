@@ -11,11 +11,14 @@ const isValid = ref(true)
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
 function handleInput(e: Event) {
-  isValid.value = !!textRef.value?.checkValidity()
   if (!(e.target instanceof HTMLInputElement)) {
     return
   }
   emit('update:modelValue', e.target.value)
+}
+
+function checkValidity() {
+  isValid.value = !!textRef.value?.checkValidity()
 }
 </script>
 
@@ -31,6 +34,7 @@ function handleInput(e: Event) {
         :placeholder="placeholder"
         :value="modelValue"
         @input="handleInput"
+        @change="checkValidity"
         v-bind="$attrs"
         ref="textRef"
       />
