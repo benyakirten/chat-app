@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid'
 
-withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
+const props = withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
   id: uuid(),
 })
 defineOptions({ inheritAttrs: false })
@@ -38,9 +38,15 @@ function handleInput(e: Event) {
         <slot name="icon"></slot>
       </div>
     </div>
-    <div class="text-input-error" :style="{ display: isValid ? 'none' : 'block' }" v-if="$slots['error']">
+    <output
+      class="text-input-error"
+      :for="props.id"
+      aria-live="polite"
+      :style="{ display: isValid ? 'none' : 'block' }"
+      v-if="$slots['error']"
+    >
       <slot name="error"></slot>
-    </div>
+    </output>
   </div>
 </template>
 
