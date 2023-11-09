@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid'
 
-const props = withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
+withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
   id: uuid(),
 })
 defineOptions({ inheritAttrs: false })
 const textRef = ref<HTMLInputElement>()
 const isValid = ref(true)
 
-const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
+const emit = defineEmits<{ (e: 'update:modelValue', value: string): void; (e: 'setValid', value: boolean): void }>()
 
 function handleInput(e: Event) {
   if (!(e.target instanceof HTMLInputElement)) {
@@ -19,6 +19,7 @@ function handleInput(e: Event) {
 
 function checkValidity() {
   isValid.value = !!textRef.value?.checkValidity()
+  emit('setValid', isValid.value)
 }
 </script>
 
@@ -44,7 +45,7 @@ function checkValidity() {
     </div>
     <output
       class="text-input-error"
-      :for="props.id"
+      :for="id"
       aria-live="polite"
       :style="{ display: isValid ? 'none' : 'block' }"
       v-if="$slots['error']"

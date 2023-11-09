@@ -15,11 +15,20 @@ const props = withDefaults(
     maxHeight?: string
     type?: 'multi' | 'single'
     isLoading?: boolean
+    isValid?: boolean
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
     getText?: (item: T) => string
   }>(),
-  { iconSize: '1.2rem', maxHeight: '8rem', id: uuid(), type: 'multi', isLoading: false, getText: (item: T) => item.id }
+  {
+    iconSize: '1.2rem',
+    maxHeight: '8rem',
+    id: uuid(),
+    type: 'multi',
+    isLoading: false,
+    isValid: true,
+    getText: (item: T) => item.id,
+  }
 )
 
 const combobox = ref<HTMLElement | null>(null)
@@ -147,7 +156,7 @@ useAddMountedEventCallback('click', backdropClickDetector)
 </script>
 
 <template>
-  <div>
+  <div class="ms-container">
     <label class="label" :for="withId('input')">
       <slot name="label">
         {{ title }}
@@ -220,10 +229,24 @@ useAddMountedEventCallback('click', backdropClickDetector)
         </li>
       </ul>
     </div>
+    <output
+      class="text-input-error"
+      :for="id"
+      aria-live="polite"
+      :style="{ display: isValid ? 'none' : 'block' }"
+      v-if="$slots['error']"
+    >
+      <slot name="error"></slot>
+    </output>
   </div>
 </template>
 
 <style scoped>
+.ms-container {
+  display: flex;
+  flex-direction: column;
+}
+
 label {
   color: currentColor;
 }
@@ -350,9 +373,6 @@ label {
   }
 }
 
-/*
-  TODO: Adjust styles
-*/
 .item-list-move,
 .item-list-enter-active,
 .item-list-leave-active {

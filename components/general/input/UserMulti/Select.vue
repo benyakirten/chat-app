@@ -27,14 +27,14 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
       <div class="no-options">No options available.</div>
     </template>
     <template #label>
-      <ChatConversationModalNewCurrentUsers
+      <GeneralInputUserMultiCurrentUsers
         :is-new-conversation="isNewConversation"
         :selected="selected"
         @delete="handleDelete"
       />
     </template>
     <template #item="{ item }">
-      <ChatConversationModalNewUserItem :user="item" />
+      <GeneralInputUserMultiUserItem :user="item" />
     </template>
   </BaseMultiSelect>
 </template>
