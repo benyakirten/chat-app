@@ -32,7 +32,7 @@ API_BASE_URL
 **NOTE**: A quick way to generate a secret in Node is:
 
 ```js
-require('crypto').randomBytes(24).toString('hex')
+require('crypto').randomBytes(24).toString('base64')
 ```
 
 The following environment variables are optional:

@@ -40,16 +40,18 @@ export const useSocketStore = defineStore('socket', () => {
     systemChannel = socket.channel('system:general', { token, hidden })
     systemChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
     systemChannel.join().receive('error', (reason) => toastStore.addErrorToast(reason, reason))
-    systemChannel.on('user_disconnect', ({ user_id }) => userStore.setUserOnlineState(user_id, false))
     systemChannel.on('update_display_name', ({ user_id, display_name }) =>
       userStore.updateUser(user_id, { name: display_name })
     )
 
     presence = new Presence(systemChannel)
     presence.onSync(() => {
-      presence!.list((id, presence) => {
-        console.log(id, presence)
-        userStore.setUserOnlineState(id, true)
+      presence?.list((id) => userStore.setUserOnlineState(id, true))
+
+      presence?.onLeave((id, presenceState) => {
+        if (id && 'metas' in presenceState && Array.isArray(presenceState.metas) && presenceState.metas.length === 0) {
+          userStore.setUserOnlineState(id, false)
+        }
       })
     })
 
