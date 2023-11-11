@@ -225,10 +225,11 @@ export const useUsersStore = defineStore('users', () => {
     }
     users.value = new Map()
 
+    await useFetch('/auth/signout', { method: 'POST' })
+
     messageStore.reset()
     recentsStore.reset()
-
-    await useFetch('/auth/signout', { method: 'POST' })
+    socketStore.disconnect()
     if (!doesNotNeedLogin(route.fullPath)) {
       await navigateTo('/login')
     }

@@ -21,9 +21,39 @@ This is a chat app. So far it has few features added, but there are a lot planne
 
 ## How do I run this?
 
+You must define the following environment variables:
+
+```bash
+COOKIE_SECRET
+WS_URL
+API_BASE_URL
+```
+
+**NOTE**: A quick way to generate a secret in Node is:
+
+```js
+require('crypto').randomBytes(24).toString('hex')
+```
+
+The following environment variables are optional:
+
+```bash
+AUTH_COOKIE_NAME # defaults to __auth
+COOKIE_EXPIRES # defaults to 604800000, the amount of milliseconds in a week
+THEME_COOKIE_NAME # defaults to __theme
+```
+
+Examples for the required cookies (that should work on local development if you're running the [`chat_api` server](https://github.com/benyakirten/chat-api)). You can copy them by running:
+
+```bash
+cp .env.example .env
+```
+
 Run `bun dev`. If you want to use another package manager, you will have to install the packages before doing so. You
 might be thinking about building/testing/etc. You can read the details in `package.json`, but because there's no
 backend, this is pretty static for now.
+
+The following environment variables must be defined:
 
 This is not currently hosted anywhere. When it gets to a good place, I will attempt to host the front and backends.
 
@@ -59,3 +89,7 @@ These are the things I would like to address when I have more time:
 3. Making the account settings page look good and make the statistics part more well-thought out
 4. Make the light theme less ick
 5. Give you a better way to look at someone's details
+
+```
+
+```

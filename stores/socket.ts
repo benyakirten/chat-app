@@ -47,7 +47,10 @@ export const useSocketStore = defineStore('socket', () => {
 
     presence = new Presence(systemChannel)
     presence.onSync(() => {
-      presence!.list((id) => userStore.setUserOnlineState(id, true))
+      presence!.list((id, presence) => {
+        console.log(id, presence)
+        userStore.setUserOnlineState(id, true)
+      })
     })
 
     userChannel = socket.channel(`user:${id}`, { token })
