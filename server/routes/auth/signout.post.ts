@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   const refreshCookie = getRefreshCookie(event, config)
 
   deleteCookie(event, config.authCookieName)
-
-  if (refreshCookie) [axios.post('/auth/signout', { token: refreshCookie.refreshToken })]
+  if (refreshCookie) {
+    await axios.post('/api/signout', { token: refreshCookie.refreshToken })
+  }
 })

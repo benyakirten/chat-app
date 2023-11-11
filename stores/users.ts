@@ -225,7 +225,7 @@ export const useUsersStore = defineStore('users', () => {
     }
     users.value = new Map()
 
-    await useFetch('/auth/signout', { method: 'POST' })
+    useFetch('/auth/signout', { method: 'POST' })
 
     messageStore.reset()
     recentsStore.reset()
@@ -242,6 +242,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     user.online = online
+    console.log(user.id, user.online)
   }
 
   return {
