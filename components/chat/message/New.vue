@@ -37,5 +37,6 @@ function startTyping(e: Event) {
 <style scoped>
 .new-message-autosize {
   place-content: end;
+  padding: var(--size-sm);
 }
 </style>
