@@ -35,7 +35,7 @@
 
   &:disabled {
     cursor: default;
-    background: var(--neutral);
+    background: var(--color-neutral);
   }
 }
 </style>
