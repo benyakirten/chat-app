@@ -10,6 +10,8 @@ const email = ref('')
 const password = ref('')
 const displayName = ref('')
 const rememberMe = ref(true)
+const formRef = ref<HTMLFormElement | null>(null)
+const formValid = ref(false)
 
 function alternateMode() {
   loginMode.value = !loginMode.value
@@ -44,6 +46,10 @@ onMounted(async () => {
     await navigateTo('/chat')
   }
 })
+
+function checkFormValidity() {
+  formValid.value = !!formRef.value?.checkValidity()
+}
 </script>
 
 <template>
@@ -55,24 +61,37 @@ onMounted(async () => {
           Need to {{ loginMode ? 'register' : 'login' }} instead?
         </button>
       </div>
-      <form @submit.prevent="handleSubmit">
-        <GeneralInputText v-model="email" type="email" placeholder="you@example.com">
+      <form ref="formRef" @submit.prevent="handleSubmit" @input="checkFormValidity">
+        <GeneralInputText v-model="email" type="email" placeholder="you@example.com" required>
+          <template #error>Email must be a valid email</template>
           <template #label> Email </template>
         </GeneralInputText>
         <GeneralInputText
-          v-model="email"
+          v-model="password"
           type="password"
-          placeholder=">= 12 letters, 1 upper, lower, number and symbol..."
+          placeholder="At least 12 letters, 1 upper, lower, number and special character..."
+          required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+`~'])[A-Za-z\d!@#$%^&*+`~']{12,}$"
         >
           <template #label> Password </template>
+          <template #error>
+            <p>Password must have the following characteristics:</p>
+            <ol>
+              <li>be at least 12 letters long</li>
+              <li>have at least 1 uppercase letter</li>
+              <li>have at least 1 lowercase letter</li>
+              <li>have at least 1 number</li>
+              <li>have at least one of the following characters: !@#$%^&*+`~'</li>
+            </ol>
+          </template>
         </GeneralInputText>
-        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
         <Transition name="display-mode">
           <GeneralInputText v-if="!loginMode" v-model="displayName" placeholder="Cool Name">
             <template #label> Display Name </template>
           </GeneralInputText>
         </Transition>
-        <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
+        <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
+        <BaseRoundedButton :disabled="!formValid" type="submit">Submit</BaseRoundedButton>
       </form>
     </div>
   </section>
@@ -129,6 +148,16 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: var(--size-md);
+  }
+
+  ol {
+    list-style: decimal;
+    li {
+      &::first-letter {
+        text-transform: capitalize;
+      }
+      margin-inline-start: var(--size-lg);
+    }
   }
 }
 </style>

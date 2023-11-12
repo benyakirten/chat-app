@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { v4 as uuid } from 'uuid'
+
 const props = withDefaults(
-  defineProps<{ modelValue: string; placeholder: string; label: string; autofocus?: boolean }>(),
-  { autofocus: false }
+  defineProps<{
+    modelValue: string
+    placeholder: string
+    label: string
+    autofocus?: boolean
+    id?: string
+    required?: boolean
+  }>(),
+  { autofocus: false, id: uuid(), required: false }
 )
 
 const emit = defineEmits<{
@@ -39,32 +48,55 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="autosize">
-    <div ref="hiddenDiv" aria-hidden="true" class="autosize-hidden">{{ props.modelValue }}</div>
-    <textarea
-      ref="textarea"
-      :aria-label="label"
-      @input="handleUpdateValue"
-      :value="props.modelValue"
-      class="autosize-input"
-      :placeholder="placeholder"
+  <div class="autosize-container">
+    <div class="autosize">
+      <div ref="hiddenDiv" aria-hidden="true" class="autosize-hidden">{{ modelValue }}</div>
+      <textarea
+        ref="textarea"
+        :id="id"
+        :aria-label="label"
+        @input="handleUpdateValue"
+        :value="modelValue"
+        class="autosize-input"
+        :placeholder="placeholder"
+        :required="required"
+      >
+      </textarea>
+    </div>
+    <output
+      class="autosize-container-error"
+      :for="id"
+      aria-live="polite"
+      :style="{ display: required && !modelValue ? 'block' : 'none' }"
+      v-if="$slots['error']"
     >
-    </textarea>
+      <slot name="error"></slot>
+    </output>
   </div>
 </template>
 
 <style scoped>
+.autosize-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-sm);
+
+  &-error {
+    color: var(--error-bg);
+  }
+}
+
 .autosize {
-  place-self: end;
   width: 100%;
 
   display: grid;
   position: relative;
-  padding: 0.5rem 1rem 0;
   place-content: center;
   justify-content: stretch;
 
-  /* TODO: Make CSS less horrid */
+  &:invalid {
+    outline: 2px solid var(--error-bg);
+  }
 
   &-input,
   &-hidden {

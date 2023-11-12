@@ -223,12 +223,14 @@ export const useUsersStore = defineStore('users', () => {
       clearTimeout(me.value.refreshTimeout)
       me.value = null
     }
-    users.value = new Map()
 
+    // Whether or not this succeeds, we want the user to appear logged out
+    await useFetch('/auth/signout', { method: 'POST' })
+
+    reset()
     messageStore.reset()
     recentsStore.reset()
-
-    await useFetch('/auth/signout', { method: 'POST' })
+    socketStore.disconnect()
     if (!doesNotNeedLogin(route.fullPath)) {
       await navigateTo('/login')
     }
@@ -241,6 +243,11 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     user.online = online
+    console.log(user.id, user.online)
+  }
+
+  function reset() {
+    users.value = new Map()
   }
 
   return {
@@ -261,5 +268,6 @@ export const useUsersStore = defineStore('users', () => {
     signout,
     setUserOnlineState,
     setHidden,
+    reset,
   }
 })

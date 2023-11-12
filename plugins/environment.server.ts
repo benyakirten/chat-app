@@ -5,6 +5,7 @@ export default defineNuxtPlugin((app) => {
     return
   }
 
+  const { cookieSecret } = app.$config
   const { apiUrl, wsUrl } = app.$config.public
 
   let missingEnvViariables: string[] = []
@@ -13,6 +14,9 @@ export default defineNuxtPlugin((app) => {
   }
   if (!apiUrl) {
     missingEnvViariables.push('API_BASE_URL')
+  }
+  if (!cookieSecret) {
+    missingEnvViariables.push('COOKIE_SECRET')
   }
 
   if (missingEnvViariables.length > 0) {

@@ -61,7 +61,7 @@ export function setRefreshCookie(
   const serialized = serialize({ rememberMe, refreshToken })
   const signedPayload = sign(serialized, config.cookieSecret)
 
-  setCookie(event, config.cookieName, signedPayload, {
+  setCookie(event, config.authCookieName, signedPayload, {
     httpOnly: true,
     path: '/',
     sameSite: 'strict',
@@ -74,7 +74,7 @@ export function getRefreshCookie(
   event: H3Event<EventHandlerRequest>,
   config: RuntimeConfig
 ): { rememberMe: boolean; refreshToken: string } | null {
-  const cookie = getCookie(event, config.cookieName)
+  const cookie = getCookie(event, config.authCookieName)
   if (!cookie) {
     return null
   }

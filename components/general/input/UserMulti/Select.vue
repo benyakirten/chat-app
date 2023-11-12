@@ -1,7 +1,16 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ selected: Set<string>; options: User[]; isNewConversation?: boolean }>(), {
-  isNewConversation: true,
-})
+const props = withDefaults(
+  defineProps<{
+    selected: Set<string>
+    options: User[]
+    isNewConversation?: boolean
+    errorMessage?: string
+    isValid?: boolean
+  }>(),
+  {
+    isNewConversation: true,
+  }
+)
 const emit = defineEmits<{ (e: 'setSelected', val: Set<string>): void }>()
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
@@ -21,20 +30,26 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
     :model-value="selected"
     :search="handleSearch"
     :placeholder="placeholder"
+    :is-valid="isValid"
     @update:modelValue="emit('setSelected', $event)"
   >
     <template #no-options>
       <div class="no-options">No options available.</div>
     </template>
     <template #label>
-      <ChatConversationModalNewCurrentUsers
+      <GeneralInputUserMultiCurrentUsers
         :is-new-conversation="isNewConversation"
         :selected="selected"
         @delete="handleDelete"
       />
     </template>
     <template #item="{ item }">
-      <ChatConversationModalNewUserItem :user="item" />
+      <GeneralInputUserMultiUserItem :user="item" />
+    </template>
+    <template #error v-if="errorMessage">
+      <p class="error">
+        {{ errorMessage }}
+      </p>
     </template>
   </BaseMultiSelect>
 </template>
@@ -52,5 +67,10 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
   &:hover {
     background-color: var(--bg-primary);
   }
+}
+
+.error {
+  padding-block: var(--size-sm);
+  color: var(--error-bg);
 }
 </style>

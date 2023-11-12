@@ -50,11 +50,11 @@ withDefaults(
     }
 
     &.disabled {
-      color: var(--neutral);
+      color: var(--color-neutral);
       animation: none;
 
       &:hover {
-        color: var(--neutral);
+        color: var(--color-neutral);
       }
     }
   }

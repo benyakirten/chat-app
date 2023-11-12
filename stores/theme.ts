@@ -5,7 +5,7 @@ export interface ColorTheme {
   accent: string
   textColor: string
   highlight: string
-  neutral: string
+  colorNeutral: string
   base: string
   mix: string
   opposite: string
@@ -26,7 +26,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     accent: '#e74c3c',
     textColor: '#333',
     highlight: '#3468ab',
-    neutral: '#95a5a6',
+    colorNeutral: '#95a5a6',
     base: '#ecceab',
     mix: '#875ea0',
     opposite: '#f39c12',
@@ -36,7 +36,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     accent: '#00b894',
     textColor: '#f4f4f4',
     highlight: '#f39c12',
-    neutral: '#495555',
+    colorNeutral: '#495555',
     base: '#000',
     mix: '#0082cb',
     opposite: '#00D4FF',
