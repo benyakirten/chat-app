@@ -7,9 +7,9 @@ const { loading, invoke } = useLoading((isPrivate: boolean, selected: Set<string
     if (!otherUser) {
       throw new Error('A conversation must involve one other person.')
     }
-    return messageStore.startConversation(true, [otherUser], message, alias)
+    return messageStore.startConversation(true, [otherUser], message)
   }
-  return messageStore.startConversation(false, [...selected], message)
+  return messageStore.startConversation(false, [...selected], message, alias)
 })
 
 const messageStore = useMessageStore()
@@ -23,27 +23,6 @@ const isPrivate = ref(true)
 const errorMessage = ref<string | null>(null)
 const multiSelectValid = computed(() => (isPrivate.value ? selected.value.size === 1 : selected.value.size > 0))
 const conversationAlias = ref('')
-
-// TODO: Replace this with form validation + checking if inputs are touched
-const displayedErrorMessage = computed(() => {
-  if (errorMessage.value) {
-    return errorMessage.value
-  }
-
-  if (message.value === '') {
-    return 'Messages must not be empty.'
-  }
-
-  if (selected.value.size === 0) {
-    return 'There must be at least one conversant'
-  }
-
-  if (isPrivate.value && selected.value.size > 1) {
-    return 'A private conversation can only have one other conversant'
-  }
-
-  return null
-})
 
 async function handleSubmit() {
   errorMessage.value = null
@@ -65,25 +44,23 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit" class="new">
-    <div class="new-first">
-      <GeneralInputUserMultiSelect
-        :selected="selected"
-        @setSelected="selected = $event"
-        :options="userStore.allOtherUsers"
-        :error-message="
-          isPrivate
-            ? 'Only exactly one other participant can be in a private conversation'
-            : 'At least one other participant must be in a group conversation'
-        "
-        :is-valid="multiSelectValid"
-      />
-      <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
-        <GeneralTooltip direction="left">
-          <template #content>Once made, conversations cannot be converted between group and private. </template>
-          <span class="new-first-checkbox-label">Private Conversation</span>
-        </GeneralTooltip>
-      </GeneralInputCheckbox>
-    </div>
+    <GeneralInputUserMultiSelect
+      :selected="selected"
+      @setSelected="selected = $event"
+      :options="userStore.allOtherUsers"
+      :error-message="
+        isPrivate
+          ? 'Only exactly one other participant can be in a private conversation'
+          : 'At least one other participant must be in a group conversation'
+      "
+      :is-valid="multiSelectValid"
+    />
+    <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
+      <GeneralTooltip direction="left">
+        <template #content>Once made, conversations cannot be converted between group and private. </template>
+        <span class="new-first-checkbox-label">Private Conversation</span>
+      </GeneralTooltip>
+    </GeneralInputCheckbox>
     <GeneralInputAutosize
       class="new-autosize"
       placeholder="Write a message..."
@@ -96,20 +73,19 @@ async function handleSubmit() {
     <GeneralInputText v-model="conversationAlias" type="text" v-if="!isPrivate" placeholder="Besties 4eva">
       <template #label>
         <GeneralTooltip direction="left">
-          <template #content>The alias will can be changed at any time </template>
+          <template #content>The alias will can be changed at any time</template>
           (Optional) Alias for the conversation
         </GeneralTooltip>
       </template>
     </GeneralInputText>
     <div class="new-submit">
-      <div class="new-submit-error" v-if="displayedErrorMessage">{{ displayedErrorMessage }}</div>
       <div class="new-submit-icon">
         <GeneralIconButton
           :title="'Send Message'"
           :icon="PaperAirplaneIcon"
           size="2.5rem"
           type="submit"
-          :disabled="loading"
+          :disabled="loading || !multiSelectValid || message.length === 0"
           tooltipDirection="left"
         />
       </div>
@@ -123,34 +99,10 @@ async function handleSubmit() {
   width: 80vw;
 
   display: grid;
-  row-gap: 4rem;
+  row-gap: 2rem;
 
   @media (width <= 800px) {
     row-gap: 1rem;
-  }
-
-  &-first {
-    display: flex;
-    justify-content: space-between;
-    padding-right: 4rem;
-
-    @media (width <= 800px) {
-      flex-direction: column;
-      gap: 10rem;
-    }
-
-    &-checkbox {
-      align-self: end;
-      padding-bottom: 0.6rem;
-
-      @media (width <= 800px) {
-        align-self: start;
-      }
-
-      &-label {
-        width: max-content;
-      }
-    }
   }
 
   &-autosize {

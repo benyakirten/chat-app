@@ -91,7 +91,6 @@ onMounted(() => {
 
   display: grid;
   position: relative;
-  padding: 0.5rem 1rem 0;
   place-content: center;
   justify-content: stretch;
 

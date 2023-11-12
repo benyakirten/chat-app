@@ -47,7 +47,9 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
       <GeneralInputUserMultiUserItem :user="item" />
     </template>
     <template #error v-if="errorMessage">
-      {{ errorMessage }}
+      <p class="error">
+        {{ errorMessage }}
+      </p>
     </template>
   </BaseMultiSelect>
 </template>
@@ -65,5 +67,10 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
   &:hover {
     background-color: var(--bg-primary);
   }
+}
+
+.error {
+  padding-block: var(--size-sm);
+  color: var(--error-bg);
 }
 </style>
