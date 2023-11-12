@@ -10,6 +10,8 @@ const email = ref('')
 const password = ref('')
 const displayName = ref('')
 const rememberMe = ref(true)
+const formRef = ref<HTMLFormElement | null>(null)
+const formValid = ref(false)
 
 function alternateMode() {
   loginMode.value = !loginMode.value
@@ -44,6 +46,10 @@ onMounted(async () => {
     await navigateTo('/chat')
   }
 })
+
+function checkFormValidity() {
+  formValid.value = !!formRef.value?.checkValidity()
+}
 </script>
 
 <template>
@@ -55,7 +61,7 @@ onMounted(async () => {
           Need to {{ loginMode ? 'register' : 'login' }} instead?
         </button>
       </div>
-      <form @submit.prevent="handleSubmit">
+      <form ref="formRef" @submit.prevent="handleSubmit" @input="checkFormValidity">
         <GeneralInputText v-model="email" type="email" placeholder="you@example.com" required>
           <template #error>Email must be a valid email</template>
           <template #label> Email </template>
@@ -85,7 +91,7 @@ onMounted(async () => {
           </GeneralInputText>
         </Transition>
         <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
-        <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
+        <BaseRoundedButton :disabled="!formValid" type="submit">Submit</BaseRoundedButton>
       </form>
     </div>
   </section>

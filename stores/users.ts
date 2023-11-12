@@ -225,7 +225,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     // Whether or not this succeeds, we want the user to appear logged out
-    useFetch('/auth/signout', { method: 'POST' })
+    await useFetch('/auth/signout', { method: 'POST' })
 
     reset()
     messageStore.reset()

@@ -59,7 +59,7 @@ function handleUpdate(e: Event) {
     &[disabled] {
       cursor: default;
       --checkmark-color: var(--text-color);
-      background-color: var(--neutral);
+      background-color: var(--color-neutral);
     }
 
     &::before {

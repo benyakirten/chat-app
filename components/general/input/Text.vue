@@ -88,7 +88,7 @@ function checkValidity() {
 
       /* TODO: This is a mess */
       &:disabled {
-        background-color: var(--neutral);
+        background-color: var(--color-neutral);
         color: var(--text-color);
       }
 

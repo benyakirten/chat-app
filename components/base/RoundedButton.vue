@@ -29,8 +29,13 @@
 
   transition: background-position 500ms ease-out;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-position: right;
+  }
+
+  &:disabled {
+    cursor: default;
+    background: var(--neutral);
   }
 }
 </style>

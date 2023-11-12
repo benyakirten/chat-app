@@ -51,7 +51,7 @@ const getUserName = computed(() => (id: UserId) => userStore.users.get(id)?.name
     border-radius: 2px;
 
     background: var(--bg-alt4);
-    border: 2px solid var(--neutral);
+    border: 2px solid var(--color-neutral);
   }
 }
 /* TODO: Make this style unique */
