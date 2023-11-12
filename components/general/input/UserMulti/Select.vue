@@ -1,7 +1,16 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ selected: Set<string>; options: User[]; isNewConversation?: boolean }>(), {
-  isNewConversation: true,
-})
+const props = withDefaults(
+  defineProps<{
+    selected: Set<string>
+    options: User[]
+    isNewConversation?: boolean
+    errorMessage?: string
+    isValid?: boolean
+  }>(),
+  {
+    isNewConversation: true,
+  }
+)
 const emit = defineEmits<{ (e: 'setSelected', val: Set<string>): void }>()
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
@@ -21,6 +30,7 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
     :model-value="selected"
     :search="handleSearch"
     :placeholder="placeholder"
+    :is-valid="isValid"
     @update:modelValue="emit('setSelected', $event)"
   >
     <template #no-options>
@@ -35,6 +45,9 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
     </template>
     <template #item="{ item }">
       <GeneralInputUserMultiUserItem :user="item" />
+    </template>
+    <template #error v-if="errorMessage">
+      {{ errorMessage }}
     </template>
   </BaseMultiSelect>
 </template>

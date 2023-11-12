@@ -30,5 +30,12 @@ function startTyping(e: Event) {
     @input="startTyping"
     @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
+    class="new-message-autosize"
   />
 </template>
+
+<style scoped>
+.new-message-autosize {
+  place-content: end;
+}
+</style>
