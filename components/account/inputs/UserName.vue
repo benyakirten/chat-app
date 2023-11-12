@@ -38,5 +38,9 @@ function updateUserName() {
 <style scoped>
 .update-button {
   align-self: end;
+
+  @media (width <= 600px) {
+    width: max-content;
+  }
 }
 </style>

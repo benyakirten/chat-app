@@ -26,5 +26,13 @@ const props = defineProps<{ me: Me; profile: User }>()
 
   display: grid;
   row-gap: 4rem;
+
+  @media (width <= 800px) {
+    padding: 6rem;
+  }
+
+  @media (width <= 600px) {
+    padding: 4rem;
+  }
 }
 </style>
