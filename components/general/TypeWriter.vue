@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TextTag } from '~/utils/types'
+import type { TextTag } from '~/utils/types'
 
 const props = withDefaults(
   defineProps<{
