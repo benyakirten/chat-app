@@ -36,7 +36,6 @@ const unreadMessages = computed(() => messageStore.unreadMessages(props.conversa
           @click.stop="modalStore.modifyConversation(conversation.id)"
         />
       </button>
-      <!-- Remove a transition from this since I cannot get it to react to route params -->
       <ChevronRightIcon class="conversation-active" v-if="route.params['id'] === conversation.id" aria-hidden="true" />
     </button>
   </li>

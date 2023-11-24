@@ -2,7 +2,14 @@ import { defineStore } from 'pinia'
 import { Socket, Presence, type Channel } from 'phoenix'
 import { z } from 'zod'
 
-import { Conversation, ConversationId, ConversationMessage, MessageId, UserConversationState, UserId } from './messages'
+import type {
+  Conversation,
+  ConversationId,
+  ConversationMessage,
+  MessageId,
+  UserConversationState,
+  UserId,
+} from './messages'
 import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -97,6 +104,8 @@ export const useSocketStore = defineStore('socket', () => {
           return
         }
 
+        const { items, next } = parsedData.data.messages
+        conversation.nextPage = next
         for (const member of parsedData.data.users) {
           const readTime = parsedData.data.read_times[member.id]
           conversation.members.set(member.id, {
@@ -105,7 +114,7 @@ export const useSocketStore = defineStore('socket', () => {
           })
         }
 
-        for (const message of parsedData.data.messages) {
+        for (const message of items) {
           conversation.messages.set(message.id, {
             id: message.id,
             content: message.content,

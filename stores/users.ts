@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { z } from 'zod'
 
-import { ConversationMessage, UserConversationState, UserId } from './messages'
+import type { ConversationMessage, UserConversationState, UserId } from './messages'
 import { PARTIAL_AUTH_SHAPE } from '@/utils/shapes'
 
 export interface User {
@@ -243,7 +243,6 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     user.online = online
-    console.log(user.id, user.online)
   }
 
   function reset() {

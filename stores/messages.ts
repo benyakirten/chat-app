@@ -23,6 +23,7 @@ export interface Conversation {
   typingTimeout?: NodeJS.Timeout
   alias: string | null
   draft?: string
+  nextPage?: string
 }
 
 // TODO: Determine how to handle deleted messages
