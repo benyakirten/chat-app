@@ -19,6 +19,7 @@ const props = withDefaults(
     search: (item: T, text: string) => boolean
     searchCallback?: (text: string) => Promise<void> | void
     getText?: (item: T) => string
+    canLoadMore?: boolean
   }>(),
   {
     iconSize: '1.2rem',
@@ -28,6 +29,7 @@ const props = withDefaults(
     isLoading: false,
     isValid: true,
     getText: (item: T) => item.id,
+    canLoadMore: false,
   }
 )
 
@@ -42,6 +44,25 @@ const { loading, invoke } = useLoading(async (value: string) => props.searchCall
 const { clear, debouncer } = useDebounce(async (value: string) => props.searchCallback && invoke(value))
 
 const withId = (name: string) => `${props.id}-${name}`
+const listBottomRef = ref<HTMLLIElement>()
+const observer = new IntersectionObserver((entries) => {
+  if (entries.length === 0) {
+    return
+  }
+
+  const [bottom] = entries
+  if (bottom.isIntersecting && props.canLoadMore && props.searchCallback) {
+    props.searchCallback(text.value)
+  }
+})
+
+watchEffect(() => {
+  if (listBottomRef.value && props.canLoadMore) {
+    observer.observe(listBottomRef.value)
+  } else {
+    observer.disconnect()
+  }
+})
 
 const shownOptions = computed(() =>
   text.value === '' ? props.options : props.options.filter((option) => props.search(option, text.value))
@@ -227,6 +248,9 @@ useAddMountedEventCallback('click', backdropClickDetector)
             </div>
           </div>
         </li>
+        <li class="listbox-item-bottom" v-if="canLoadMore" ref="listBottomRef">
+          <GeneralLoading size="1.6rem" />
+        </li>
       </ul>
     </div>
     <output
@@ -350,6 +374,11 @@ label {
       &:hover {
         background-color: var(--bg-primary);
       }
+    }
+
+    &-bottom {
+      cursor: default;
+      padding: calc(var(--size-md) * 0.5);
     }
 
     &-left {

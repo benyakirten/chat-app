@@ -20,7 +20,7 @@ watch(magnificationSelected, (val) => {
 </script>
 
 <template>
-  <BaseMultiSelect
+  <BaseMultiselect
     :options="magnificationOptions"
     v-model="magnificationSelected"
     title="Text Magnification"
@@ -34,5 +34,5 @@ watch(magnificationSelected, (val) => {
     <template #item="{ item }">
       <AccountInputsItem>{{ item.id }}</AccountInputsItem>
     </template>
-  </BaseMultiSelect>
+  </BaseMultiselect>
 </template>

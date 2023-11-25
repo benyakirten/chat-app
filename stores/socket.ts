@@ -104,8 +104,8 @@ export const useSocketStore = defineStore('socket', () => {
           return
         }
 
-        const { items, next } = parsedData.data.messages
-        conversation.nextPage = next
+        const { items, page_token } = parsedData.data.messages
+        conversation.nextPage = page_token
         for (const member of parsedData.data.users) {
           const readTime = parsedData.data.read_times[member.id]
           conversation.members.set(member.id, {

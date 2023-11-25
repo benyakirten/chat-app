@@ -11,6 +11,8 @@ const props = withDefaults(
     isNewConversation: true,
   }
 )
+
+const userStore = useUsersStore()
 const emit = defineEmits<{ (e: 'setSelected', val: Set<string>): void }>()
 
 const handleSearch = (user: User, search: string) => user.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
@@ -24,7 +26,7 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
 </script>
 
 <template>
-  <BaseMultiSelect
+  <BaseMultiselect
     :options="options"
     title="Participants"
     :model-value="selected"
@@ -32,6 +34,8 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
     :placeholder="placeholder"
     :is-valid="isValid"
     @update:modelValue="emit('setSelected', $event)"
+    :can-load-more="userStore.token !== ''"
+    :search-callback="userStore.performSearch"
   >
     <template #no-options>
       <div class="no-options">No options available.</div>
@@ -51,7 +55,7 @@ const placeholder = computed(() => (props.isNewConversation ? 'Choose the partic
         {{ errorMessage }}
       </p>
     </template>
-  </BaseMultiSelect>
+  </BaseMultiselect>
 </template>
 
 <style scoped>
