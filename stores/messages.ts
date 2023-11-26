@@ -119,7 +119,8 @@ export const useMessageStore = defineStore('messages', () => {
 
     const { signal } = abortController
     activeRequestToken.value = token
-    const res = await useAuthedFetch('/api/messages', 'GET', undefined, { signal })
+    const query = new URLSearchParams({ conversation_id: conversation.id, page_token: token })
+    const res = await useAuthedFetch(`/api/messages?${query}`, 'GET', undefined, { signal })
 
     if (res.error.value) {
       toastStore.addErrorToast(
@@ -129,7 +130,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const messagesResponse = MESSAGES_QUERY_SHAPE.safeParse(res.data)
+    const messagesResponse = MESSAGES_QUERY_SHAPE.safeParse(res.data.value)
     if (!messagesResponse.success) {
       toastStore.addErrorToast(
         res.data.value,

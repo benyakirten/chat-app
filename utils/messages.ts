@@ -1,9 +1,9 @@
-export function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessage>): ConversationMessage[][] {
+export function chunkMessagesByAuthor(messages: ConversationMessage[]): ConversationMessage[][] {
   const messageChunks: ConversationMessage[][] = []
 
   let lastAuthor: UserId | null = null
   let currentChunk: ConversationMessage[] = []
-  for (const message of messages.values()) {
+  for (const message of messages) {
     if (lastAuthor && lastAuthor !== message.sender) {
       messageChunks.push(currentChunk)
       currentChunk = []
@@ -19,6 +19,15 @@ export function chunkMessagesByAuthor(messages: Map<MessageId, ConversationMessa
   }
 
   return messageChunks
+}
+
+export function sortMessagesByTime(messageMap?: Map<ConversationId, ConversationMessage>): ConversationMessage[] {
+  if (!messageMap) {
+    return []
+  }
+
+  const messages = [...messageMap.values()].toSorted((a, b) => a.createTime.valueOf() - b.createTime.valueOf())
+  return messages
 }
 
 export function getUserReadTimes(conversation: Conversation, me: UserId | undefined): UserReadTimes {
