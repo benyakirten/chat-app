@@ -13,6 +13,7 @@ const conversation = computed(() => messageStore.conversation(props.conversation
 const messages = computed(() => sortMessagesByTime(conversation.value?.messages))
 const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value, userStore.me?.id) : {}))
+
 const observer = new IntersectionObserver((entries) => {
   if (entries.length === 0 || !conversation.value || !conversation.value.nextPage || !scrolledToBottom.value) {
     return
@@ -23,10 +24,8 @@ const observer = new IntersectionObserver((entries) => {
     return
   }
 
-  console.log('CALLED')
   messageStore.getNextMessagePage(conversation.value, conversation.value.nextPage)
 })
-
 const messageTopRef = ref<HTMLLIElement>()
 const scrolledToBottom = ref(false)
 

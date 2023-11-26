@@ -93,7 +93,8 @@ export const useMessageStore = defineStore('messages', () => {
   const conversation = computed(() => (id: ConversationId) => conversations.value.find((convo) => convo.id === id))
 
   const visibleConversations = computed(() => {
-    if (!filteredConversationIds.value) {
+    // TODO: Add ability to search conversations
+    if (!filteredConversationIds.value || filteredConversationIds.value.length === 0) {
       return conversations.value
     }
 
