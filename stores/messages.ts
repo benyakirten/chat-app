@@ -48,6 +48,10 @@ export const useMessageStore = defineStore('messages', () => {
   const socketStore = useSocketStore()
   const route = useRoute()
 
+  const conversationMessagesRequestId = ref('')
+  const activeRequestToken = ref('')
+  let abortController = new AbortController()
+
   const unreadMessages = computed(() => (conversation?: Conversation) => {
     if (!conversation || !userStore.me) {
       return 0
@@ -101,6 +105,53 @@ export const useMessageStore = defineStore('messages', () => {
       return [...acc, convo]
     }, [])
   })
+
+  async function getNextMessagePage(conversation: Conversation, token: string) {
+    if (activeRequestToken.value === token) {
+      return
+    }
+
+    if (conversation.id !== conversationMessagesRequestId.value) {
+      abortController.abort()
+      abortController = new AbortController()
+      conversationMessagesRequestId.value = conversation.id
+    }
+
+    const { signal } = abortController
+    activeRequestToken.value = token
+    const res = await useAuthedFetch('/api/messages', 'GET', undefined, { signal })
+
+    if (res.error.value) {
+      toastStore.addErrorToast(
+        res.error,
+        `Unable to find additional messages for ${getConversationName(conversation.id)}`
+      )
+      return
+    }
+
+    const messagesResponse = MESSAGES_QUERY_SHAPE.safeParse(res.data)
+    if (!messagesResponse.success) {
+      toastStore.addErrorToast(
+        res.data.value,
+        'Received unexpected shape from server. Unable to find load additional messages.'
+      )
+      return
+    }
+
+    const { items, page_token } = messagesResponse.data.messages
+    conversation.nextPage = page_token
+    for (const message of items) {
+      const conversationMessage: ConversationMessage = {
+        sender: message.sender,
+        id: message.id,
+        content: message.content,
+        status: 'complete',
+        createTime: new Date(message.inserted_at),
+        updateTime: new Date(message.updated_at),
+      }
+      conversation.messages.set(message.id, conversationMessage)
+    }
+  }
 
   // This function will also be called when a channel is told that another user has read a conversation
   function viewConversation(conversationId: ConversationId, userId: UserId | undefined = userStore.me?.id) {
@@ -442,5 +493,6 @@ export const useMessageStore = defineStore('messages', () => {
     removeUserFromConversation,
     updateMessage,
     removeMessage,
+    getNextMessagePage,
   }
 })

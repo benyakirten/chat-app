@@ -13,6 +13,15 @@ const conversation = computed(() => messageStore.conversation(props.conversation
 const messages = computed(() => conversation.value?.messages)
 const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value, userStore.me?.id) : {}))
+const observer = new IntersectionObserver((entries) => {
+  if (entries.length === 0 || !conversation.value || !conversation.value.nextPage) {
+    return
+  }
+
+  messageStore.getNextMessagePage(conversation.value, conversation.value.nextPage)
+})
+const messageTopRef = ref<HTMLLIElement>()
+
 const someoneIsTyping = computed(() => {
   if (!conversation.value) {
     return false
@@ -24,6 +33,14 @@ const someoneIsTyping = computed(() => {
   }
 
   return false
+})
+
+watchEffect(() => {
+  if (messageTopRef.value) {
+    observer.observe(messageTopRef.value)
+  } else {
+    observer.disconnect()
+  }
 })
 
 watchEffect(() => {
@@ -74,6 +91,9 @@ onUnmounted(() => {
       No messages in this conversation. Be the first to say something.
     </p>
     <ul class="list" ref="list" v-else>
+      <li class="list-top" v-if="conversation.nextPage" ref="messageTopRef">
+        <GeneralLoading size="3rem" />
+      </li>
       <ChatMessageChunk
         v-for="chunk of messageChunks"
         :key="chunk[0].id"
@@ -122,6 +142,13 @@ onUnmounted(() => {
     padding-bottom: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
+
+    &-top {
+      display: grid;
+      place-items: center;
+      padding: var(--size-md);
+      width: 100%;
+    }
   }
 }
 </style>

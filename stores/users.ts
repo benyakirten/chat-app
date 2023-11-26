@@ -74,7 +74,10 @@ export const useUsersStore = defineStore('users', () => {
 
     const usersResponse = USERS_QUERY_SHAPE.safeParse(res.data.value)
     if (!usersResponse.success) {
-      toastStore.addErrorToast(res.data.value, 'Response from server in unexpected shape.')
+      toastStore.addErrorToast(
+        res.data.value,
+        'Received unexpected shape from server. Unable to find additional users.'
+      )
       return
     }
 

@@ -95,3 +95,10 @@ export const USERS_QUERY_SHAPE = z.object({
     page_token: z.string(),
   }),
 })
+
+export const MESSAGES_QUERY_SHAPE = z.object({
+  messages: z.object({
+    items: z.array(message),
+    page_token: z.string(),
+  }),
+})
