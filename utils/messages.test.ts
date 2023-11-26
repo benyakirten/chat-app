@@ -5,48 +5,42 @@ import { chunkMessagesByAuthor, getUserReadTimes, getMessageReadList } from './m
 describe('chunkMessagesByAuthor', () => {
   const now = new Date('1980-1-1')
   const anotherTime = new Date('1990-1-1')
-  test.each<{ want: ConversationMessage[][]; input: Map<MessageId, ConversationMessage>; desc: string }>([
+  test.each<{ want: ConversationMessage[][]; input: ConversationMessage[]; desc: string }>([
     {
-      input: new Map(),
+      input: [],
       want: [],
       desc: 'an empty array if there are no messages',
     },
     {
-      input: new Map([
-        [
-          'm1',
-          {
-            sender: 'u1',
-            id: 'm1',
-            content: 'Message1',
-            status: 'complete',
-            createTime: now,
-            updateTime: anotherTime,
-          },
-        ],
-        [
-          'm2',
-          {
-            sender: 'u1',
-            id: 'm2',
-            content: 'Message2',
-            status: 'complete',
-            createTime: anotherTime,
-            updateTime: anotherTime,
-          },
-        ],
-        [
-          'm3',
-          {
-            sender: 'u1',
-            id: 'm3',
-            content: 'Message3',
-            status: 'complete',
-            createTime: anotherTime,
-            updateTime: now,
-          },
-        ],
-      ]),
+      input: [
+        {
+          sender: 'u1',
+          id: 'm1',
+          content: 'Message1',
+          status: 'complete',
+          createTime: now,
+          updateTime: anotherTime,
+        },
+
+        {
+          sender: 'u1',
+          id: 'm2',
+          content: 'Message2',
+          status: 'complete',
+          createTime: anotherTime,
+          updateTime: anotherTime,
+        },
+
+        {
+          sender: 'u1',
+          id: 'm3',
+          content: 'Message3',
+          status: 'complete',
+          createTime: anotherTime,
+          updateTime: now,
+        },
+      ],
+
       want: [
         [
           {
@@ -78,63 +72,52 @@ describe('chunkMessagesByAuthor', () => {
       desc: 'one list of inputs if there is only one author',
     },
     {
-      input: new Map([
-        [
-          'm1',
-          {
-            sender: 'u1',
-            id: 'm1',
-            content: 'Message1',
-            status: 'complete',
-            createTime: now,
-            updateTime: anotherTime,
-          },
-        ],
-        [
-          'm2',
-          {
-            sender: 'u1',
-            id: 'm2',
-            content: 'Message2',
-            status: 'complete',
-            createTime: now,
-            updateTime: anotherTime,
-          },
-        ],
-        [
-          'm3',
-          {
-            sender: 'u2',
-            id: 'm3',
-            content: 'Message3',
-            status: 'complete',
-            createTime: anotherTime,
-            updateTime: anotherTime,
-          },
-        ],
-        [
-          'm4',
-          {
-            sender: 'u1',
-            id: 'm4',
-            content: 'Message4',
-            status: 'complete',
-            createTime: anotherTime,
-            updateTime: now,
-          },
-        ],
-        [
-          'm5',
-          {
-            sender: 'u3',
-            id: 'm5',
-            content: 'Message5',
-            status: 'complete',
-            createTime: anotherTime,
-            updateTime: now,
-          },
-        ],
-      ]),
+      input: [
+        {
+          sender: 'u1',
+          id: 'm1',
+          content: 'Message1',
+          status: 'complete',
+          createTime: now,
+          updateTime: anotherTime,
+        },
+
+        {
+          sender: 'u1',
+          id: 'm2',
+          content: 'Message2',
+          status: 'complete',
+          createTime: now,
+          updateTime: anotherTime,
+        },
+
+        {
+          sender: 'u2',
+          id: 'm3',
+          content: 'Message3',
+          status: 'complete',
+          createTime: anotherTime,
+          updateTime: anotherTime,
+        },
+
+        {
+          sender: 'u1',
+          id: 'm4',
+          content: 'Message4',
+          status: 'complete',
+          createTime: anotherTime,
+          updateTime: now,
+        },
+
+        {
+          sender: 'u3',
+          id: 'm5',
+          content: 'Message5',
+          status: 'complete',
+          createTime: anotherTime,
+          updateTime: now,
+        },
+      ],
       want: [
         [
           {
@@ -201,6 +184,7 @@ describe('getUserReadTimes', () => {
       members: new Map(),
       messages: new Map(),
       isPrivate: false,
+      alias: null,
     }
 
     const _1980 = new Date('1980-1-1')
@@ -233,14 +217,17 @@ describe('getMessageReadList', () => {
     users.set('u1', {
       id: 'u1',
       name: 'User 1',
+      online: false,
     })
     users.set('u2', {
       id: 'u2',
       name: 'User 2',
+      online: false,
     })
     users.set('u3', {
       id: 'u3',
       name: 'User 3',
+      online: false,
     })
 
     const _1980 = new Date('1980-1-1')

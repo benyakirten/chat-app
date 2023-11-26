@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getUserReadTimes } from '@/utils/messages'
+import { getUserReadTimes, sortMessagesByTime } from '@/utils/messages'
 
 const route = useRoute()
 const messageStore = useMessageStore()
@@ -10,9 +10,25 @@ const list = ref<HTMLUListElement | null>(null)
 const viewedMessageId = ref<MessageId | false>(typeof route.query['view'] === 'string' && route.query['view'])
 const lastMessageSize = ref(0)
 const conversation = computed(() => messageStore.conversation(props.conversationId))
-const messages = computed(() => conversation.value?.messages)
+const messages = computed(() => sortMessagesByTime(conversation.value?.messages))
 const messageChunks = computed(() => messages.value && chunkMessagesByAuthor(messages.value))
 const userReadTimes = computed(() => (conversation.value ? getUserReadTimes(conversation.value, userStore.me?.id) : {}))
+
+const observer = new IntersectionObserver((entries) => {
+  if (entries.length === 0 || !conversation.value || !conversation.value.nextPage || !scrolledToBottom.value) {
+    return
+  }
+
+  const [top] = entries
+  if (!top.isIntersecting) {
+    return
+  }
+
+  messageStore.getNextMessagePage(conversation.value, conversation.value.nextPage)
+})
+const messageTopRef = ref<HTMLLIElement>()
+const scrolledToBottom = ref(false)
+
 const someoneIsTyping = computed(() => {
   if (!conversation.value) {
     return false
@@ -26,16 +42,39 @@ const someoneIsTyping = computed(() => {
   return false
 })
 
+watch(
+  () => props.conversationId,
+  async (newVal, oldVal) => {
+    if (oldVal !== newVal) {
+      scrolledToBottom.value = false
+      scrollToListBottom()
+
+      await waitFor(1_000)
+      scrolledToBottom.value = true
+    }
+  },
+  { immediate: true }
+)
+
 watchEffect(() => {
-  if (!messages.value) {
+  if (messageTopRef.value && scrolledToBottom.value) {
+    observer.observe(messageTopRef.value)
+  } else {
+    observer.disconnect()
+  }
+})
+
+watchEffect(() => {
+  const listEl = list.value
+  if (!messages.value || !listEl) {
     return
   }
 
-  // TODO: Consider:
-  // Should we check if the list is not already at scroll bottom to not scroll down?
-  if (messages.value.size > lastMessageSize.value) {
-    lastMessageSize.value = messages.value.size
-    scrollToListBottom()
+  if (listEl.scrollTop === listEl.scrollHeight - listEl.offsetHeight) {
+    if (messages.value.length > lastMessageSize.value || someoneIsTyping) {
+      lastMessageSize.value = messages.value.length
+      scrollToListBottom()
+    }
   }
 })
 
@@ -43,13 +82,15 @@ watchEffect(() => {
 // if there isn't already a message that's
 // TODO: Consider which is better - probably theother method
 async function scrollToListBottom() {
+  const listEl = list.value
+
   await nextTick()
-  if (!list.value) {
+  if (!listEl) {
     return
   }
 
-  list.value.scrollBy({
-    top: list.value.scrollHeight,
+  listEl.scrollBy({
+    top: listEl.scrollHeight,
     behavior: 'smooth',
   })
 }
@@ -74,6 +115,9 @@ onUnmounted(() => {
       No messages in this conversation. Be the first to say something.
     </p>
     <ul class="list" ref="list" v-else>
+      <li class="list-top" v-if="conversation.nextPage" ref="messageTopRef">
+        <GeneralLoading size="3rem" />
+      </li>
       <ChatMessageChunk
         v-for="chunk of messageChunks"
         :key="chunk[0].id"
@@ -122,6 +166,13 @@ onUnmounted(() => {
     padding-bottom: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
+
+    &-top {
+      display: grid;
+      place-items: center;
+      padding: var(--size-md);
+      width: 100%;
+    }
   }
 }
 </style>

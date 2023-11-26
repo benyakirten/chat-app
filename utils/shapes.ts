@@ -85,6 +85,20 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
 export const CHANNEL_JOIN_SHAPE = z.object({
   conversation,
   users: z.array(user),
-  messages: z.array(message),
+  messages: z.object({ items: z.array(message), page_token: z.string() }),
   read_times: z.record(z.string().uuid(), z.union([z.null(), timestamp])),
+})
+
+export const USERS_QUERY_SHAPE = z.object({
+  users: z.object({
+    items: z.array(user),
+    page_token: z.string(),
+  }),
+})
+
+export const MESSAGES_QUERY_SHAPE = z.object({
+  messages: z.object({
+    items: z.array(message),
+    page_token: z.string(),
+  }),
 })

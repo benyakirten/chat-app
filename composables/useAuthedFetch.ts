@@ -1,4 +1,4 @@
-import { UseFetchOptions } from 'nuxt/app'
+import type { UseFetchOptions } from 'nuxt/app'
 
 export const useAuthedFetch = <T>(
   url: string,

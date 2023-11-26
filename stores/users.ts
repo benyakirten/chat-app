@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { z } from 'zod'
 
-import { ConversationMessage, UserConversationState, UserId } from './messages'
-import { PARTIAL_AUTH_SHAPE } from '@/utils/shapes'
+import type { ConversationMessage, UserConversationState, UserId } from './messages'
+import { PARTIAL_AUTH_SHAPE, USERS_QUERY_SHAPE } from '@/utils/shapes'
 
 export interface User {
   id: UserId
@@ -26,11 +26,6 @@ export interface Me {
 
 export type MutableOptions = Omit<Me, 'id'>
 
-export interface UsersStoreState {
-  users: Map<UserId, User>
-  me: Me | null
-}
-
 export const useUsersStore = defineStore('users', () => {
   const toastStore = useToastStore()
   const messageStore = useMessageStore()
@@ -38,16 +33,64 @@ export const useUsersStore = defineStore('users', () => {
   const socketStore = useSocketStore()
   const route = useRoute()
 
-  const users = ref<UsersStoreState['users']>(new Map())
-  const me = ref<UsersStoreState['me']>(null)
+  const token = ref<string | null>(null)
+  const search = ref<string>('')
+  let searchAbortController = new AbortController()
+
+  const users = ref<Map<UserId, User>>(new Map())
+  const me = ref<Me | null>(null)
 
   function addUser(user: User) {
     users.value.set(user.id, user)
   }
 
-  function batchAddUsers(users: User[]) {
-    // TODO: Modify this when we have a backend
-    users.forEach((user) => addUser(user))
+  async function performSearch(searchText: string) {
+    if (searchText !== search.value) {
+      // This will fire every time that the multiselect is opened if there are only a few options
+      // Therefore we only abort the request
+      searchAbortController.abort()
+
+      // If the abort controller has called .abort then any request that uses its signal will not
+      // complete running forward
+      searchAbortController = new AbortController()
+
+      search.value = searchText
+      token.value = null
+    }
+
+    const { signal } = searchAbortController
+
+    const params = new URLSearchParams()
+    params.set('search', search.value)
+    if (token.value) {
+      params.set('page_token', token.value)
+    }
+
+    const res = await useAuthedFetch(`/api/users?${params}`, 'GET', undefined, { signal })
+    if (!res.error) {
+      toastStore.addErrorToast(res.error, 'Unable to find additional users.')
+      return
+    }
+
+    const usersResponse = USERS_QUERY_SHAPE.safeParse(res.data.value)
+    if (!usersResponse.success) {
+      toastStore.addErrorToast(
+        res.data.value,
+        'Received unexpected shape from server. Unable to find additional users.'
+      )
+      return
+    }
+
+    const { items, page_token } = usersResponse.data.users
+    token.value = page_token
+    for (const user of items) {
+      const internalUser: User = {
+        id: user.id,
+        name: user.display_name,
+        online: false,
+      }
+      users.value.set(user.id, internalUser)
+    }
   }
 
   function updateUser(id: UserId, user: Partial<User>) {
@@ -243,7 +286,6 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     user.online = online
-    console.log(user.id, user.online)
   }
 
   function reset() {
@@ -255,7 +297,6 @@ export const useUsersStore = defineStore('users', () => {
     me,
     getOtherUsers,
     addUser,
-    batchAddUsers,
     updateUser,
     isMine,
     otherUsers,
@@ -269,5 +310,7 @@ export const useUsersStore = defineStore('users', () => {
     setUserOnlineState,
     setHidden,
     reset,
+    token,
+    performSearch,
   }
 })
