@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
-defineProps<{ showEditButton: boolean }>()
+const props = defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | 'bottom' }>()
 defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
 
 const buttonsContainer = ref<HTMLDivElement | null>(null)
+watchEffect(() => console.log(props.tooltipDirection))
 </script>
 
 <template>
   <div ref="buttonsContainer" class="message-buttons">
-    <Transition name="fade">
-      <GeneralIconButton
-        v-if="showEditButton"
-        title="Edit Message"
-        :icon="PencilIcon"
-        size="1.6rem"
-        @click="$emit('edit')"
-      />
-    </Transition>
+    <GeneralIconButton
+      v-if="showEditButton"
+      title="Edit Message"
+      :icon="PencilIcon"
+      :tooltip-direction="tooltipDirection"
+      size="1.6rem"
+      @click="$emit('edit')"
+    />
     <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="1.6rem" @click.stop="$emit('delete')" />
   </div>
 </template>

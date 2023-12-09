@@ -12,6 +12,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ (e: 'delete', id: MessageId): void; (e: 'edit', id: MessageId): void }>()
 const MESSAGE_HIGHLIGHT_DURATION = 1600
+const MIN_OFFSET_HEIGHT_FOR_TOOLTIP_BOTTOM = 200
 
 const readList = computed(() => getMessageReadList(props.message.createTime, userStore.users, props.readTimes))
 const justifyAuthor = computed(() => (props.isMine ? 'flex-end' : 'flex-start'))
@@ -19,6 +20,8 @@ const textAlign = computed(() => (props.isMine ? 'right' : 'left'))
 const isEditing = computed(() => props.message.id === messageStore.editedMessage?.messageId)
 const highlighted = ref(false)
 const messageEl = ref<HTMLLinkElement | null>(null)
+
+const tooltipDirection = ref<'bottom' | 'top'>('top')
 
 onMounted(() => {
   if (props.autoView && messageEl.value) {
@@ -34,6 +37,22 @@ onMounted(() => {
   }
 })
 
+useAddMountedEventCallback(
+  'scroll',
+  () => {
+    if (!messageEl.value) {
+      console.log('EARLY RETURN')
+      return
+    }
+
+    console.log('HERE!')
+    console.log(messageEl.value)
+    // console.log(messageEl.value.scrollTop, typeof messageEl.value.scrollTop)
+    tooltipDirection.value = messageEl.value.offsetTop <= MIN_OFFSET_HEIGHT_FOR_TOOLTIP_BOTTOM ? 'bottom' : 'top'
+  },
+  () => document.querySelector('#message-list')
+)
+
 const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' : 'none'))
 </script>
 
@@ -42,7 +61,8 @@ const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' 
     <ChatMessageChunkItemButtons
       @delete="emit('delete', message.id)"
       @edit="emit('edit', message.id)"
-      :showEditButton="!messageStore.editedMessage"
+      :show-edit-button="!messageStore.editedMessage"
+      :tooltip-direction="tooltipDirection"
       v-if="isMine && message.status === 'complete'"
     />
     <ChatMessageChunkItemAuthor

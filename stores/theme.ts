@@ -9,6 +9,12 @@ export interface ColorTheme {
   base: string
   mix: string
   opposite: string
+  bgAlt1: string
+  bgAlt2: string
+  bgAlt3: string
+  bgAlt4: string
+  bgAlt5: string
+  bodyBg: string
 }
 
 export interface ThemeStoreState {
@@ -22,14 +28,28 @@ export interface ThemeStoreState {
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
     // TODO: This is still terrible
-    bgPrimary: '#f4f4f4',
-    accent: '#e74c3c',
-    textColor: '#333',
+    bgPrimary: '#eae7ed',
+    accent: '#588157',
+    textColor: '#344e41',
     highlight: '#3468ab',
     colorNeutral: '#95a5a6',
-    base: '#ecceab',
-    mix: '#875ea0',
-    opposite: '#f39c12',
+    base: '#BCC9B7',
+    mix: '#3a5a40',
+    opposite: '#7bbf4c',
+    bgAlt1: 'color-mix(in srgb, var(--bg-primary) 95%, var(--mix))',
+    bgAlt2: 'color-mix(in srgb, var(--bg-primary) 91%, var(--mix))',
+    bgAlt3: 'color-mix(in srgb, var(--bg-primary) 87%, var(--mix))',
+    bgAlt4: 'color-mix(in srgb, var(--bg-primary) 83%, var(--mix))',
+    bgAlt5: 'color-mix(in srgb, var(--bg-primary) 79%, var(--mix))',
+    bodyBg: `linear-gradient(
+      to bottom left,
+      var(--bg-primary) 0%,
+      var(--bg-alt2) 10%,
+      var(--bg-primary) 15%,
+      var(--bg-alt5) 30%,
+      var(--bg-primary) 65%,
+      var(--bg-alt5) 95%
+    )`,
   },
   night: {
     bgPrimary: '#0a192f',
@@ -40,6 +60,20 @@ const defaultThemes: ThemeStoreState['themes'] = {
     base: '#000',
     mix: '#0082cb',
     opposite: '#00D4FF',
+    bgAlt1: 'color-mix(in srgb, var(--bg-primary) 95%, var(--mix))',
+    bgAlt2: 'color-mix(in srgb, var(--bg-primary) 91%, var(--mix))',
+    bgAlt3: 'color-mix(in srgb, var(--bg-primary) 87%, var(--mix))',
+    bgAlt4: 'color-mix(in srgb, var(--bg-primary) 83%, var(--mix))',
+    bgAlt5: 'color-mix(in srgb, var(--bg-primary) 79%, var(--mix))',
+    bodyBg: `linear-gradient(
+      to bottom right,
+      var(--bg-alt5) 5%,
+      var(--bg-primary) 10%,
+      var(--bg-primary) 30%,
+      var(--bg-alt5) 40%,
+      var(--bg-primary) 65%,
+      var(--bg-alt5) 95%
+    )`,
   },
 }
 
