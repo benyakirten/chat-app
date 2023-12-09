@@ -32,22 +32,7 @@ onMounted(() => {
 
 <style>
 body {
-  --bg-alt1: color-mix(in srgb, var(--bg-primary) 95%, var(--mix));
-  --bg-alt2: color-mix(in srgb, var(--bg-primary) 91%, var(--mix));
-  --bg-alt3: color-mix(in srgb, var(--bg-primary) 87%, var(--mix));
-  --bg-alt4: color-mix(in srgb, var(--bg-primary) 83%, var(--mix));
-  --bg-alt5: color-mix(in srgb, var(--bg-primary) 79%, var(--mix));
   --box-shadow-color: color-mix(in srgb, var(--accent) 25%, transparent);
-
-  --body-bg: linear-gradient(
-    to bottom right,
-    var(--bg-alt5) 5%,
-    var(--bg-primary) 10%,
-    var(--bg-primary) 30%,
-    var(--bg-alt5) 40%,
-    var(--bg-primary) 65%,
-    var(--bg-alt5) 95%
-  );
 
   background: var(--body-bg);
   color: var(--text-color);

@@ -114,7 +114,7 @@ onUnmounted(() => {
     <p class="no-messages" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
     </p>
-    <ul class="list" ref="list" v-else>
+    <ul id="message-list" class="list" ref="list" v-else>
       <li class="list-top" v-if="conversation.nextPage" ref="messageTopRef">
         <GeneralLoading size="3rem" />
       </li>
