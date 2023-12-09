@@ -5,7 +5,6 @@ const props = defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | '
 defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
 
 const buttonsContainer = ref<HTMLDivElement | null>(null)
-watchEffect(() => console.log(props.tooltipDirection))
 </script>
 
 <template>

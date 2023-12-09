@@ -41,13 +41,9 @@ useAddMountedEventCallback(
   'scroll',
   () => {
     if (!messageEl.value) {
-      console.log('EARLY RETURN')
       return
     }
 
-    console.log('HERE!')
-    console.log(messageEl.value)
-    // console.log(messageEl.value.scrollTop, typeof messageEl.value.scrollTop)
     tooltipDirection.value = messageEl.value.offsetTop <= MIN_OFFSET_HEIGHT_FOR_TOOLTIP_BOTTOM ? 'bottom' : 'top'
   },
   () => document.querySelector('#message-list')
