@@ -7,15 +7,13 @@ const keyGenParams: RsaHashedKeyGenParams = {
   hash: { name: 'SHA-256' },
 }
 
-/**
- * Generate a public and private key using the RSA-OAEP algorith.
- */
 export function generateKeys(): Promise<{ publicKey: CryptoKey; privateKey: CryptoKey }> {
   return crypto.subtle.generateKey(keyGenParams, true, ['encrypt', 'decrypt'])
 }
 
 /**
- * Encrypt a message using a public key and encodes it as base64.
+ * Encrypt a message using a public key
+ * and transfer it to base64 so it can be transmitted over JSON.
  */
 export async function encrypt(publicKey: CryptoKey, message: string): Promise<string> {
   // Encode a string into an array buffer
@@ -31,9 +29,6 @@ export async function encrypt(publicKey: CryptoKey, message: string): Promise<st
   return base64
 }
 
-/**
- * Decodes  message from base64 then decrypts it using a private key.
- */
 export async function decrypt(privateKey: CryptoKey, encryptedMessage: string): Promise<string> {
   const buffer = sidecodeBase64ToArrayBuffer(encryptedMessage)
   const decrypted = await crypto.subtle.decrypt(ENCRYPTION_ALGORITHM, privateKey, buffer)
@@ -57,4 +52,29 @@ export function sidecodeBase64ToArrayBuffer(base64: string): ArrayBuffer {
 
   const arrayBuffer = uint8Array.buffer
   return arrayBuffer
+}
+
+/**
+ * Create a base64-encoded string of a CryptoKey exported to JSON.
+ * This is so it can be stored as a string in the database and not have to create a separate table for it.
+ * The tradeoff is that it will require additional computing resources to encode/decode.
+ *
+ * TODO: Consider using a separate table for this.
+ */
+export async function exportKeyToBase64(key: CryptoKey): Promise<string> {
+  const exported = crypto.subtle.exportKey('jwk', key)
+  const stringified = JSON.stringify(exported)
+  return btoa(stringified)
+}
+
+/**
+ * Reverse process of the above function.
+ */
+export async function importKeyFromBase64(base64: string, type: 'public' | 'private'): Promise<CryptoKey> {
+  const decoded = atob(base64)
+  const decodedInJson = JSON.parse(decoded)
+  const importedKey = await crypto.subtle.importKey('jwk', decodedInJson, keyGenParams, true, [
+    type === 'private' ? 'decrypt' : 'encrypt',
+  ])
+  return importedKey
 }
