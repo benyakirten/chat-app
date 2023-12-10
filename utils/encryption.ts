@@ -7,7 +7,7 @@ const keyGenParams: RsaHashedKeyGenParams = {
   hash: { name: 'SHA-256' },
 }
 
-export function generateKeys(): Promise<{ publicKey: CryptoKey; privateKey: CryptoKey }> {
+export function generateKeys(): Promise<CryptoKeyPair> {
   return crypto.subtle.generateKey(keyGenParams, true, ['encrypt', 'decrypt'])
 }
 
