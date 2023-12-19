@@ -34,6 +34,7 @@ function startTyping(e: Event) {
     @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
     class="new-message-autosize"
+    :disabled="conversation.isPrivate && !conversation.publicKey"
   />
 </template>
 

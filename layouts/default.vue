@@ -44,6 +44,9 @@ body {
   --text-size-sm: calc(var(--size-sm) * var(--magnification, 1));
 
   font-size: var(--text-size-lg);
+
+  --disabled-bg: #ccc;
+  --disabled-text: #888;
 }
 
 main {

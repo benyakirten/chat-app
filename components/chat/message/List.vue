@@ -108,10 +108,13 @@ onUnmounted(() => {
 
 <template>
   <div class="message-chunk-list">
-    <p class="no-conversation" v-if="!messageChunks || !conversationId">
+    <p class="messages-error" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
-    <p class="no-messages" v-else-if="messageChunks.length === 0">
+    <p class="messages-error" v-else-if="conversation.isPrivate && !conversation.publicKey">
+      Encryption process requires completion by the other user before you can begin sending messages.
+    </p>
+    <p class="messages-error" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
     </p>
     <ul id="message-list" class="list" ref="list" v-else>
@@ -151,8 +154,7 @@ onUnmounted(() => {
   height: inherit;
   position: relative;
 
-  .no-conversation,
-  .no-messages {
+  .messages-error {
     padding: 1rem;
   }
 

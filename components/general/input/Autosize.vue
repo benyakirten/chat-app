@@ -6,11 +6,12 @@ const props = withDefaults(
     modelValue: string
     placeholder: string
     label: string
+    disabled?: boolean
     autofocus?: boolean
     id?: string
     required?: boolean
   }>(),
-  { autofocus: false, id: uuid(), required: false }
+  { autofocus: false, id: uuid(), required: false, disabled: false }
 )
 
 const emit = defineEmits<{
@@ -33,7 +34,7 @@ watch(
 )
 
 function handleUpdateValue(e: Event) {
-  if (!(e.target instanceof HTMLTextAreaElement)) {
+  if (!(e.target instanceof HTMLTextAreaElement) || props.disabled) {
     return
   }
 
@@ -60,6 +61,7 @@ onMounted(() => {
         class="autosize-input"
         :placeholder="placeholder"
         :required="required"
+        :disabled="disabled"
       >
       </textarea>
     </div>
@@ -96,6 +98,11 @@ onMounted(() => {
 
   &:invalid {
     outline: 2px solid var(--error-bg);
+  }
+
+  &-input:disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
   }
 
   &-input,

@@ -78,7 +78,7 @@ async function handleSubmit() {
           :icon="PaperAirplaneIcon"
           size="2.5rem"
           type="submit"
-          :disabled="loading || !multiSelectValid || message.length === 0"
+          :disabled="loading || !multiSelectValid"
           tooltipDirection="left"
         />
       </div>

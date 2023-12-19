@@ -392,6 +392,8 @@ export const useMessageStore = defineStore('messages', () => {
 
   async function startPrivateConversation(otherUserId: UserId): Promise<string> {
     try {
+      const privateConversationId = useAuthedFetch(`/api/private_conversation/${otherUserId}`, 'GET')
+
       const { privateKey, publicKey } = await generateKeys()
       const jsonPublicKey = await exportKey(publicKey)
       const jsonPrivateKey = await exportKey(privateKey)

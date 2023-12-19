@@ -354,7 +354,23 @@ export const useSocketStore = defineStore('socket', () => {
     publicKey: JsonWebKey,
     privateKey: JsonWebKey
   ): Promise<string> {
-    // TODO
+    return new Promise((resolve, reject) => {
+      if (!userStore.me || !systemChannel) {
+        return reject('Token or system channel unavailable.')
+      }
+
+      const { token } = userStore.me
+      systemChannel
+        .push('start_private_conversation', {
+          token,
+          other_user_id: userId,
+          public_key: publicKey,
+          private_key: privateKey,
+        })
+        .receive('ok', (id) => resolve(id))
+        .receive('error', (error) => reject(error))
+        .receive('timeout', (error) => reject(error))
+    })
   }
 
   async function transmitNewGroupConversation(members: UserId[], alias?: string): Promise<string> {
