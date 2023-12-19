@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
+import { exportKey } from '~/utils/encryption'
 
 export type ConversationId = string
 export type MessageId = string
@@ -24,6 +25,8 @@ export interface Conversation {
   alias: string | null
   draft?: string
   nextPage?: string
+  publicKey: CryptoKey | null
+  privateKey: CryptoKey | null
 }
 
 // TODO: Determine how to handle deleted messages
@@ -387,27 +390,32 @@ export const useMessageStore = defineStore('messages', () => {
     convo?.messages.set(message.id, message)
   }
 
-  async function startConversation(
-    isPrivate: boolean,
-    members: UserId[],
-    firstMessage: string,
-    alias?: string
-  ): Promise<string> {
-    if (isPrivate) {
-      for (const conversation of conversations.value) {
-        if (isPrivate && conversation.members.has(members[0])) {
-          sendMessage(conversation.id, firstMessage)
-          return conversation.id
-        }
-      }
-    }
+  async function startPrivateConversation(otherUserId: UserId): Promise<string> {
+    try {
+      const { privateKey, publicKey } = await generateKeys()
+      const jsonPublicKey = await exportKey(publicKey)
+      const jsonPrivateKey = await exportKey(privateKey)
 
-    const conversationId = await socketStore.transmitNewConversation(isPrivate, members, firstMessage, alias)
-    if (typeof conversationId !== 'string') {
-      throw conversationId
+      const conversationId = await socketStore.transmitNewPrivateConversation(
+        otherUserId,
+        jsonPublicKey,
+        jsonPrivateKey
+      )
+      return conversationId
+    } catch (e) {
+      toastStore.addErrorToast(e, 'Error starting group conversation')
+      throw e
     }
+  }
 
-    return conversationId
+  async function startGroupConversation(members: UserId[], alias?: string): Promise<string> {
+    try {
+      const conversationId = socketStore.transmitNewGroupConversation(members, alias)
+      return conversationId
+    } catch (e) {
+      toastStore.addErrorToast(e, 'Error starting group conversation')
+      throw e
+    }
   }
 
   function getConversationName(conversationId: ConversationId): string {
@@ -484,7 +492,8 @@ export const useMessageStore = defineStore('messages', () => {
     editMessage,
     stopMessageEdit,
     unreadMessages,
-    startConversation,
+    startGroupConversation,
+    startPrivateConversation,
     modifyConversation,
     leaveConversation,
     moveConversationToTop,

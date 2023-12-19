@@ -10,7 +10,8 @@ import type {
   UserConversationState,
   UserId,
 } from './messages'
-import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
+import { CHANNEL_JOIN_SHAPE, encryptionKey } from '~/utils/shapes'
+import { importKey } from '~/utils/encryption'
 
 export const useSocketStore = defineStore('socket', () => {
   const config = useRuntimeConfig()
@@ -93,7 +94,7 @@ export const useSocketStore = defineStore('socket', () => {
     // Break this up into smaller functions
     channel
       .join()
-      .receive('ok', (data) => {
+      .receive('ok', async (data) => {
         const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
 
         if (!parsedData.success) {
@@ -104,8 +105,16 @@ export const useSocketStore = defineStore('socket', () => {
           return
         }
 
+        const { private_key, public_key } = parsedData.data
         const { items, page_token } = parsedData.data.messages
+
+        const publicKey = public_key && (await importKey(public_key, 'public'))
+        const privateKey = private_key && (await importKey(private_key, 'private'))
+
         conversation.nextPage = page_token
+        conversation.publicKey = publicKey
+        conversation.privateKey = privateKey
+
         for (const member of parsedData.data.users) {
           const readTime = parsedData.data.read_times[member.id]
           conversation.members.set(member.id, {
@@ -340,12 +349,15 @@ export const useSocketStore = defineStore('socket', () => {
     )
   }
 
-  async function transmitNewConversation(
-    isPrivate: boolean,
-    members: UserId[],
-    message: string,
-    alias?: string
+  async function transmitNewPrivateConversation(
+    userId: UserId,
+    publicKey: JsonWebKey,
+    privateKey: JsonWebKey
   ): Promise<string> {
+    // TODO
+  }
+
+  async function transmitNewGroupConversation(members: UserId[], alias?: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!userStore.me || !systemChannel) {
         return reject('Token or system channel unavailable.')
@@ -353,16 +365,14 @@ export const useSocketStore = defineStore('socket', () => {
 
       const { token } = userStore.me
       systemChannel
-        .push('start_conversation', {
+        .push('start_group_conversation', {
           token,
-          private: isPrivate,
-          message: message,
           alias,
           user_ids: [...members, userStore.me.id],
         })
         .receive('ok', (id) => resolve(id))
-        .receive('error', (error) => resolve(error))
-        .receive('timeout', (error) => resolve(error))
+        .receive('error', (error) => reject(error))
+        .receive('timeout', (error) => reject(error))
     })
   }
 
@@ -395,6 +405,8 @@ export const useSocketStore = defineStore('socket', () => {
       members,
       messages: new Map(),
       isPrivate: parseRes.data.private,
+      privateKey: null,
+      publicKey: null,
     }
 
     messageStore.conversations.push(convo)
@@ -461,7 +473,8 @@ export const useSocketStore = defineStore('socket', () => {
     receiveMessageUpdate,
     transmitConversationEdit,
     transmitHiddenStatusChange,
-    transmitNewConversation,
+    transmitNewGroupConversation,
     transmitDisplayNameChange,
+    transmitNewPrivateConversation,
   }
 })

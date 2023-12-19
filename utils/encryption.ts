@@ -56,24 +56,16 @@ export function sidecodeBase64ToArrayBuffer(base64: string): ArrayBuffer {
 
 /**
  * Create a base64-encoded string of a CryptoKey exported to JSON.
- * This is so it can be stored as a string in the database and not have to create a separate table for it.
- * The tradeoff is that it will require additional computing resources to encode/decode.
- *
- * TODO: Consider using a separate table for this.
  */
-export async function exportKeyToBase64(key: CryptoKey): Promise<string> {
-  const exported = crypto.subtle.exportKey('jwk', key)
-  const stringified = JSON.stringify(exported)
-  return btoa(stringified)
+export async function exportKey(key: CryptoKey): Promise<JsonWebKey> {
+  return crypto.subtle.exportKey('jwk', key)
 }
 
 /**
  * Reverse process of the above function.
  */
-export async function importKeyFromBase64(base64: string, type: 'public' | 'private'): Promise<CryptoKey> {
-  const decoded = atob(base64)
-  const decodedInJson = JSON.parse(decoded)
-  const importedKey = await crypto.subtle.importKey('jwk', decodedInJson, keyGenParams, true, [
+export async function importKey(key: JsonWebKey, type: 'public' | 'private'): Promise<CryptoKey> {
+  const importedKey = await crypto.subtle.importKey('jwk', key, keyGenParams, true, [
     type === 'private' ? 'decrypt' : 'encrypt',
   ])
   return importedKey

@@ -82,11 +82,29 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
   hidden: z.union([z.undefined(), z.boolean()]),
 })
 
+export const encryptionKey = z.object({
+  alg: z.string(),
+  d: z.string(),
+  dp: z.string(),
+  dq: z.string(),
+  e: z.string(),
+  ext: z.boolean(),
+  key_ops: z.array(z.enum(['encrypt', 'decrypt'])),
+  kty: z.string(),
+  n: z.string(),
+  p: z.string(),
+  q: z.string(),
+  qi: z.string(),
+  type: z.enum(['private', 'public']),
+})
+
 export const CHANNEL_JOIN_SHAPE = z.object({
   conversation,
   users: z.array(user),
   messages: z.object({ items: z.array(message), page_token: z.string() }),
   read_times: z.record(z.string().uuid(), z.union([z.null(), timestamp])),
+  public_key: z.union([z.null(), encryptionKey]),
+  private_key: z.union([z.null(), encryptionKey]),
 })
 
 export const USERS_QUERY_SHAPE = z.object({
