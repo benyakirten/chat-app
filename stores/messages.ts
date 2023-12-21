@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
-import { exportKey } from '~/utils/encryption'
+import { exportKey, importKey } from '~/utils/encryption'
 
 export type ConversationId = string
 export type MessageId = string
@@ -180,7 +180,7 @@ export const useMessageStore = defineStore('messages', () => {
     member.lastRead = new Date()
   }
 
-  function addMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function addMessage(conversationId: ConversationId, message: ConversationMessage) {
     if (!userStore.me) {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
@@ -189,6 +189,19 @@ export const useMessageStore = defineStore('messages', () => {
     if (!convo) {
       toastStore.add('Unable to find conversation', { type: 'error' })
       return
+    }
+
+    if (convo.isPrivate) {
+      if (!convo.privateKey) {
+        toastStore.addErrorToast(
+          null,
+          'Cannot receive message to private conversation until encryption has been established.'
+        )
+        return
+      }
+
+      const decryptedMessage = await decrypt(convo.privateKey, message.content)
+      message.content = decryptedMessage
     }
 
     convo.messages.set(message.id, message)
@@ -250,6 +263,14 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
+    if (convo.isPrivate && !convo.publicKey) {
+      toastStore.addErrorToast(
+        null,
+        'Cannot send message to private conversation until encryption has been established.'
+      )
+      return
+    }
+
     // TODO: Consider if this should be null
     convo.draft = undefined
     const { typingTimeout } = convo
@@ -260,10 +281,12 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     const newId = uuid()
+
+    const messageContent = convo.isPrivate && convo.publicKey ? await encrypt(convo.publicKey, message) : message
     const convoMessage: ConversationMessage = {
       sender: userStore.me.id,
       id: newId,
-      content: message,
+      content: messageContent,
       status: 'complete',
       createTime: new Date(),
       updateTime: new Date(),
@@ -479,6 +502,20 @@ export const useMessageStore = defineStore('messages', () => {
     // TODO: Transmit that typing has ended
   }
 
+  async function setEncryptionKey(conversationId: ConversationId, userId: UserId, publicKey: JsonWebKey) {
+    if (userId === userStore.me?.id) {
+      return
+    }
+
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      return
+    }
+
+    const key = await importKey(publicKey, 'public')
+    convo.publicKey = key
+  }
+
   return {
     conversations: skipHydrate(conversations),
     visibleConversations,
@@ -507,5 +544,6 @@ export const useMessageStore = defineStore('messages', () => {
     updateMessage,
     removeMessage,
     getNextMessagePage,
+    setEncryptionKey,
   }
 })

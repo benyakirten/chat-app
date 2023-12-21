@@ -100,7 +100,7 @@ export const useSocketStore = defineStore('socket', () => {
         if (!parsedData.success) {
           toastStore.addErrorToast(
             parsedData.error,
-            `Unexpected data shape for ${conversationName}. Details for this conversation may be missing`
+            `Unexpected data shape for ${conversationName}. Details for this conversation may be missing.`
           )
           return
         }
@@ -109,7 +109,27 @@ export const useSocketStore = defineStore('socket', () => {
         const { items, page_token } = parsedData.data.messages
 
         const publicKey = public_key && (await importKey(public_key, 'public'))
-        const privateKey = private_key && (await importKey(private_key, 'private'))
+        let privateKey = private_key && (await importKey(private_key, 'private'))
+
+        if (!privateKey) {
+          const keys = await generateKeys()
+          privateKey = await new Promise((resolve) => {
+            channel
+              .push('set_encryption_key', {
+                token: userStore.me?.token,
+                public_key: keys.publicKey,
+                private_key: keys.privateKey,
+              })
+              .receive('ok', () => resolve(keys.privateKey))
+              .receive('error', () => {
+                toastStore.addErrorToast(
+                  null,
+                  'Error creating encryption for private conversation. Please try reloading the page.'
+                )
+                resolve(null)
+              })
+          })
+        }
 
         conversation.nextPage = page_token
         conversation.publicKey = publicKey
@@ -147,6 +167,9 @@ export const useSocketStore = defineStore('socket', () => {
     channel.on('update_message', ({ message }) => receiveMessageUpdate(conversation.id, message))
     channel.on('delete_message', ({ message_id }) => messageStore.removeMessage(conversation.id, message_id))
     channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
+    channel.on('set_encryption_key', ({ public_key, user_id }) =>
+      messageStore.setEncryptionKey(conversation.id, user_id, public_key)
+    )
   }
 
   async function transmitConversationDeparture(conversationId: ConversationId): Promise<boolean> {
