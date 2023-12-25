@@ -28,6 +28,8 @@ function handleUpdate(e: Event) {
   align-items: center;
   gap: 1rem;
 
+  width: max-content;
+
   position: relative;
   cursor: pointer;
 
