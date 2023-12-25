@@ -230,6 +230,8 @@ export const useUsersStore = defineStore('users', () => {
       messages: new Map(),
       isPrivate: conversation.private,
       alias: conversation.alias,
+      privateKey: null,
+      publicKey: null,
     }))
 
     for (const recent of data.user.recents.toReversed()) {

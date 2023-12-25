@@ -299,7 +299,6 @@ export const useMessageStore = defineStore('messages', () => {
       await socketStore.transmitNewMessage(id, message)
       synchronizeMessage(id, newId, true)
     } catch (e) {
-      console.error(e)
       synchronizeMessage(id, newId, false)
     }
   }

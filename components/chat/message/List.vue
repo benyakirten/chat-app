@@ -150,7 +150,6 @@ onUnmounted(() => {
   --item-box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
 
   display: grid;
-  padding: 1rem 0;
   height: inherit;
   position: relative;
 

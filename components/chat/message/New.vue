@@ -42,5 +42,6 @@ function startTyping(e: Event) {
 .new-message-autosize {
   place-content: end;
   padding: var(--size-sm);
+  padding-bottom: calc(var(--size-sm) * 0.5);
 }
 </style>
