@@ -112,7 +112,7 @@ onUnmounted(() => {
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
     <p class="messages-error" v-else-if="conversation.isPrivate && !conversation.publicKey">
-      Encryption process requires completion by the other user before you can begin sending messages.
+      Encryption must be complete before you can begin sending messages.
     </p>
     <p class="messages-error" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.

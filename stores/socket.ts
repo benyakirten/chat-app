@@ -206,8 +206,8 @@ export const useSocketStore = defineStore('socket', () => {
     conversationName: string,
     data: unknown
   ) {
+    console.log(data)
     const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
-
     if (!parsedData.success) {
       toastStore.addErrorToast(
         parsedData.error,
@@ -221,6 +221,8 @@ export const useSocketStore = defineStore('socket', () => {
 
     const publicKey = public_key && (await importKey(public_key, 'public'))
     let privateKey = private_key && (await importKey(private_key, 'private'))
+
+    console.log(publicKey, privateKey)
 
     if (conversation.isPrivate && !privateKey) {
       const keys = await generateKeys()

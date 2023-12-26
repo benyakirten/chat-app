@@ -84,17 +84,17 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
 
 export const encryptionKey = z.object({
   alg: z.string(),
-  d: z.string(),
-  dp: z.string(),
-  dq: z.string(),
+  d: z.union([z.null(), z.string()]),
+  dp: z.union([z.null(), z.string()]),
+  dq: z.union([z.null(), z.string()]),
   e: z.string(),
   ext: z.boolean(),
   key_ops: z.array(z.enum(['encrypt', 'decrypt'])),
   kty: z.string(),
   n: z.string(),
-  p: z.string(),
-  q: z.string(),
-  qi: z.string(),
+  p: z.union([z.null(), z.string()]),
+  q: z.union([z.null(), z.string()]),
+  qi: z.union([z.null(), z.string()]),
   type: z.enum(['private', 'public']),
 })
 

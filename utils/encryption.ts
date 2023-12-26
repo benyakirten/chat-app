@@ -1,3 +1,5 @@
+import type { Nullable } from './types'
+
 const ENCRYPTION_ALGORITHM = 'RSA-OAEP'
 
 const keyGenParams: RsaHashedKeyGenParams = {
@@ -55,7 +57,7 @@ export function sidecodeBase64ToArrayBuffer(base64: string): ArrayBuffer {
 }
 
 /**
- * Create a base64-encoded string of a CryptoKey exported to JSON.
+ * Create a JSON Web Key from a CryptoKey so it can be sent over JSON.
  */
 export async function exportKey(key: CryptoKey): Promise<JsonWebKey> {
   return crypto.subtle.exportKey('jwk', key)
@@ -64,9 +66,21 @@ export async function exportKey(key: CryptoKey): Promise<JsonWebKey> {
 /**
  * Reverse process of the above function.
  */
-export async function importKey(key: JsonWebKey, type: 'public' | 'private'): Promise<CryptoKey> {
-  const importedKey = await crypto.subtle.importKey('jwk', key, keyGenParams, true, [
+export async function importKey(key: Nullable<JsonWebKey>, type: 'public' | 'private'): Promise<CryptoKey> {
+  const _key = transformNullableToOptional(key)
+  const importedKey = await crypto.subtle.importKey('jwk', _key, keyGenParams, true, [
     type === 'private' ? 'decrypt' : 'encrypt',
   ])
   return importedKey
+}
+
+export function transformNullableToOptional<T extends object>(obj: Nullable<T>): Partial<T> {
+  const result: Partial<T> = {}
+  for (const key in obj) {
+    if (obj[key] !== null) {
+      result[key] = obj[key] as any
+    }
+  }
+
+  return result
 }
