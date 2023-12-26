@@ -40,6 +40,15 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<Map<UserId, User>>(new Map())
   const me = ref<Me | null>(null)
 
+  function getUserName(userId: UserId) {
+    const user = users.value.get(userId)
+    if (!user) {
+      return 'Unknown User'
+    }
+
+    return user.name
+  }
+
   function addUser(user: User) {
     users.value.set(user.id, user)
   }
@@ -314,5 +323,6 @@ export const useUsersStore = defineStore('users', () => {
     reset,
     token,
     performSearch,
+    getUserName,
   }
 })

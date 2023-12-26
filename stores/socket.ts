@@ -238,16 +238,20 @@ export const useSocketStore = defineStore('socket', () => {
       })
     }
 
-    for (const message of items) {
-      conversation.messages.set(message.id, {
+    const messagePromises = items.map((message) => {
+      const conversationMessage: ConversationMessage = {
         id: message.id,
         content: message.content,
         sender: message.sender,
         createTime: new Date(message.inserted_at),
         updateTime: new Date(message.updated_at),
         status: 'complete',
-      })
-    }
+      }
+      return messageStore.addMessageToConversation(conversation, conversationMessage)
+    })
+
+    await Promise.allSettled(messagePromises)
+    console.log(conversation)
   }
 
   function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {

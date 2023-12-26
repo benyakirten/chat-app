@@ -191,8 +191,16 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    if (convo.isPrivate) {
-      if (!convo.privateKey) {
+    await addMessageToConversation(convo, message)
+
+    if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
+      socketStore.transmitConversationRead(convo.id)
+    }
+  }
+
+  async function addMessageToConversation(conversation: Conversation, message: ConversationMessage) {
+    if (conversation.isPrivate) {
+      if (!conversation.privateKey) {
         toastStore.addErrorToast(
           null,
           'Cannot receive message to private conversation until encryption has been established.'
@@ -200,15 +208,11 @@ export const useMessageStore = defineStore('messages', () => {
         return
       }
 
-      const decryptedMessage = await decrypt(convo.privateKey, message.content)
+      const decryptedMessage = await decrypt(conversation.privateKey, message.content)
       message.content = decryptedMessage
     }
 
-    convo.messages.set(message.id, message)
-
-    if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
-      socketStore.transmitConversationRead(convo.id)
-    }
+    conversation.messages.set(message.id, message)
   }
 
   function startTyping(conversationId: ConversationId) {
@@ -412,9 +416,48 @@ export const useMessageStore = defineStore('messages', () => {
     convo?.messages.set(message.id, message)
   }
 
+  async function checkForPrexistingConversation(otherUserId: UserId): Promise<Conversation | null> {
+    const res = await useAuthedFetch(`/api/conversations?private=${otherUserId}`, 'GET')
+    if (res.error.value) {
+      toastStore.addErrorToast(
+        res.error,
+        `Unable to start conversation with user ${userStore.getUserName(otherUserId)}`
+      )
+      throw res.error
+    }
+
+    const existingConversationShape = PRIVATE_CONVERSATION_SHAPE.safeParse(res.data.value)
+    if (!existingConversationShape.success) {
+      toastStore.addErrorToast(res.data.value, 'Received unexpected shape from server. Unable to create conversation.')
+      throw res.error
+    }
+
+    const { conversation_id } = existingConversationShape.data
+
+    if (!conversation_id) {
+      return null
+    }
+
+    const existingConversation: Conversation = {
+      id: conversation_id,
+      members: new Map(),
+      messages: new Map(),
+      isPrivate: true,
+      alias: null,
+      publicKey: null,
+      privateKey: null,
+    }
+    return existingConversation
+  }
+
   async function startPrivateConversation(otherUserId: UserId): Promise<string> {
     try {
-      const privateConversationId = useAuthedFetch(`/api/private_conversation/${otherUserId}`, 'GET')
+      const existingConversation = await checkForPrexistingConversation(otherUserId)
+      if (existingConversation) {
+        conversations.value.push(existingConversation)
+        socketStore.joinConversation(existingConversation)
+        return existingConversation.id
+      }
 
       const { privateKey, publicKey } = await generateKeys()
       const jsonPublicKey = await exportKey(publicKey)
@@ -544,5 +587,6 @@ export const useMessageStore = defineStore('messages', () => {
     removeMessage,
     getNextMessagePage,
     setEncryptionKey,
+    addMessageToConversation,
   }
 })

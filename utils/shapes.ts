@@ -120,3 +120,7 @@ export const MESSAGES_QUERY_SHAPE = z.object({
     page_token: z.string(),
   }),
 })
+
+export const PRIVATE_CONVERSATION_SHAPE = z.object({
+  conversation_id: z.union([z.string().uuid(), z.null()]),
+})
