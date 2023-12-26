@@ -416,8 +416,19 @@ export const useMessageStore = defineStore('messages', () => {
     convo?.messages.set(message.id, message)
   }
 
-  async function checkForPrexistingConversation(otherUserId: UserId): Promise<Conversation | null> {
-    const res = await useAuthedFetch(`/api/conversations?private=${otherUserId}`, 'GET')
+  /**
+   * If the conversation is already made (available either locally or from the server), get it
+   * so we don't create keys for a conversation that already exists.
+   */
+  async function checkForPrexistingConversation(
+    otherUserId: UserId
+  ): Promise<{ conversation: Conversation; needsSocket: boolean } | null> {
+    let conversation = conversations.value.find((convo) => convo.isPrivate && convo.members.has(otherUserId))
+    if (conversation) {
+      return { conversation, needsSocket: false }
+    }
+
+    const res = await useAuthedFetch(`/api/conversation?privateWithUser=${otherUserId}`, 'GET')
     if (res.error.value) {
       toastStore.addErrorToast(
         res.error,
@@ -438,7 +449,7 @@ export const useMessageStore = defineStore('messages', () => {
       return null
     }
 
-    const existingConversation: Conversation = {
+    conversation = {
       id: conversation_id,
       members: new Map(),
       messages: new Map(),
@@ -447,16 +458,21 @@ export const useMessageStore = defineStore('messages', () => {
       publicKey: null,
       privateKey: null,
     }
-    return existingConversation
+    return { conversation, needsSocket: true }
   }
 
   async function startPrivateConversation(otherUserId: UserId): Promise<string> {
     try {
       const existingConversation = await checkForPrexistingConversation(otherUserId)
       if (existingConversation) {
-        conversations.value.push(existingConversation)
-        socketStore.joinConversation(existingConversation)
-        return existingConversation.id
+        const { conversation, needsSocket } = existingConversation
+        if (!needsSocket) {
+          return conversation.id
+        }
+
+        conversations.value.push(conversation)
+        socketStore.joinConversation(conversation)
+        return conversation.id
       }
 
       const { privateKey, publicKey } = await generateKeys()
@@ -546,6 +562,7 @@ export const useMessageStore = defineStore('messages', () => {
 
   async function setEncryptionKey(conversationId: ConversationId, userId: UserId, publicKey: JsonWebKey) {
     if (userId === userStore.me?.id) {
+      console.log("IT's ME")
       return
     }
 

@@ -62,7 +62,7 @@ function checkFormValidity() {
         </button>
       </div>
       <form ref="formRef" @submit.prevent="handleSubmit" @input="checkFormValidity">
-        <GeneralInputText v-model="email" type="email" placeholder="you@example.com" required>
+        <GeneralInputText v-model="email" type="email" placeholder="you@example.com" required id="email">
           <template #error>Email must be a valid email</template>
           <template #label> Email </template>
         </GeneralInputText>
@@ -71,6 +71,7 @@ function checkFormValidity() {
           type="password"
           placeholder="At least 12 letters, 1 upper, lower, number and special character..."
           required
+          id="password"
           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+`~'])[A-Za-z\d!@#$%^&*+`~']{12,}$"
         >
           <template #label> Password </template>

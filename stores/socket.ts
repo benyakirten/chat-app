@@ -178,12 +178,12 @@ export const useSocketStore = defineStore('socket', () => {
     setupChannelJoinHandlers(channel, conversation, conversationName)
   }
 
-  async function transmitNewEncryptionKeys(
+  async function createAndTransmitNewEncryptionKeys(
     channel: Channel,
-    conversationName: string,
-    publicKey: CryptoKey,
-    privateKey: CryptoKey
+    conversation: Conversation,
+    conversationName: string
   ): Promise<CryptoKey | null> {
+    const { publicKey, privateKey } = await generateKeys()
     const exportedPublicKey = await exportKey(publicKey)
     const exportedPrivateKey = await exportKey(privateKey)
 
@@ -195,7 +195,10 @@ export const useSocketStore = defineStore('socket', () => {
           private_key: exportedPrivateKey,
         }),
       SocketEvent.SET_ENCRYPTION_KEYS,
-      () => privateKey,
+      () => {
+        conversation.privateKey = privateKey
+        return privateKey
+      },
       `Error creating encryption for ${conversationName}.`
     )
   }
@@ -221,11 +224,6 @@ export const useSocketStore = defineStore('socket', () => {
     const publicKey = public_key && (await importKey(public_key, 'public'))
     let privateKey = private_key && (await importKey(private_key, 'private'))
 
-    if (conversation.isPrivate && !privateKey) {
-      const keys = await generateKeys()
-      privateKey = await transmitNewEncryptionKeys(channel, conversationName, keys.publicKey, keys.privateKey)
-    }
-
     conversation.nextPage = page_token
     conversation.publicKey = publicKey
     conversation.privateKey = privateKey
@@ -247,11 +245,15 @@ export const useSocketStore = defineStore('socket', () => {
         updateTime: new Date(message.updated_at),
         status: 'complete',
       }
+
       return messageStore.addMessageToConversation(conversation, conversationMessage)
     })
 
     await Promise.allSettled(messagePromises)
-    console.log(conversation)
+
+    if (conversation.isPrivate && !privateKey) {
+      await createAndTransmitNewEncryptionKeys(channel, conversation, conversationName)
+    }
   }
 
   function setupChannelJoinHandlers(channel: Channel, conversation: Conversation, conversationName: string) {
