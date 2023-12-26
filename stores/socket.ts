@@ -206,7 +206,6 @@ export const useSocketStore = defineStore('socket', () => {
     conversationName: string,
     data: unknown
   ) {
-    console.log(data)
     const parsedData = CHANNEL_JOIN_SHAPE.safeParse(data)
     if (!parsedData.success) {
       toastStore.addErrorToast(
@@ -221,8 +220,6 @@ export const useSocketStore = defineStore('socket', () => {
 
     const publicKey = public_key && (await importKey(public_key, 'public'))
     let privateKey = private_key && (await importKey(private_key, 'private'))
-
-    console.log(publicKey, privateKey)
 
     if (conversation.isPrivate && !privateKey) {
       const keys = await generateKeys()
@@ -269,7 +266,7 @@ export const useSocketStore = defineStore('socket', () => {
     channel.on('update_message', ({ message }) => receiveMessageUpdate(conversation.id, message))
     channel.on('delete_message', ({ message_id }) => messageStore.removeMessage(conversation.id, message_id))
     channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
-    channel.on('set_encryption_key', ({ public_key, user_id }) =>
+    channel.on('set_encryption_keys', ({ public_key, user_id }) =>
       messageStore.setEncryptionKey(conversation.id, user_id, public_key)
     )
   }
