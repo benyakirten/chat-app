@@ -10,8 +10,6 @@ import type {
   UserConversationState,
   UserId,
 } from './messages'
-import { CHANNEL_JOIN_SHAPE } from '~/utils/shapes'
-import { importKey } from '~/utils/encryption'
 
 export const useSocketStore = defineStore('socket', () => {
   const config = useRuntimeConfig()
@@ -218,22 +216,27 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
-    const { private_key, public_key } = parsedData.data
+    const { private_key } = parsedData.data
     const { items, page_token } = parsedData.data.messages
 
-    const publicKey = public_key && (await importKey(public_key, 'public'))
     let privateKey = private_key && (await importKey(private_key, 'private'))
 
     conversation.nextPage = page_token
-    conversation.publicKey = publicKey
     conversation.privateKey = privateKey
 
-    for (const member of parsedData.data.users) {
-      const readTime = parsedData.data.read_times[member.id]
-      conversation.members.set(member.id, {
-        state: 'idle',
+    const parseUserPromises = parsedData.data.users.map(async (user) => {
+      const readTime = parsedData.data.read_times[user.id]
+      const publicKey = user.public_key && (await importKey(user.public_key, 'public'))
+      return {
+        id: user.id,
         lastRead: new Date(readTime ?? 0),
-      })
+        publicKey,
+      }
+    })
+
+    const parseUserRes = await Promise.all(parseUserPromises)
+    for (const user of parseUserRes) {
+      conversation.members.set(user.id, { state: 'idle', lastRead: user.lastRead, publicKey: user.publicKey })
     }
 
     const messagePromises = items.map((message) => {
@@ -244,6 +247,7 @@ export const useSocketStore = defineStore('socket', () => {
         createTime: new Date(message.inserted_at),
         updateTime: new Date(message.updated_at),
         status: 'complete',
+        messageGroup: message.message_group,
       }
 
       return messageStore.addMessageToConversation(conversation, conversationMessage)
@@ -303,7 +307,10 @@ export const useSocketStore = defineStore('socket', () => {
     )
   }
 
-  async function transmitNewMessage(conversationId: ConversationId, content: string): Promise<z.infer<typeof message>> {
+  async function transmitNewMessage(
+    conversationId: ConversationId,
+    encryptedMessage: Map<string, string>
+  ): Promise<z.infer<typeof message>> {
     // This can throw because the payload is more complicated than a boolean
     const { channel, token } = getChannelAndToken(conversationId, 'Unable to locate conversation to send message.')
 
@@ -316,7 +323,7 @@ export const useSocketStore = defineStore('socket', () => {
       () =>
         channel.push('send_message', {
           token,
-          content,
+          encryptedMessage,
         }),
       SocketEvent.SEND_MESSAGE,
       (res) => res as any,
@@ -340,7 +347,7 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
-    const { id, sender, updated_at, content, inserted_at } = messageRes.data
+    const { id, sender, updated_at, content, inserted_at, message_group } = messageRes.data
     const conversationMessage: ConversationMessage = {
       id,
       sender,
@@ -348,6 +355,7 @@ export const useSocketStore = defineStore('socket', () => {
       createTime: new Date(inserted_at),
       updateTime: new Date(updated_at),
       status: 'complete',
+      messageGroup: message_group,
     }
 
     return conversationMessage
@@ -530,7 +538,7 @@ export const useSocketStore = defineStore('socket', () => {
     if (existingConversation) {
       for (const userId of userIds) {
         if (!existingConversation.members.has(userId)) {
-          existingConversation.members.set(userId, { state: 'idle', lastRead: new Date(0) })
+          existingConversation.members.set(userId, { state: 'idle', lastRead: new Date(0), publicKey: null })
         }
       }
       existingConversation.alias = parseRes.data.alias
@@ -539,7 +547,7 @@ export const useSocketStore = defineStore('socket', () => {
 
     const members = new Map<UserId, UserConversationState>()
     for (const userId of userIds) {
-      members.set(userId, { state: 'idle', lastRead: new Date(0) })
+      members.set(userId, { state: 'idle', lastRead: new Date(0), publicKey: null })
     }
 
     const convo: Conversation = {
@@ -549,7 +557,6 @@ export const useSocketStore = defineStore('socket', () => {
       messages: new Map(),
       isPrivate: parseRes.data.private,
       privateKey: null,
-      publicKey: null,
     }
 
     messageStore.conversations.push(convo)

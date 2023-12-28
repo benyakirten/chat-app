@@ -185,6 +185,8 @@ describe('getUserReadTimes', () => {
       messages: new Map(),
       isPrivate: false,
       alias: null,
+      privateKey: null,
+      publicKey: null,
     }
 
     const _1980 = new Date('1980-1-1')

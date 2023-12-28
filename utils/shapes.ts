@@ -28,11 +28,29 @@ export const conversation = timestamped.extend({
   alias: z.union([z.string(), z.null()]),
 })
 
+export const encryptionKey = z.object({
+  alg: z.string(),
+  d: z.union([z.null(), z.string()]),
+  dp: z.union([z.null(), z.string()]),
+  dq: z.union([z.null(), z.string()]),
+  e: z.string(),
+  ext: z.boolean(),
+  key_ops: z.array(z.enum(['encrypt', 'decrypt'])),
+  kty: z.string(),
+  n: z.string(),
+  p: z.union([z.null(), z.string()]),
+  q: z.union([z.null(), z.string()]),
+  qi: z.union([z.null(), z.string()]),
+  type: z.enum(['private', 'public']),
+})
+
 export const user = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   display_name: z.string(),
 })
+
+export const conversationUser = user.extend({ public_key: z.union([z.null(), encryptionKey]) })
 
 export const userMe = user.extend({
   confirmed_at: z.union([z.string().datetime(), z.null()]),
@@ -49,6 +67,7 @@ export const message = timestamped.extend({
   id: z.string().uuid(),
   sender: z.string().uuid(),
   content: z.string(),
+  message_group: z.string().uuid(),
 })
 
 export const REGISTER_SHAPE = LOGIN_SHAPE.extend({
@@ -82,28 +101,11 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
   hidden: z.union([z.undefined(), z.boolean()]),
 })
 
-export const encryptionKey = z.object({
-  alg: z.string(),
-  d: z.union([z.null(), z.string()]),
-  dp: z.union([z.null(), z.string()]),
-  dq: z.union([z.null(), z.string()]),
-  e: z.string(),
-  ext: z.boolean(),
-  key_ops: z.array(z.enum(['encrypt', 'decrypt'])),
-  kty: z.string(),
-  n: z.string(),
-  p: z.union([z.null(), z.string()]),
-  q: z.union([z.null(), z.string()]),
-  qi: z.union([z.null(), z.string()]),
-  type: z.enum(['private', 'public']),
-})
-
 export const CHANNEL_JOIN_SHAPE = z.object({
   conversation,
-  users: z.array(user),
+  users: z.array(conversationUser),
   messages: z.object({ items: z.array(message), page_token: z.string() }),
   read_times: z.record(z.string().uuid(), z.union([z.null(), timestamp])),
-  public_key: z.union([z.null(), encryptionKey]),
   private_key: z.union([z.null(), encryptionKey]),
 })
 
