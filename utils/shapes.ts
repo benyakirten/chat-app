@@ -42,6 +42,7 @@ export const encryptionKey = z.object({
   q: z.union([z.null(), z.string()]),
   qi: z.union([z.null(), z.string()]),
   type: z.enum(['private', 'public']),
+  user_id: z.string().uuid(),
 })
 
 export const user = z.object({
@@ -49,8 +50,6 @@ export const user = z.object({
   email: z.string().email(),
   display_name: z.string(),
 })
-
-export const conversationUser = user.extend({ public_key: z.union([z.null(), encryptionKey]) })
 
 export const userMe = user.extend({
   confirmed_at: z.union([z.string().datetime(), z.null()]),
@@ -103,10 +102,11 @@ export const UPDATE_PROFILE_SETTINGS_SHAPE = z.object({
 
 export const CHANNEL_JOIN_SHAPE = z.object({
   conversation,
-  users: z.array(conversationUser),
+  users: z.array(user),
   messages: z.object({ items: z.array(message), page_token: z.string() }),
   read_times: z.record(z.string().uuid(), z.union([z.null(), timestamp])),
   private_key: z.union([z.null(), encryptionKey]),
+  public_keys: z.record(z.string().uuid(), encryptionKey),
 })
 
 export const USERS_QUERY_SHAPE = z.object({

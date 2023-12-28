@@ -216,7 +216,7 @@ export const useSocketStore = defineStore('socket', () => {
       return
     }
 
-    const { private_key } = parsedData.data
+    const { private_key, public_keys } = parsedData.data
     const { items, page_token } = parsedData.data.messages
 
     let privateKey = private_key && (await importKey(private_key, 'private'))
@@ -226,7 +226,8 @@ export const useSocketStore = defineStore('socket', () => {
 
     const parseUserPromises = parsedData.data.users.map(async (user) => {
       const readTime = parsedData.data.read_times[user.id]
-      const publicKey = user.public_key && (await importKey(user.public_key, 'public'))
+      const rawKey = public_keys[user.id]
+      const publicKey = rawKey && (await importKey(rawKey, 'public'))
       return {
         id: user.id,
         lastRead: new Date(readTime ?? 0),
