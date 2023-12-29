@@ -6,6 +6,7 @@ const props = defineProps<{
   isPrivate: boolean
   conversationId: ConversationId
   viewedMessageId: MessageId | false
+  canEdit: boolean
 }>()
 
 const messageStore = useMessageStore()
@@ -32,6 +33,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
           :key="message.id"
           :auto-view="message.id === viewedMessageId"
           :conversation-id="conversationId"
+          :can-edit="canEdit"
         />
       </TransitionGroup>
     </ul>

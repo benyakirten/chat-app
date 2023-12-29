@@ -10,6 +10,7 @@ const props = defineProps<{
   isLast: boolean
   isPrivate: boolean
   autoView: boolean
+  canEdit: boolean
 }>()
 const emit = defineEmits<{ (e: 'delete', id: MessageId): void; (e: 'edit', id: MessageId): void }>()
 const MESSAGE_HIGHLIGHT_DURATION = 1600
@@ -60,6 +61,7 @@ const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' 
       @edit="emit('edit', message.id)"
       :show-edit-button="!messageStore.editedMessage"
       :tooltip-direction="tooltipDirection"
+      :can-edit="canEdit"
       v-if="isMine && message.status === 'complete'"
     />
     <ChatMessageChunkItemAuthor

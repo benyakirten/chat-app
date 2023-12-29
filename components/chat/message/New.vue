@@ -24,6 +24,8 @@ function startTyping(e: Event) {
     messageStore.startTyping(conversationId)
   }
 }
+
+const canWrite = messageStore.conversationCanChange(conversationId)
 </script>
 
 <template>
@@ -34,7 +36,7 @@ function startTyping(e: Event) {
     @keydown.enter="sendMessage(conversationId, value)"
     v-model="value"
     class="new-message-autosize"
-    :disabled="conversation.isPrivate && !conversation.publicKey"
+    :disabled="!canWrite"
   />
 </template>
 

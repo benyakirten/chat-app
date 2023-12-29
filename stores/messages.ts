@@ -97,6 +97,20 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   const conversation = computed(() => (id: ConversationId) => conversations.value.find((convo) => convo.id === id))
+  const conversationCanChange = computed(() => (conversationId: ConversationId) => {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      return false
+    }
+
+    for (const member of convo.members.values()) {
+      if (!member.publicKey) {
+        return false
+      }
+    }
+
+    return true
+  })
 
   const visibleConversations = computed(() => {
     // TODO: Add ability to search conversations
@@ -654,5 +668,6 @@ export const useMessageStore = defineStore('messages', () => {
     getNextMessagePage,
     setEncryptionKey,
     addMessageToConversation,
+    conversationCanChange,
   }
 })

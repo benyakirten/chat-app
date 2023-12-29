@@ -28,6 +28,7 @@ const observer = new IntersectionObserver((entries) => {
 })
 const messageTopRef = ref<HTMLLIElement>()
 const scrolledToBottom = ref(false)
+const conversationCanEdit = messageStore.conversationCanChange(props.conversationId)
 
 const someoneIsTyping = computed(() => {
   if (!conversation.value) {
@@ -111,7 +112,7 @@ onUnmounted(() => {
     <p class="messages-error" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
-    <p class="messages-error" v-else-if="conversation.isPrivate && !conversation.publicKey">
+    <p class="messages-error" v-else-if="!conversationCanEdit">
       Encryption must be complete before you can begin sending messages.
     </p>
     <p class="messages-error" v-else-if="messageChunks.length === 0">
@@ -129,6 +130,7 @@ onUnmounted(() => {
         :is-private="(conversation?.members.size ?? 0) > 2"
         :conversation-id="conversationId"
         :viewed-message-id="viewedMessageId"
+        :can-edit="conversationCanEdit"
       />
       <li v-if="someoneIsTyping">
         <GeneralTypingIndicator />

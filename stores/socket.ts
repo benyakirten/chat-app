@@ -264,7 +264,7 @@ export const useSocketStore = defineStore('socket', () => {
 
     await Promise.allSettled(messagePromises)
 
-    if (conversation.isPrivate && !privateKey) {
+    if (!privateKey) {
       await createAndTransmitNewEncryptionKeys(channel, conversation, conversationName)
     }
   }
