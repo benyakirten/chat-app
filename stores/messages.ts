@@ -1,4 +1,4 @@
-import { defineStore, skipHydrate } from 'pinia'
+import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 
 import { useUsersStore } from './users'
@@ -8,6 +8,8 @@ import { exportKey, importKey } from '~/utils/encryption'
 export type ConversationId = string
 export type MessageId = string
 export type UserId = string
+export type MessageGroupId = string
+export type EncryptedMessages = Record<string, string>
 
 export const TYPING_TIMEOUT = 2_000
 
@@ -37,7 +39,7 @@ export interface ConversationMessage {
   status: 'pending' | 'error' | 'complete'
   createTime: Date
   updateTime: Date
-  messageGroup: string
+  messageGroup: MessageGroupId
 }
 
 export type UserReadTimes = Record<UserId, Date>
@@ -288,7 +290,7 @@ export const useMessageStore = defineStore('messages', () => {
     const convoMessage: ConversationMessage = {
       sender: userStore.me.id,
       id: newId,
-      content: encryptedMessages.get(userStore.me.id)!,
+      content: message,
       status: 'complete',
       createTime: new Date(),
       updateTime: new Date(),
@@ -306,7 +308,7 @@ export const useMessageStore = defineStore('messages', () => {
     }
   }
 
-  async function encryptMessageToAll(conversation: Conversation, message: string): Promise<Map<string, string> | null> {
+  async function encryptMessageToAll(conversation: Conversation, message: string): Promise<EncryptedMessages | null> {
     const promises: Promise<{ userId: UserId; encryptedMessage: string }>[] = []
     for (const [userId, member] of conversation.members.entries()) {
       if (!member.publicKey) {
@@ -321,10 +323,10 @@ export const useMessageStore = defineStore('messages', () => {
 
     const results = await Promise.all(promises)
 
-    return results.reduce<Map<string, string>>((acc, { userId, encryptedMessage }) => {
-      acc.set(userId, encryptedMessage)
+    return results.reduce<Record<string, string>>((acc, { userId, encryptedMessage }) => {
+      acc[userId] = encryptedMessage
       return acc
-    }, new Map())
+    }, {})
   }
 
   /**
@@ -353,14 +355,32 @@ export const useMessageStore = defineStore('messages', () => {
     convo.messages.delete(messageId)
   }
 
-  function resendMessage(message: ConversationMessage) {
-    message.status = 'pending'
-    // TODO: Attempt to create the message again
+  async function resendMessage(conversationId: ConversationId, message: ConversationMessage) {
+    if (message.status !== 'error') {
+      toastStore.addErrorToast(null, 'Cannot resend a message which was incorrectly sent.')
+      return
+    }
 
-    // TODO: Delete the timeout when we have an actual backend
-    setTimeout(() => {
-      message.status = 'complete'
-    }, 1000)
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      toastStore.addErrorToast(null, 'Cannot locate conversation for the message..')
+      return
+    }
+
+    message.status = 'pending'
+    const encryptedMessages = await encryptMessageToAll(convo, message.content)
+    if (!encryptedMessages) {
+      toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
+      return
+    }
+
+    try {
+      socketStore.transmitTypingEnded(convo.id)
+      await socketStore.transmitNewMessage(convo.id, encryptedMessages)
+      synchronizeMessage(convo.id, message.id, true)
+    } catch (e) {
+      synchronizeMessage(convo.id, message.id, false)
+    }
   }
 
   function deleteMessage(conversationId: ConversationId, messageId: MessageId) {
@@ -381,7 +401,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    socketStore.transmitDeleteMessage(conversationId, messageId)
+    socketStore.transmitDeleteMessage(conversationId, message.messageGroup)
   }
 
   function removeMessage(conversationId: ConversationId, messageId: MessageId) {
@@ -424,7 +444,14 @@ export const useMessageStore = defineStore('messages', () => {
 
     // TODO: Transmit new message content - if successful, we'll get a new update time
     stopMessageEdit()
-    socketStore.transmitEditMessage(conversationId, messageId, content)
+
+    const encryptedMessages = await encryptMessageToAll(convo, content)
+    if (!encryptedMessages) {
+      toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
+      return
+    }
+
+    socketStore.transmitEditMessage(conversationId, messageId, encryptedMessages)
   }
 
   function stopMessageEdit() {

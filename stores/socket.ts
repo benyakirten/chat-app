@@ -6,6 +6,8 @@ import type {
   Conversation,
   ConversationId,
   ConversationMessage,
+  EncryptedMessages,
+  MessageGroupId,
   MessageId,
   UserConversationState,
   UserId,
@@ -145,6 +147,7 @@ export const useSocketStore = defineStore('socket', () => {
 
     userChannel = socket.channel(`user:${id}`, { token })
     userChannel.onError((reason) => toastStore.addErrorToast(reason, reason))
+    addUserHandlersForChannelMessages(userChannel)
 
     createStandardSocketEventHandlers(
       () => userChannel!.join(),
@@ -152,11 +155,16 @@ export const useSocketStore = defineStore('socket', () => {
       () => {},
       'Unable to join user channel.'
     )
-    userChannel.on('new_conversation', ({ conversation, user_ids }) => receiveNewConversation(conversation, user_ids))
 
     for (const conversation of messageStore.conversations) {
       joinConversation(conversation)
     }
+  }
+
+  function addUserHandlersForChannelMessages(channel: Channel) {
+    channel.on('new_conversation', ({ conversation, user_ids }) => receiveNewConversation(conversation, user_ids))
+    channel.on('edit_message', ({ message, conversation_id }) => messageStore.updateMessage(conversation_id, message))
+    channel.on('new_message', ({ message, conversation_id }) => messageStore.addMessage(conversation_id, message))
   }
 
   function joinConversation(conversation: Conversation) {
@@ -269,12 +277,10 @@ export const useSocketStore = defineStore('socket', () => {
       `Unable to join ${conversationName}.`
     )
 
-    channel.on('new_message', (msg) => receiveNewMessage(conversation.id, msg.message))
     channel.on('read_conversation', (msg) => messageStore.viewConversation(conversation.id, msg.user_id))
     channel.on('start_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'typing'))
     channel.on('finish_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'idle'))
     channel.on('leave_conversation', ({ user_id }) => messageStore.removeUserFromConversation(conversation.id, user_id))
-    channel.on('update_message', ({ message }) => receiveMessageUpdate(conversation.id, message))
     channel.on('delete_message', ({ message_id }) => messageStore.removeMessage(conversation.id, message_id))
     channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
     channel.on('set_encryption_keys', ({ public_key, user_id }) =>
@@ -310,7 +316,7 @@ export const useSocketStore = defineStore('socket', () => {
 
   async function transmitNewMessage(
     conversationId: ConversationId,
-    encryptedMessage: Map<string, string>
+    encryptedMessage: EncryptedMessages
   ): Promise<z.infer<typeof message>> {
     // This can throw because the payload is more complicated than a boolean
     const { channel, token } = getChannelAndToken(conversationId, 'Unable to locate conversation to send message.')
@@ -410,13 +416,13 @@ export const useSocketStore = defineStore('socket', () => {
   function transmitEditMessage(
     conversationId: ConversationId,
     messageId: MessageId,
-    content: string
+    encryptedMessages: EncryptedMessages
   ): Promise<boolean> {
     return transmitBasicEvent(
       conversationId,
       SocketEvent.EDIT_MESSAGE,
-      { message_id: messageId, content },
-      'Unable to edit message.'
+      { message_id: messageId, encrypted_messages: encryptedMessages },
+      `Unable to edit message in ${messageStore.getConversationName(conversationId)}.`
     )
   }
 
@@ -429,11 +435,11 @@ export const useSocketStore = defineStore('socket', () => {
     messageStore.updateMessage(conversationId, conversationMessage)
   }
 
-  function transmitDeleteMessage(conversationId: ConversationId, messageId: MessageId): Promise<boolean> {
+  function transmitDeleteMessage(conversationId: ConversationId, messageGroup: MessageGroupId): Promise<boolean> {
     return transmitBasicEvent(
       conversationId,
       SocketEvent.DELETE_MESSAGE,
-      { message_id: messageId },
+      { message_group_id: messageGroup },
       'Unable to delete message.'
     )
   }

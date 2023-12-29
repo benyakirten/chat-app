@@ -31,6 +31,7 @@ const transitionGroupName = computed(() => `message-${isMine.value ? 'mine' : 'o
           :is-private="isPrivate"
           :key="message.id"
           :auto-view="message.id === viewedMessageId"
+          :conversation-id="conversationId"
         />
       </TransitionGroup>
     </ul>

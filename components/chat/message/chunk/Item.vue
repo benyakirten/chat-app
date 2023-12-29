@@ -2,6 +2,7 @@
 const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const props = defineProps<{
+  conversationId: ConversationId
   message: ConversationMessage
   readTimes: UserReadTimes
   isMine: boolean
@@ -68,7 +69,7 @@ const border = computed(() => (highlighted.value ? '1px solid var(--highlight)' 
     />
     <ChatMessageChunkItemContent :is-editing="isEditing" :content="message.content" :status="message.status" />
     <ChatMessageChunkItemStatus
-      @resend="messageStore.resendMessage(message)"
+      @resend="messageStore.resendMessage(conversationId, message)"
       :is-mine="isMine"
       :is-private="isPrivate"
       :align="textAlign"

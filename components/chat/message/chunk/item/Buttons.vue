@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
-const props = defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | 'bottom' }>()
+defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | 'bottom' }>()
 defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
 
 const buttonsContainer = ref<HTMLDivElement | null>(null)
