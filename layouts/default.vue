@@ -49,10 +49,6 @@ body {
   --disabled-text: #888;
 }
 
-main {
-  min-height: 100vh;
-}
-
 .page-leave-active,
 .page-enter-active {
   transition: all 300ms ease;

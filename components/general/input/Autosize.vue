@@ -108,7 +108,7 @@ onMounted(() => {
   &-input,
   &-hidden {
     word-break: break-all;
-    padding: 0.5rem 1rem;
+    padding: var(--size-xs);
     border-radius: 4px;
     resize: none;
 
@@ -120,12 +120,11 @@ onMounted(() => {
   &-hidden {
     position: absolute;
     height: min-content;
-    margin: 0 var(--text-size-lg);
-    z-index: -100;
+    z-index: 5;
     visibility: hidden;
     pointer-events: none;
     white-space: pre-wrap;
-    font-size: var(--text-size-xl);
+    margin-left: 2px;
   }
 }
 </style>
