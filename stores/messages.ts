@@ -607,9 +607,6 @@ export const useMessageStore = defineStore('messages', () => {
       const jsonPublicKey = await exportKey(publicKey)
       const jsonPrivateKey = await exportKey(privateKey)
 
-      console.log('HERE!')
-      console.table({ jsonPrivateKey, jsonPublicKey })
-
       const conversationId = await socketStore.transmitNewGroupConversation(
         members,
         jsonPublicKey,
