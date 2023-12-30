@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
+import type { z } from 'zod'
 
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
@@ -199,7 +200,7 @@ export const useMessageStore = defineStore('messages', () => {
     member.lastRead = new Date()
   }
 
-  async function addMessage(conversationId: ConversationId, message: unknown) {
+  async function addMessage(conversationId: ConversationId, _message: z.infer<typeof message>) {
     if (!userStore.me) {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
@@ -218,7 +219,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const messageData = await parseMessage(message, convo.privateKey)
+    const messageData = await parseMessage(_message, convo.privateKey)
     if (!messageData) {
       return
     }
@@ -230,11 +231,14 @@ export const useMessageStore = defineStore('messages', () => {
     }
   }
 
-  async function parseMessage(message: unknown, privateKey: CryptoKey): Promise<ConversationMessage | null> {
-    const messageRes = MESSAGE_SHAPE.safeParse(message)
+  async function parseMessage(
+    _message: z.infer<typeof message>,
+    privateKey: CryptoKey
+  ): Promise<ConversationMessage | null> {
+    const messageRes = MESSAGE_SHAPE.safeParse(_message)
 
     if (!messageRes.success) {
-      toastStore.addErrorToast(message, 'Received unexpected shape from server. Unable to parse message.')
+      toastStore.addErrorToast(_message, 'Received unexpected shape from server. Unable to parse message.')
       return null
     }
 
@@ -499,7 +503,7 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  async function updateMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function updateMessage(conversationId: ConversationId, _message: z.infer<typeof message>) {
     const convo = conversation.value(conversationId)
     if (!convo) {
       toastStore.addErrorToast(null, 'Unable to update message. Please reload the page and try again.')
@@ -511,7 +515,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const messageData = await parseMessage(message, convo.privateKey)
+    const messageData = await parseMessage(_message, convo.privateKey)
     if (!messageData) {
       return
     }
@@ -594,12 +598,28 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   async function startGroupConversation(members: UserId[], alias?: string): Promise<string> {
+    if (!userStore.me) {
+      throw new Error('You must be logged in to start a group conversation')
+    }
+
     try {
-      const conversationId = socketStore.transmitNewGroupConversation(members, alias)
+      const { privateKey, publicKey } = await generateKeys()
+      const jsonPublicKey = await exportKey(publicKey)
+      const jsonPrivateKey = await exportKey(privateKey)
+
+      console.log('HERE!')
+      console.table({ jsonPrivateKey, jsonPublicKey })
+
+      const conversationId = await socketStore.transmitNewGroupConversation(
+        members,
+        jsonPublicKey,
+        jsonPrivateKey,
+        alias
+      )
       return conversationId
     } catch (e) {
-      toastStore.addErrorToast(e, 'Error starting group conversation')
-      throw e
+      console.error(e)
+      throw new Error('Error starting group conversation')
     }
   }
 

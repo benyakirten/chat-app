@@ -462,7 +462,12 @@ export const useSocketStore = defineStore('socket', () => {
     )
   }
 
-  async function transmitNewGroupConversation(members: UserId[], alias?: string): Promise<string> {
+  async function transmitNewGroupConversation(
+    members: UserId[],
+    publicKey: JsonWebKey,
+    privateKey: JsonWebKey,
+    alias?: string
+  ): Promise<string> {
     if (!userStore.me || !systemChannel) {
       const err = new Error('Token or system channel unavailable.')
       toastStore.addErrorToast(err, err.message)
@@ -476,6 +481,8 @@ export const useSocketStore = defineStore('socket', () => {
           token,
           alias,
           user_ids: [...members, userStore.me!.id],
+          public_key: publicKey,
+          private_key: privateKey,
         }),
       SocketEvent.START_GROUP_CONVERSATION,
       (id) => id as string,
@@ -486,7 +493,7 @@ export const useSocketStore = defineStore('socket', () => {
   function receiveNewConversation(_conversation: z.infer<typeof conversation>, userIds: string[]) {
     const parseRes = conversation.safeParse(_conversation)
     if (!parseRes.success) {
-      // TODO: Error handling?
+      toastStore.addErrorToast(parseRes.error, 'Unable to parse new conversation.')
       return
     }
 
