@@ -164,18 +164,17 @@ export const useMessageStore = defineStore('messages', () => {
 
     const { items, page_token } = messagesResponse.data.messages
     conversation.nextPage = page_token
-    for (const message of items) {
-      const conversationMessage: ConversationMessage = {
-        sender: message.sender,
-        id: message.message_group,
-        content: message.content,
-        status: 'complete',
-        createTime: new Date(message.inserted_at),
-        updateTime: new Date(message.updated_at),
-        messageId: message.id,
+
+    const messagePromises = items.map(async (item) => {
+      const messageData = await parseMessage(item, conversation.privateKey!)
+      if (!messageData) {
+        toastStore.addErrorToast(null, 'Unable to load message. Please reload the page and try again.')
+        return null
       }
-      conversation.messages.set(message.id, conversationMessage)
-    }
+
+      conversation.messages.set(messageData.id, messageData)
+    })
+    await Promise.allSettled(messagePromises)
   }
 
   // This function will also be called when a channel is told that another user has read a conversation
