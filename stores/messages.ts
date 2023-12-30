@@ -40,7 +40,7 @@ export interface ConversationMessage {
   status: 'pending' | 'error' | 'complete'
   createTime: Date
   updateTime: Date
-  messageGroup: MessageGroupId
+  messageId: MessageId
 }
 
 export type UserReadTimes = Record<UserId, Date>
@@ -166,12 +166,12 @@ export const useMessageStore = defineStore('messages', () => {
     for (const message of items) {
       const conversationMessage: ConversationMessage = {
         sender: message.sender,
-        id: message.id,
+        id: message.message_group,
         content: message.content,
         status: 'complete',
         createTime: new Date(message.inserted_at),
         updateTime: new Date(message.updated_at),
-        messageGroup: message.message_group,
+        messageId: message.id,
       }
       conversation.messages.set(message.id, conversationMessage)
     }
@@ -200,13 +200,6 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   async function addMessage(conversationId: ConversationId, message: unknown) {
-    const messageRes = MESSAGE_SHAPE.safeParse(message)
-
-    if (!messageRes.success) {
-      toastStore.addErrorToast(message, 'Received unexpected shape from server. Unable to receive message.')
-      return
-    }
-
     if (!userStore.me) {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
@@ -217,24 +210,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const messageData: ConversationMessage = {
-      sender: messageRes.data.sender,
-      id: messageRes.data.id,
-      content: messageRes.data.content,
-      status: 'complete',
-      createTime: new Date(messageRes.data.inserted_at),
-      updateTime: new Date(messageRes.data.updated_at),
-      messageGroup: messageRes.data.message_group,
-    }
-    await addMessageToConversation(convo, messageData)
-
-    if (route.params['id'] === conversationId && !document.hidden && messageData.sender !== userStore.me?.id) {
-      socketStore.transmitConversationRead(convo.id)
-    }
-  }
-
-  async function addMessageToConversation(conversation: Conversation, message: ConversationMessage) {
-    if (!conversationCanChange.value(conversation.id) || !conversation.privateKey) {
+    if (!convo.privateKey) {
       toastStore.addErrorToast(
         null,
         'Cannot receive message to private conversation until encryption has been established.'
@@ -242,10 +218,47 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    const decryptedMessage = await decrypt(conversation.privateKey, message.content)
-    message.content = decryptedMessage
+    const messageData = await parseMessage(message, convo.privateKey)
+    if (!messageData) {
+      return
+    }
 
-    conversation.messages.set(message.id, message)
+    convo.messages.set(messageData.id, messageData)
+
+    if (route.params['id'] === conversationId && !document.hidden && messageData.sender !== userStore.me?.id) {
+      socketStore.transmitConversationRead(convo.id)
+    }
+  }
+
+  async function parseMessage(message: unknown, privateKey: CryptoKey): Promise<ConversationMessage | null> {
+    const messageRes = MESSAGE_SHAPE.safeParse(message)
+
+    if (!messageRes.success) {
+      toastStore.addErrorToast(message, 'Received unexpected shape from server. Unable to parse message.')
+      return null
+    }
+
+    const { sender, content, id, inserted_at, updated_at, message_group } = messageRes.data
+
+    let decryptedMessage: string
+    try {
+      decryptedMessage = await decrypt(privateKey, content)
+    } catch (e) {
+      toastStore.addErrorToast(e, 'Unable to decrypt message')
+      return null
+    }
+
+    const messageData: ConversationMessage = {
+      sender,
+      id: message_group,
+      content: decryptedMessage,
+      status: 'complete',
+      createTime: new Date(inserted_at),
+      updateTime: new Date(updated_at),
+      messageId: id,
+    }
+
+    return messageData
   }
 
   function startTyping(conversationId: ConversationId) {
@@ -323,7 +336,7 @@ export const useMessageStore = defineStore('messages', () => {
       status: 'complete',
       createTime: new Date(),
       updateTime: new Date(),
-      messageGroup: newId,
+      messageId: newId,
     }
 
     convo.messages.set(newId, convoMessage)
@@ -430,12 +443,12 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    socketStore.transmitDeleteMessage(conversationId, message.messageGroup)
+    socketStore.transmitDeleteMessage(conversationId, message.id)
   }
 
-  function removeMessage(conversationId: ConversationId, messageId: MessageId) {
+  function removeMessage(conversationId: ConversationId, messageGroupId: MessageGroupId) {
     const convo = conversation.value(conversationId)
-    convo?.messages.delete(messageId)
+    convo?.messages.delete(messageGroupId)
   }
 
   function startMessageEdit(conversationId: ConversationId, message: ConversationMessage) {
@@ -487,9 +500,24 @@ export const useMessageStore = defineStore('messages', () => {
     editedMessage.value = null
   }
 
-  function updateMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function updateMessage(conversationId: ConversationId, message: ConversationMessage) {
     const convo = conversation.value(conversationId)
-    convo?.messages.set(message.id, message)
+    if (!convo) {
+      toastStore.addErrorToast(null, 'Unable to update message. Please reload the page and try again.')
+      return
+    }
+
+    if (!convo.privateKey) {
+      toastStore.addErrorToast(null, 'Cannot update message until encryption has been established.')
+      return
+    }
+
+    const messageData = await parseMessage(message, convo.privateKey)
+    if (!messageData) {
+      return
+    }
+
+    convo?.messages.set(message.id, messageData)
   }
 
   /**
@@ -682,7 +710,6 @@ export const useMessageStore = defineStore('messages', () => {
     removeMessage,
     getNextMessagePage,
     setEncryptionKey,
-    addMessageToConversation,
     conversationCanChange,
   }
 })

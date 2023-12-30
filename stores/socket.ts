@@ -248,20 +248,7 @@ export const useSocketStore = defineStore('socket', () => {
       conversation.members.set(user.id, { state: 'idle', lastRead: user.lastRead, publicKey: user.publicKey })
     }
 
-    const messagePromises = items.map((message) => {
-      const conversationMessage: ConversationMessage = {
-        id: message.id,
-        content: message.content,
-        sender: message.sender,
-        createTime: new Date(message.inserted_at),
-        updateTime: new Date(message.updated_at),
-        status: 'complete',
-        messageGroup: message.message_group,
-      }
-
-      return messageStore.addMessageToConversation(conversation, conversationMessage)
-    })
-
+    const messagePromises = items.map((message) => messageStore.addMessage(conversation.id, message))
     await Promise.allSettled(messagePromises)
 
     if (!privateKey) {
@@ -281,7 +268,9 @@ export const useSocketStore = defineStore('socket', () => {
     channel.on('start_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'typing'))
     channel.on('finish_typing', ({ user_id }) => messageStore.setUserTypingState(conversation.id, user_id, 'idle'))
     channel.on('leave_conversation', ({ user_id }) => messageStore.removeUserFromConversation(conversation.id, user_id))
-    channel.on('delete_message', ({ message_id }) => messageStore.removeMessage(conversation.id, message_id))
+    channel.on('delete_message', ({ message_group_id }) =>
+      messageStore.removeMessage(conversation.id, message_group_id)
+    )
     channel.on('update_alias', ({ conversation }) => receiveConversationAliasChanged(conversation))
     channel.on('set_encryption_keys', ({ public_key, user_id }) =>
       messageStore.setEncryptionKey(conversation.id, user_id, public_key)
@@ -336,36 +325,6 @@ export const useSocketStore = defineStore('socket', () => {
       (res) => res as any,
       'Unable to send message.'
     )
-  }
-
-  function receiveNewMessage(conversationId: ConversationId, msg: z.infer<typeof message>) {
-    const conversationMessage = parseMessage(msg)
-    if (!conversationMessage) {
-      return
-    }
-
-    messageStore.addMessage(conversationId, conversationMessage)
-  }
-
-  function parseMessage(msg: z.infer<typeof message>) {
-    const messageRes = message.safeParse(msg)
-    if (!messageRes.success) {
-      toastStore.addErrorToast(messageRes.error, 'Message shape not recognized.')
-      return
-    }
-
-    const { id, sender, updated_at, content, inserted_at, message_group } = messageRes.data
-    const conversationMessage: ConversationMessage = {
-      id,
-      sender,
-      content,
-      createTime: new Date(inserted_at),
-      updateTime: new Date(updated_at),
-      status: 'complete',
-      messageGroup: message_group,
-    }
-
-    return conversationMessage
   }
 
   function transmitConversationAliasChanged(conversationId: ConversationId, alias: string) {
@@ -424,15 +383,6 @@ export const useSocketStore = defineStore('socket', () => {
       { message_id: messageId, encrypted_messages: encryptedMessages },
       `Unable to edit message in ${messageStore.getConversationName(conversationId)}.`
     )
-  }
-
-  function receiveMessageUpdate(conversationId: ConversationId, msg: z.infer<typeof message>) {
-    const conversationMessage = parseMessage(msg)
-    if (!conversationMessage) {
-      return
-    }
-
-    messageStore.updateMessage(conversationId, conversationMessage)
   }
 
   function transmitDeleteMessage(conversationId: ConversationId, messageGroup: MessageGroupId): Promise<boolean> {
@@ -621,7 +571,6 @@ export const useSocketStore = defineStore('socket', () => {
     transmitConversationDeparture,
     transmitConversationRead,
     transmitNewMessage,
-    receiveNewMessage,
     transmitConversationAliasChanged,
     receiveConversationAliasChanged,
     transmitTypingStarted,
@@ -631,7 +580,6 @@ export const useSocketStore = defineStore('socket', () => {
     getChannelAndToken,
     transmitBasicEvent,
     transmitToBooleanPromise,
-    receiveMessageUpdate,
     transmitConversationEdit,
     transmitHiddenStatusChange,
     transmitNewGroupConversation,
