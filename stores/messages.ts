@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
 import { exportKey, importKey } from '~/utils/encryption'
+import { MESSAGE_SHAPE } from '~/utils/shapes'
 
 export type ConversationId = string
 export type MessageId = string
@@ -198,7 +199,14 @@ export const useMessageStore = defineStore('messages', () => {
     member.lastRead = new Date()
   }
 
-  async function addMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function addMessage(conversationId: ConversationId, message: unknown) {
+    const messageRes = MESSAGE_SHAPE.safeParse(message)
+
+    if (!messageRes.success) {
+      toastStore.addErrorToast(message, 'Received unexpected shape from server. Unable to receive message.')
+      return
+    }
+
     if (!userStore.me) {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
@@ -209,26 +217,33 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    await addMessageToConversation(convo, message)
+    const messageData: ConversationMessage = {
+      sender: messageRes.data.sender,
+      id: messageRes.data.id,
+      content: messageRes.data.content,
+      status: 'complete',
+      createTime: new Date(messageRes.data.inserted_at),
+      updateTime: new Date(messageRes.data.updated_at),
+      messageGroup: messageRes.data.message_group,
+    }
+    await addMessageToConversation(convo, messageData)
 
-    if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
+    if (route.params['id'] === conversationId && !document.hidden && messageData.sender !== userStore.me?.id) {
       socketStore.transmitConversationRead(convo.id)
     }
   }
 
   async function addMessageToConversation(conversation: Conversation, message: ConversationMessage) {
-    if (conversation.isPrivate) {
-      if (!conversation.privateKey) {
-        toastStore.addErrorToast(
-          null,
-          'Cannot receive message to private conversation until encryption has been established.'
-        )
-        return
-      }
-
-      const decryptedMessage = await decrypt(conversation.privateKey, message.content)
-      message.content = decryptedMessage
+    if (!conversationCanChange.value(conversation.id) || !conversation.privateKey) {
+      toastStore.addErrorToast(
+        null,
+        'Cannot receive message to private conversation until encryption has been established.'
+      )
+      return
     }
+
+    const decryptedMessage = await decrypt(conversation.privateKey, message.content)
+    message.content = decryptedMessage
 
     conversation.messages.set(message.id, message)
   }
@@ -311,7 +326,7 @@ export const useMessageStore = defineStore('messages', () => {
       messageGroup: newId,
     }
 
-    addMessage(id, convoMessage)
+    convo.messages.set(newId, convoMessage)
 
     try {
       socketStore.transmitTypingEnded(convo.id)

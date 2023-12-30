@@ -69,6 +69,8 @@ export const message = timestamped.extend({
   message_group: z.string().uuid(),
 })
 
+export const MESSAGE_SHAPE = message
+
 export const REGISTER_SHAPE = LOGIN_SHAPE.extend({
   displayName: z.union([z.undefined(), z.string()]),
   password: z

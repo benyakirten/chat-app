@@ -73,16 +73,14 @@ export const useSocketStore = defineStore('socket', () => {
   function createStandardSocketEventHandlers<T>(
     initialEvent: () => Push,
     event: SocketEvent,
-    successCallback: ((response: unknown) => Promise<T>) | ((response: unknown) => T),
+    successCallback: (response: unknown) => T,
     errorMessage: string
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       initialEvent()
         .receive('ok', async (data) => {
           resetReattempts(event)
-          const callbackPromise = successCallback?.(data)
-          resolve(callbackPromise)
-          return
+          resolve(data)
         })
         .receive('error', async (error) => {
           if (canReattempt(error, event)) {
@@ -97,6 +95,8 @@ export const useSocketStore = defineStore('socket', () => {
           toastStore.addErrorToast(error, errorMessage)
           reject(error)
         })
+    }).then((data) => {
+      return successCallback(data)
     })
   }
 
@@ -117,7 +117,7 @@ export const useSocketStore = defineStore('socket', () => {
 
     socket = new Socket(config.public.wsUrl, { params: { token } })
     socket.connect()
-    socket.onError((err) => console.error(err))
+    socket.onError((err) => toastStore.addErrorToast(err, "Couldn't establish connection to server."))
 
     // TODO: Abstract this and handle errors better?
     systemChannel = socket.channel('system:general', { token, hidden })
@@ -316,7 +316,7 @@ export const useSocketStore = defineStore('socket', () => {
 
   async function transmitNewMessage(
     conversationId: ConversationId,
-    encryptedMessage: EncryptedMessages
+    encryptedMessages: EncryptedMessages
   ): Promise<z.infer<typeof message>> {
     // This can throw because the payload is more complicated than a boolean
     const { channel, token } = getChannelAndToken(conversationId, 'Unable to locate conversation to send message.')
@@ -330,7 +330,7 @@ export const useSocketStore = defineStore('socket', () => {
       () =>
         channel.push('send_message', {
           token,
-          encryptedMessage,
+          encrypted_messages: encryptedMessages,
         }),
       SocketEvent.SEND_MESSAGE,
       (res) => res as any,
