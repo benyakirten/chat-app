@@ -120,7 +120,7 @@ onMounted(() => {
   &-hidden {
     position: absolute;
     height: min-content;
-    z-index: 5;
+    z-index: -100;
     visibility: hidden;
     pointer-events: none;
     white-space: pre-wrap;
