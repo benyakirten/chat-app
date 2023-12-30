@@ -5,7 +5,6 @@ import { z } from 'zod'
 import type {
   Conversation,
   ConversationId,
-  ConversationMessage,
   EncryptedMessages,
   MessageGroupId,
   MessageId,
@@ -380,7 +379,7 @@ export const useSocketStore = defineStore('socket', () => {
     return transmitBasicEvent(
       conversationId,
       SocketEvent.EDIT_MESSAGE,
-      { message_id: messageId, encrypted_messages: encryptedMessages },
+      { message_group_id: messageId, encrypted_messages: encryptedMessages },
       `Unable to edit message in ${messageStore.getConversationName(conversationId)}.`
     )
   }

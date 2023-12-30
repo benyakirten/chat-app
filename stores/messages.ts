@@ -476,17 +476,16 @@ export const useMessageStore = defineStore('messages', () => {
 
     const message = convo.messages.get(messageId)
     if (!message) {
-      // TODO: Error handling
+      toastStore.addErrorToast(null, 'Unable to edit message. Please reload the page and try again.')
       return
     }
 
     if (message.content === content) {
+      toastStore.addErrorToast(null, 'Message contents have not changed.')
       return
     }
 
-    // TODO: Transmit new message content - if successful, we'll get a new update time
     stopMessageEdit()
-
     const encryptedMessages = await encryptMessageToAll(convo, content)
     if (!encryptedMessages) {
       toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
@@ -517,7 +516,7 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    convo?.messages.set(message.id, messageData)
+    convo?.messages.set(messageData.id, messageData)
   }
 
   /**
