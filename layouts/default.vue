@@ -44,10 +44,9 @@ body {
   --text-size-sm: calc(var(--size-sm) * var(--magnification, 1));
 
   font-size: var(--text-size-lg);
-}
 
-main {
-  min-height: 100vh;
+  --disabled-bg: #ccc;
+  --disabled-text: #888;
 }
 
 .page-leave-active,

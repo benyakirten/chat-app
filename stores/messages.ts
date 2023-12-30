@@ -1,18 +1,24 @@
-import { defineStore, skipHydrate } from 'pinia'
+import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
+import type { z } from 'zod'
 
 import { useUsersStore } from './users'
 import { useToastStore } from './toasts'
+import { exportKey, importKey } from '~/utils/encryption'
+import { MESSAGE_SHAPE } from '~/utils/shapes'
 
 export type ConversationId = string
 export type MessageId = string
 export type UserId = string
+export type MessageGroupId = string
+export type EncryptedMessages = Record<string, string>
 
 export const TYPING_TIMEOUT = 2_000
 
 export interface UserConversationState {
   state: 'typing' | 'idle'
   lastRead: Date
+  publicKey: CryptoKey | null
 }
 
 export interface Conversation {
@@ -22,6 +28,7 @@ export interface Conversation {
   isPrivate: boolean
   typingTimeout?: NodeJS.Timeout
   alias: string | null
+  privateKey: CryptoKey | null
   draft?: string
   nextPage?: string
 }
@@ -34,6 +41,7 @@ export interface ConversationMessage {
   status: 'pending' | 'error' | 'complete'
   createTime: Date
   updateTime: Date
+  messageId: MessageId
 }
 
 export type UserReadTimes = Record<UserId, Date>
@@ -91,6 +99,20 @@ export const useMessageStore = defineStore('messages', () => {
   }
 
   const conversation = computed(() => (id: ConversationId) => conversations.value.find((convo) => convo.id === id))
+  const conversationCanChange = computed(() => (conversationId: ConversationId) => {
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      return false
+    }
+
+    for (const member of convo.members.values()) {
+      if (!member.publicKey) {
+        return false
+      }
+    }
+
+    return true
+  })
 
   const visibleConversations = computed(() => {
     // TODO: Add ability to search conversations
@@ -142,17 +164,17 @@ export const useMessageStore = defineStore('messages', () => {
 
     const { items, page_token } = messagesResponse.data.messages
     conversation.nextPage = page_token
-    for (const message of items) {
-      const conversationMessage: ConversationMessage = {
-        sender: message.sender,
-        id: message.id,
-        content: message.content,
-        status: 'complete',
-        createTime: new Date(message.inserted_at),
-        updateTime: new Date(message.updated_at),
+
+    const messagePromises = items.map(async (item) => {
+      const messageData = await parseMessage(item, conversation.privateKey!)
+      if (!messageData) {
+        toastStore.addErrorToast(null, 'Unable to load message. Please reload the page and try again.')
+        return null
       }
-      conversation.messages.set(message.id, conversationMessage)
-    }
+
+      conversation.messages.set(messageData.id, messageData)
+    })
+    await Promise.allSettled(messagePromises)
   }
 
   // This function will also be called when a channel is told that another user has read a conversation
@@ -177,7 +199,7 @@ export const useMessageStore = defineStore('messages', () => {
     member.lastRead = new Date()
   }
 
-  function addMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function addMessage(conversationId: ConversationId, _message: z.infer<typeof message>) {
     if (!userStore.me) {
       toastStore.add('You must be logged in to receive or send messages', { type: 'error' })
     }
@@ -188,11 +210,58 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    convo.messages.set(message.id, message)
+    if (!convo.privateKey) {
+      toastStore.addErrorToast(
+        null,
+        'Cannot receive message to private conversation until encryption has been established.'
+      )
+      return
+    }
 
-    if (route.params['id'] === conversationId && !document.hidden && message.sender !== userStore.me?.id) {
+    const messageData = await parseMessage(_message, convo.privateKey)
+    if (!messageData) {
+      return
+    }
+
+    convo.messages.set(messageData.id, messageData)
+
+    if (route.params['id'] === conversationId && !document.hidden && messageData.sender !== userStore.me?.id) {
       socketStore.transmitConversationRead(convo.id)
     }
+  }
+
+  async function parseMessage(
+    _message: z.infer<typeof message>,
+    privateKey: CryptoKey
+  ): Promise<ConversationMessage | null> {
+    const messageRes = MESSAGE_SHAPE.safeParse(_message)
+
+    if (!messageRes.success) {
+      toastStore.addErrorToast(_message, 'Received unexpected shape from server. Unable to parse message.')
+      return null
+    }
+
+    const { sender, content, id, inserted_at, updated_at, message_group } = messageRes.data
+
+    let decryptedMessage: string
+    try {
+      decryptedMessage = await decrypt(privateKey, content)
+    } catch (e) {
+      toastStore.addErrorToast(e, 'Unable to decrypt message')
+      return null
+    }
+
+    const messageData: ConversationMessage = {
+      sender,
+      id: message_group,
+      content: decryptedMessage,
+      status: 'complete',
+      createTime: new Date(inserted_at),
+      updateTime: new Date(updated_at),
+      messageId: id,
+    }
+
+    return messageData
   }
 
   function startTyping(conversationId: ConversationId) {
@@ -257,6 +326,12 @@ export const useMessageStore = defineStore('messages', () => {
     }
 
     const newId = uuid()
+
+    const encryptedMessages = await encryptMessageToAll(convo, message)
+    if (!encryptedMessages) {
+      toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
+      return
+    }
     const convoMessage: ConversationMessage = {
       sender: userStore.me.id,
       id: newId,
@@ -264,18 +339,39 @@ export const useMessageStore = defineStore('messages', () => {
       status: 'complete',
       createTime: new Date(),
       updateTime: new Date(),
+      messageId: newId,
     }
 
-    addMessage(id, convoMessage)
+    convo.messages.set(newId, convoMessage)
 
     try {
       socketStore.transmitTypingEnded(convo.id)
-      await socketStore.transmitNewMessage(id, message)
+      await socketStore.transmitNewMessage(id, encryptedMessages)
       synchronizeMessage(id, newId, true)
     } catch (e) {
-      console.error(e)
       synchronizeMessage(id, newId, false)
     }
+  }
+
+  async function encryptMessageToAll(conversation: Conversation, message: string): Promise<EncryptedMessages | null> {
+    const promises: Promise<{ userId: UserId; encryptedMessage: string }>[] = []
+    for (const [userId, member] of conversation.members.entries()) {
+      if (!member.publicKey) {
+        return null
+      }
+      const promise = async () => {
+        const encryptedMessage = await encrypt(member.publicKey!, message)
+        return { userId, encryptedMessage }
+      }
+      promises.push(promise())
+    }
+
+    const results = await Promise.all(promises)
+
+    return results.reduce<Record<string, string>>((acc, { userId, encryptedMessage }) => {
+      acc[userId] = encryptedMessage
+      return acc
+    }, {})
   }
 
   /**
@@ -304,14 +400,32 @@ export const useMessageStore = defineStore('messages', () => {
     convo.messages.delete(messageId)
   }
 
-  function resendMessage(message: ConversationMessage) {
-    message.status = 'pending'
-    // TODO: Attempt to create the message again
+  async function resendMessage(conversationId: ConversationId, message: ConversationMessage) {
+    if (message.status !== 'error') {
+      toastStore.addErrorToast(null, 'Cannot resend a message which was incorrectly sent.')
+      return
+    }
 
-    // TODO: Delete the timeout when we have an actual backend
-    setTimeout(() => {
-      message.status = 'complete'
-    }, 1000)
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      toastStore.addErrorToast(null, 'Cannot locate conversation for the message..')
+      return
+    }
+
+    message.status = 'pending'
+    const encryptedMessages = await encryptMessageToAll(convo, message.content)
+    if (!encryptedMessages) {
+      toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
+      return
+    }
+
+    try {
+      socketStore.transmitTypingEnded(convo.id)
+      await socketStore.transmitNewMessage(convo.id, encryptedMessages)
+      synchronizeMessage(convo.id, message.id, true)
+    } catch (e) {
+      synchronizeMessage(convo.id, message.id, false)
+    }
   }
 
   function deleteMessage(conversationId: ConversationId, messageId: MessageId) {
@@ -332,12 +446,12 @@ export const useMessageStore = defineStore('messages', () => {
       return
     }
 
-    socketStore.transmitDeleteMessage(conversationId, messageId)
+    socketStore.transmitDeleteMessage(conversationId, message.id)
   }
 
-  function removeMessage(conversationId: ConversationId, messageId: MessageId) {
+  function removeMessage(conversationId: ConversationId, messageGroupId: MessageGroupId) {
     const convo = conversation.value(conversationId)
-    convo?.messages.delete(messageId)
+    convo?.messages.delete(messageGroupId)
   }
 
   function startMessageEdit(conversationId: ConversationId, message: ConversationMessage) {
@@ -365,49 +479,144 @@ export const useMessageStore = defineStore('messages', () => {
 
     const message = convo.messages.get(messageId)
     if (!message) {
-      // TODO: Error handling
+      toastStore.addErrorToast(null, 'Unable to edit message. Please reload the page and try again.')
       return
     }
 
     if (message.content === content) {
+      toastStore.addErrorToast(null, 'Message contents have not changed.')
       return
     }
 
-    // TODO: Transmit new message content - if successful, we'll get a new update time
     stopMessageEdit()
-    socketStore.transmitEditMessage(conversationId, messageId, content)
+    const encryptedMessages = await encryptMessageToAll(convo, content)
+    if (!encryptedMessages) {
+      toastStore.addErrorToast(null, 'Cannot send message until encryption has been established.')
+      return
+    }
+
+    socketStore.transmitEditMessage(conversationId, messageId, encryptedMessages)
   }
 
   function stopMessageEdit() {
     editedMessage.value = null
   }
 
-  function updateMessage(conversationId: ConversationId, message: ConversationMessage) {
+  async function updateMessage(conversationId: ConversationId, _message: z.infer<typeof message>) {
     const convo = conversation.value(conversationId)
-    convo?.messages.set(message.id, message)
+    if (!convo) {
+      toastStore.addErrorToast(null, 'Unable to update message. Please reload the page and try again.')
+      return
+    }
+
+    if (!convo.privateKey) {
+      toastStore.addErrorToast(null, 'Cannot update message until encryption has been established.')
+      return
+    }
+
+    const messageData = await parseMessage(_message, convo.privateKey)
+    if (!messageData) {
+      return
+    }
+
+    convo?.messages.set(messageData.id, messageData)
   }
 
-  async function startConversation(
-    isPrivate: boolean,
-    members: UserId[],
-    firstMessage: string,
-    alias?: string
-  ): Promise<string> {
-    if (isPrivate) {
-      for (const conversation of conversations.value) {
-        if (isPrivate && conversation.members.has(members[0])) {
-          sendMessage(conversation.id, firstMessage)
+  /**
+   * If the conversation is already made (available either locally or from the server), get it
+   * so we don't create keys for a conversation that already exists.
+   */
+  async function checkForPrexistingConversation(
+    otherUserId: UserId
+  ): Promise<{ conversation: Conversation; needsSocket: boolean } | null> {
+    let conversation = conversations.value.find((convo) => convo.isPrivate && convo.members.has(otherUserId))
+    if (conversation) {
+      return { conversation, needsSocket: false }
+    }
+
+    const res = await useAuthedFetch(`/api/conversation?privateWithUser=${otherUserId}`, 'GET')
+    if (res.error.value) {
+      toastStore.addErrorToast(
+        res.error,
+        `Unable to start conversation with user ${userStore.getUserName(otherUserId)}`
+      )
+      throw res.error
+    }
+
+    const existingConversationShape = PRIVATE_CONVERSATION_SHAPE.safeParse(res.data.value)
+    if (!existingConversationShape.success) {
+      toastStore.addErrorToast(res.data.value, 'Received unexpected shape from server. Unable to create conversation.')
+      throw res.error
+    }
+
+    const { conversation_id } = existingConversationShape.data
+
+    if (!conversation_id) {
+      return null
+    }
+
+    conversation = {
+      id: conversation_id,
+      members: new Map(),
+      messages: new Map(),
+      isPrivate: true,
+      alias: null,
+      privateKey: null,
+    }
+    return { conversation, needsSocket: true }
+  }
+
+  async function startPrivateConversation(otherUserId: UserId): Promise<string> {
+    try {
+      const existingConversation = await checkForPrexistingConversation(otherUserId)
+      if (existingConversation) {
+        const { conversation, needsSocket } = existingConversation
+        if (!needsSocket) {
           return conversation.id
         }
+
+        conversations.value.push(conversation)
+        socketStore.joinConversation(conversation)
+        return conversation.id
       }
+
+      const { privateKey, publicKey } = await generateKeys()
+      const jsonPublicKey = await exportKey(publicKey)
+      const jsonPrivateKey = await exportKey(privateKey)
+
+      const conversationId = await socketStore.transmitNewPrivateConversation(
+        otherUserId,
+        jsonPublicKey,
+        jsonPrivateKey
+      )
+      return conversationId
+    } catch (e) {
+      toastStore.addErrorToast(e, 'Error starting group conversation')
+      throw e
+    }
+  }
+
+  async function startGroupConversation(members: UserId[], alias?: string): Promise<string> {
+    if (!userStore.me) {
+      throw new Error('You must be logged in to start a group conversation')
     }
 
-    const conversationId = await socketStore.transmitNewConversation(isPrivate, members, firstMessage, alias)
-    if (typeof conversationId !== 'string') {
-      throw conversationId
-    }
+    try {
+      const { privateKey, publicKey } = await generateKeys()
+      const jsonPublicKey = await exportKey(publicKey)
+      const jsonPrivateKey = await exportKey(privateKey)
 
-    return conversationId
+      const conversationId = await socketStore.transmitNewGroupConversation(
+        members,
+        jsonPublicKey,
+        jsonPrivateKey,
+        alias
+      )
+      return conversationId
+    } catch (e) {
+      console.error(e)
+      throw new Error('Error starting group conversation')
+    }
   }
 
   function getConversationName(conversationId: ConversationId): string {
@@ -469,8 +678,26 @@ export const useMessageStore = defineStore('messages', () => {
     // TODO: Transmit that typing has ended
   }
 
+  async function setEncryptionKey(conversationId: ConversationId, userId: UserId, publicKey: JsonWebKey) {
+    if (userId === userStore.me?.id) {
+      return
+    }
+
+    const convo = conversation.value(conversationId)
+    if (!convo) {
+      return
+    }
+
+    const member = convo.members.get(userId)
+    if (!member) {
+      return
+    }
+
+    member.publicKey = await importKey(publicKey, 'public')
+  }
+
   return {
-    conversations: skipHydrate(conversations),
+    conversations,
     visibleConversations,
     resendMessage,
     addMessage,
@@ -484,7 +711,8 @@ export const useMessageStore = defineStore('messages', () => {
     editMessage,
     stopMessageEdit,
     unreadMessages,
-    startConversation,
+    startGroupConversation,
+    startPrivateConversation,
     modifyConversation,
     leaveConversation,
     moveConversationToTop,
@@ -496,5 +724,7 @@ export const useMessageStore = defineStore('messages', () => {
     updateMessage,
     removeMessage,
     getNextMessagePage,
+    setEncryptionKey,
+    conversationCanChange,
   }
 })

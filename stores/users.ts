@@ -40,6 +40,15 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<Map<UserId, User>>(new Map())
   const me = ref<Me | null>(null)
 
+  function getUserName(userId: UserId) {
+    const user = users.value.get(userId)
+    if (!user) {
+      return 'Unknown User'
+    }
+
+    return user.name
+  }
+
   function addUser(user: User) {
     users.value.set(user.id, user)
   }
@@ -230,6 +239,8 @@ export const useUsersStore = defineStore('users', () => {
       messages: new Map(),
       isPrivate: conversation.private,
       alias: conversation.alias,
+      privateKey: null,
+      publicKey: null,
     }))
 
     for (const recent of data.user.recents.toReversed()) {
@@ -312,5 +323,6 @@ export const useUsersStore = defineStore('users', () => {
     reset,
     token,
     performSearch,
+    getUserName,
   }
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
-const props = defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | 'bottom' }>()
+defineProps<{ showEditButton: boolean; tooltipDirection: 'top' | 'bottom'; canEdit: boolean }>()
 defineEmits<{ (e: 'edit'): void; (e: 'delete'): void }>()
 
 const buttonsContainer = ref<HTMLDivElement | null>(null)
@@ -16,6 +16,7 @@ const buttonsContainer = ref<HTMLDivElement | null>(null)
       :tooltip-direction="tooltipDirection"
       size="1.6rem"
       @click="$emit('edit')"
+      :disabled="!canEdit"
     />
     <GeneralIconButton title="Delete Message" :icon="TrashIcon" size="1.6rem" @click.stop="$emit('delete')" />
   </div>

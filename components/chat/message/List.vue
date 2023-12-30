@@ -28,6 +28,7 @@ const observer = new IntersectionObserver((entries) => {
 })
 const messageTopRef = ref<HTMLLIElement>()
 const scrolledToBottom = ref(false)
+const conversationCanEdit = messageStore.conversationCanChange(props.conversationId)
 
 const someoneIsTyping = computed(() => {
   if (!conversation.value) {
@@ -108,10 +109,13 @@ onUnmounted(() => {
 
 <template>
   <div class="message-chunk-list">
-    <p class="no-conversation" v-if="!messageChunks || !conversationId">
+    <p class="messages-error" v-if="!messageChunks || !conversationId">
       The conversation couldn't be found. Please check that you are viewing a conversation that exists.
     </p>
-    <p class="no-messages" v-else-if="messageChunks.length === 0">
+    <p class="messages-error" v-else-if="!conversationCanEdit">
+      Encryption must be complete before you can begin sending messages.
+    </p>
+    <p class="messages-error" v-else-if="messageChunks.length === 0">
       No messages in this conversation. Be the first to say something.
     </p>
     <ul id="message-list" class="list" ref="list" v-else>
@@ -126,6 +130,7 @@ onUnmounted(() => {
         :is-private="(conversation?.members.size ?? 0) > 2"
         :conversation-id="conversationId"
         :viewed-message-id="viewedMessageId"
+        :can-edit="conversationCanEdit"
       />
       <li v-if="someoneIsTyping">
         <GeneralTypingIndicator />
@@ -147,12 +152,10 @@ onUnmounted(() => {
   --item-box-shadow: 0px 0px 7px 1px var(--box-shadow-color);
 
   display: grid;
-  padding: 1rem 0;
   height: inherit;
   position: relative;
 
-  .no-conversation,
-  .no-messages {
+  .messages-error {
     padding: 1rem;
   }
 
