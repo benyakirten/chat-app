@@ -92,7 +92,7 @@ function checkFormValidity() {
           </GeneralInputText>
         </Transition>
         <GeneralInputCheckbox v-model="rememberMe"> Remember Me </GeneralInputCheckbox>
-        <BaseRoundedButton :disabled="!formValid" type="submit">Submit</BaseRoundedButton>
+        <BaseRoundedButton type="submit">Submit</BaseRoundedButton>
       </form>
     </div>
   </section>

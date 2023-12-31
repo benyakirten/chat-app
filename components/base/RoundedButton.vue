@@ -14,13 +14,7 @@
   padding-block: var(--size-md);
 
   --background-mix: color-mix(in srgb, var(--accent) 80%, var(--mix));
-  background: linear-gradient(
-    45deg,
-    var(--accent) 0%,
-    var(--background-mix) 35%,
-    var(--accent) 65%,
-    var(--background-mix)
-  );
+  background: var(--button-bg);
   background-size: 200%;
   background-position: left;
   color: var(--text-color);

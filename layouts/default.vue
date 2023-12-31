@@ -24,6 +24,7 @@ onMounted(() => {
   </Head>
   <NavHeader />
   <NavTheSidebar />
+  <AboutModal />
   <ToasterComponent />
   <main>
     <slot></slot>

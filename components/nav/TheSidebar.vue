@@ -4,6 +4,7 @@ const messageStore = useMessageStore()
 const titleStore = useTitleStore()
 const layoutStore = useLayoutStore()
 const userStore = useUsersStore()
+const modalStore = useModalStore()
 
 function getConversationFromRoute(route: string) {
   const segments = route.split('/')
@@ -35,7 +36,7 @@ function signout() {
     <button v-if="layoutStore.sidebarOpen" class="backdrop" @click="layoutStore.setSidebarState(false)"></button>
   </Transition>
   <Transition name="slide-in">
-    <nav id="nav" v-if="layoutStore.sidebarOpen">
+    <nav class="nav" id="nav" v-if="layoutStore.sidebarOpen">
       <NavSection height="8rem" width="100%" group="chat" :z-index="2" background-color="var(--bg-alt1)">
         <BaseLink to="/chat">All Chats</BaseLink>
         <div v-if="recentsStore.chatLRU.cache.length === 0">No recently viewed chats.</div>
@@ -70,6 +71,11 @@ function signout() {
           </li>
         </ul>
       </div>
+
+      <div class="nav-footer">
+        <BaseLink class="nav-footer-button" @click="modalStore.seeAboutModal()">About</BaseLink>
+        <p clas="nav-footer-copyright">&copy; 2024 Benyakir Horowitz</p>
+      </div>
     </nav>
   </Transition>
 </template>
@@ -91,7 +97,7 @@ function signout() {
   backdrop-filter: blur(3px);
 }
 
-nav {
+.nav {
   position: fixed;
   z-index: var(--z-above);
   top: 0;
@@ -117,20 +123,34 @@ nav {
 
   .recent {
     flex-grow: 1;
-    padding: 1rem;
+    padding: var(--size-md);
     width: 80%;
     background-color: var(--bg-alt4);
 
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--size-md);
 
     h4 {
       font-size: var(--text-size-xxl);
     }
 
     ul > li {
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--size-xs);
+    }
+  }
+
+  &-footer {
+    width: 80%;
+    padding: var(--size-md);
+    background-color: var(--bg-alt4);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-xs);
+
+    &-button {
+      width: min-content;
     }
   }
 }

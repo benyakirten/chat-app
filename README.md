@@ -62,7 +62,7 @@ Although the implemtntation is very similar to the LRU cache above, I couldn't i
 
 The layout and components rendered on the conversations page change between desktop and mobile layout as shown [here](./components/chat/Layout.vue). I decided on this approach instead of a CSS-only solution because I wanted to try something new instead of using the old hidden checkbox feature. The additional complexity is less than nice, and the need to make sure the store is not hydrated (because the `matchMedia` function is not available server-side, for obvious reasons) is regrettable.
 
-Including this issue, I bumped up into an issue with SSR when trying to get a user's color theme preference. It would always flash a frame of the computer's current theme even after the user logged in, no matter the user's preference. Therefore, to solve this, the last theme used for the page is stored in a cookie.
+Including this issue, I bumped up into an issue with SSR when trying to get a user's color theme preference. It would always flash a frame of the computer's current theme even after the user logged in, no matter the user's preference. Therefore, to solve this, the last theme used for the page is stored in local storage.
 
 ## Why
 
