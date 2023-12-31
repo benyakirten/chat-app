@@ -96,3 +96,5 @@ These are the things I would like to address when I have more time:
 1. Expand user preferences (probably in service of chatroom discoverability), including avatars and images.
 1. Make the chat input be able to parse code, upload images/videos, etc.
 1. Allow users to disable color theme cookie if so desired.
+1. Allow users to delete accounts and remove data.
+1. Complete functionality for confirming account/changing email/resetting password.
