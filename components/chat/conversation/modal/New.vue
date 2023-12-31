@@ -56,10 +56,7 @@ async function handleSubmit() {
     />
     <GeneralInputCheckbox class="new-first-checkbox" v-model="isPrivate">
       <GeneralTooltip direction="left">
-        <template #content
-          >Encryption is not enabled for group conversations. Once made, conversations cannot be converted between group
-          and private.</template
-        >
+        <template #content>Once created, a conversation cannot be converted between group and private.</template>
         <span class="new-first-checkbox-label">Private Conversation</span>
       </GeneralTooltip>
     </GeneralInputCheckbox>

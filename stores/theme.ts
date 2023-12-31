@@ -14,6 +14,7 @@ export interface ColorTheme {
   bgAlt3: string
   bgAlt4: string
   bgAlt5: string
+  buttonBg: string
   bodyBg: string
 }
 
@@ -27,7 +28,6 @@ export interface ThemeStoreState {
 
 const defaultThemes: ThemeStoreState['themes'] = {
   day: {
-    // TODO: This is still terrible
     bgPrimary: '#eae7ed',
     accent: '#588157',
     textColor: '#344e41',
@@ -41,6 +41,7 @@ const defaultThemes: ThemeStoreState['themes'] = {
     bgAlt3: 'color-mix(in srgb, var(--bg-primary) 87%, var(--mix))',
     bgAlt4: 'color-mix(in srgb, var(--bg-primary) 83%, var(--mix))',
     bgAlt5: 'color-mix(in srgb, var(--bg-primary) 79%, var(--mix))',
+    buttonBg: `color-mix(in srgb, var(--base) 90%, var(--opposite))`,
     bodyBg: `linear-gradient(
       to bottom left,
       var(--bg-primary) 0%,
@@ -65,6 +66,12 @@ const defaultThemes: ThemeStoreState['themes'] = {
     bgAlt3: 'color-mix(in srgb, var(--bg-primary) 87%, var(--mix))',
     bgAlt4: 'color-mix(in srgb, var(--bg-primary) 83%, var(--mix))',
     bgAlt5: 'color-mix(in srgb, var(--bg-primary) 79%, var(--mix))',
+    buttonBg: `linear-gradient(
+      45deg,
+      var(--mix) 0%,
+      var(--bg-alt5) 65%,
+      var(--mix)
+    )`,
     bodyBg: `linear-gradient(
       to bottom right,
       var(--bg-alt5) 5%,

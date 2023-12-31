@@ -1,5 +1,4 @@
 import { defineStore, skipHydrate } from 'pinia'
-import { ConversationId } from './messages'
 
 interface NewMessageModal {
   type: 'new'
@@ -8,8 +7,11 @@ interface ModifyConversationModal {
   type: 'modify'
   id: ConversationId
 }
+interface AboutModal {
+  type: 'about'
+}
 
-type ModalState = NewMessageModal | ModifyConversationModal
+type ModalState = NewMessageModal | ModifyConversationModal | AboutModal
 
 export const useModalStore = defineStore('modal', () => {
   const state = ref<ModalState | null>(null)
@@ -25,9 +27,13 @@ export const useModalStore = defineStore('modal', () => {
     state.value = { type: 'new' }
   }
 
+  function seeAboutModal() {
+    state.value = { type: 'about' }
+  }
+
   function close() {
     state.value = null
   }
 
-  return { state: skipHydrate(state), modifyConversation, newConversation, close }
+  return { state: skipHydrate(state), modifyConversation, newConversation, seeAboutModal, close }
 })

@@ -10,7 +10,10 @@ function focusCombobox() {
 </script>
 
 <template>
-  <BaseModal :open="modalStore.state !== null" :initial-focus-callback="focusCombobox">
+  <BaseModal
+    :open="modalStore.state?.type === 'new' || modalStore.state?.type === 'modify'"
+    :initial-focus-callback="focusCombobox"
+  >
     <ChatConversationModalNew v-if="modalStore.state?.type === 'new'" />
     <ChatConversationModalModify
       v-else-if="modalStore.state?.type === 'modify'"
