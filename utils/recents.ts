@@ -13,9 +13,10 @@ export class LRU {
   // We are using a set instead of a map so that we can dynamically update
   // the page title if need be
   // i.e. Chat with 3 people becomes Chat with 4 people if someone joins
-  private _cache: Set<string> = new Set()
+  #cache: Set<string> = new Set()
+  #size: number
   public get cache() {
-    return [...this._cache.values()].reverse()
+    return [...this.#cache.values()].reverse()
   }
 
   /**
@@ -23,18 +24,20 @@ export class LRU {
    */
   private remove(n: number) {
     for (let i = 0; i < n; i++) {
-      const iter = this._cache.keys().next()
+      const iter = this.#cache.keys().next()
       if (iter.done) {
         break
       }
-      this._cache.delete(iter.value)
+      this.#cache.delete(iter.value)
     }
   }
 
-  constructor(private _size = 10) {}
+  constructor(size = 10) {
+    this.#size = size
+  }
 
   public get size() {
-    return this._size
+    return this.#size
   }
 
   public set size(newSize: number) {
@@ -42,27 +45,27 @@ export class LRU {
       newSize = 1
     }
 
-    if (newSize < this._size) {
-      this.remove(this._size - newSize)
+    if (newSize < this.#size) {
+      this.remove(this.#size - newSize)
     }
-    this._size = newSize
+    this.#size = newSize
   }
 
   public reset() {
-    this._cache = new Set()
+    this.#cache = new Set()
   }
 
   public visit(page: string) {
-    if (this._cache.has(page)) {
-      this._cache.delete(page)
-      this._cache.add(page)
+    if (this.#cache.has(page)) {
+      this.#cache.delete(page)
+      this.#cache.add(page)
       return
     }
 
-    if (this._cache.size >= this._size) {
+    if (this.#cache.size >= this.#size) {
       this.remove(1)
     }
 
-    this._cache.add(page)
+    this.#cache.add(page)
   }
 }
