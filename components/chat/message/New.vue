@@ -25,7 +25,7 @@ function startTyping(e: Event) {
   }
 }
 
-const canWrite = messageStore.conversationCanChange(conversationId)
+const canWrite = computed(() => messageStore.conversationCanChange(conversationId))
 </script>
 
 <template>
