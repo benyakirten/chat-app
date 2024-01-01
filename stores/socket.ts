@@ -202,7 +202,7 @@ export const useSocketStore = defineStore('socket', () => {
       SocketEvent.SET_ENCRYPTION_KEYS,
       () => {
         conversation.privateKey = privateKey
-        const me = conversation.members.get(userStore.me!.id)
+        const me = conversation.members.get(userStore.me?.id ?? '')
         if (me) {
           me.publicKey = publicKey
         }

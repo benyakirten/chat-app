@@ -98,3 +98,4 @@ These are the things I would like to address when I have more time:
 1. Allow users to disable color theme cookie if so desired.
 1. Allow users to delete accounts and remove data.
 1. Complete functionality for confirming account/changing email/resetting password.
+1. Finish tests.
