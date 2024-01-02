@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/be4d01b6-01e9-488e-a231-c75d8e234714/deploy-status)](https://app.netlify.com/sites/splendorous-conkies-5f20c5/deploys)
 ![Unit Tests](https://github.com/benyakirten/chat-app/actions/workflows/unit_test.yml/badge.svg)
 ![E2E Tests](https://github.com/benyakirten/chat-app/actions/workflows/playwright.yml/badge.svg)
 
