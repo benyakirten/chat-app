@@ -102,7 +102,7 @@ export const useThemeStore = defineStore('theme', () => {
 
     const cookie = useCookie(config.public.themeCookieName, {
       path: '/',
-      sameSite: 'strict',
+      sameSite: true,
       secure: process.env.NODE_ENV === 'production',
     })
 
