@@ -4,22 +4,22 @@ definePageMeta({
 })
 
 const route = useRoute()
-const messageStore = useMessageStore()
 const socketStore = useSocketStore()
 // TODO: Work on types here
 const id = toRef(route.params['id'] as string)
+const visibilityState = ref(true)
 
-// If the window was hidden then became visible then we want to say the user has viewed the current conversation
-function handleVisibilityChange() {
-  if (document.visibilityState === 'visible' && id.value) {
-    socketStore.transmitConversationRead(id.value)
+watch([() => id.value, () => visibilityState.value], ([$id, $visiblityState]) => {
+  if ($id && $visiblityState) {
+    socketStore.transmitConversationRead($id)
   }
+})
+
+function handleVisibilityChange() {
+  visibilityState.value = document.visibilityState === 'visible'
 }
 
 useAddMountedEventCallback('visibilitychange', handleVisibilityChange)
-onMounted(() => {
-  socketStore.transmitConversationRead(id.value)
-})
 </script>
 
 <template>

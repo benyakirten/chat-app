@@ -15,9 +15,3 @@ const mediaStore = useMediaStore()
     <ChatConversationModal />
   </BasePage>
 </template>
-
-<!-- <style scoped>
-.layout-container {
-  margin-top: var(--header-height);
-} -->
-<!-- </style> -->
