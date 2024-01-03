@@ -64,7 +64,7 @@ export function setRefreshCookie(
   setCookie(event, config.authCookieName, signedPayload, {
     httpOnly: true,
     path: '/',
-    sameSite: 'strict',
+    sameSite: true,
     secure: process.env.NODE_ENV === 'production',
     expires: new Date(Date.now() + config.cookieExpires),
   })
