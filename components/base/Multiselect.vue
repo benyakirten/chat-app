@@ -1,5 +1,4 @@
 <script lang="ts" setup generic="T extends { id: string }">
-import { v4 as uuid } from 'uuid'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: Set<string>): void }>()
@@ -24,7 +23,7 @@ const props = withDefaults(
   {
     iconSize: '1.2rem',
     maxHeight: '8rem',
-    id: uuid(),
+    id: crypto.randomUUID(),
     type: 'multi',
     isLoading: false,
     isValid: true,

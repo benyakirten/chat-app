@@ -1,7 +1,6 @@
 // Should toasts allow a string or template?
 
 import { defineStore } from 'pinia'
-import { v4 as uuid } from 'uuid'
 
 const DEFAULT_TOAST_TIMEOUT = 3_000
 
@@ -27,7 +26,7 @@ export const useToastStore = defineStore('toasts', () => {
     content: string,
     { closeable = true, type = 'success', timeout = DEFAULT_TOAST_TIMEOUT }: ToastOptions = {}
   ) {
-    const id = uuid()
+    const id = crypto.randomUUID()
     const toast: Toast = { id, content, closeable, type }
 
     toasts.value.set(id, toast)

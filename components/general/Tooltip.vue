@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { v4 as uuid } from 'uuid'
-
 const props = withDefaults(
   defineProps<{
     direction?: TooltipDirection
@@ -8,7 +6,7 @@ const props = withDefaults(
     id?: string
     disableClick?: boolean
   }>(),
-  { direction: 'top', debounceTimeout: 800, id: uuid(), disableClick: false }
+  { direction: 'top', debounceTimeout: 800, id: crypto.randomUUID(), disableClick: false }
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
