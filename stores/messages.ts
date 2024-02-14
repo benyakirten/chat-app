@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { v4 as uuid } from 'uuid'
 import type { z } from 'zod'
 
 import { useUsersStore } from './users'
@@ -324,7 +325,7 @@ export const useMessageStore = defineStore('messages', () => {
       // TODO: Transmit that typing has ended
     }
 
-    const newId = crypto.randomUUID()
+    const newId = uuid()
 
     const encryptedMessages = await encryptMessageToAll(convo, message)
     if (!encryptedMessages) {

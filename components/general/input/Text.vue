@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { v4 as uuid } from 'uuid'
+
 withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
-  id: crypto.randomUUID(),
+  id: uuid(),
 })
 defineOptions({ inheritAttrs: false })
 const textRef = ref<HTMLInputElement>()
