@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { v4 as uuid } from 'uuid'
+
 const props = withDefaults(
   defineProps<{
     modelValue: string
@@ -9,7 +11,7 @@ const props = withDefaults(
     id?: string
     required?: boolean
   }>(),
-  { autofocus: false, id: crypto.randomUUID(), required: false, disabled: false }
+  { autofocus: false, id: uuid(), required: false, disabled: false }
 )
 
 const emit = defineEmits<{
