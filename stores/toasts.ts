@@ -26,7 +26,7 @@ export const useToastStore = defineStore('toasts', () => {
     content: string,
     { closeable = true, type = 'success', timeout = DEFAULT_TOAST_TIMEOUT }: ToastOptions = {}
   ) {
-    const id = globalThis.crypto.randomUUID()
+    const id = crypto.randomUUID()
     const toast: Toast = { id, content, closeable, type }
 
     toasts.value.set(id, toast)

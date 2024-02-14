@@ -23,7 +23,7 @@ const props = withDefaults(
   {
     iconSize: '1.2rem',
     maxHeight: '8rem',
-    id: globalThis.crypto.randomUUID(),
+    id: crypto.randomUUID(),
     type: 'multi',
     isLoading: false,
     isValid: true,
