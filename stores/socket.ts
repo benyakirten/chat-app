@@ -108,7 +108,8 @@ export const useSocketStore = defineStore('socket', () => {
     }
 
     if (socket) {
-      console.log('the socket has already been initialized.')
+      toastStore.addErrorToast(null, 'A problem occurred with the socket. If errors occur, try refreshing the page.')
+      console.error('the socket has already been initialized.')
       return
     }
 

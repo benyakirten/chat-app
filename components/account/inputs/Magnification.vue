@@ -12,7 +12,7 @@ watch(magnificationSelected, (val) => {
   const _val = getFirstSetItem(val) ?? '100%'
   const size = parseInt(_val) / 100
   if (isNaN(size)) {
-    toastStore.add('Size value cannot be parsed', { type: 'error' })
+    toastStore.addErrorToast(`Input ${val} cannot be parsed`, 'Size value cannot be parsed')
   }
 
   userStore.setAccountOption('magnification', size)

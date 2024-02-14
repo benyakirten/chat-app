@@ -5,7 +5,6 @@ const messageStore = useMessageStore()
 const userStore = useUsersStore()
 const toastStore = useToastStore()
 const modalStore = useModalStore()
-const route = useRoute()
 
 const props = defineProps<{ conversationId: ConversationId | null }>()
 
@@ -32,7 +31,7 @@ async function handleSubmit() {
   modalStore.close()
 
   if (res instanceof Error) {
-    toastStore.add(res.message, { type: 'error' })
+    toastStore.addErrorToast(res, 'Failed to modify conversation')
   }
 }
 
