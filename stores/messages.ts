@@ -324,7 +324,7 @@ export const useMessageStore = defineStore('messages', () => {
       // TODO: Transmit that typing has ended
     }
 
-    const newId = crypto.randomUUID()
+    const newId = globalThis.crypto.randomUUID()
 
     const encryptedMessages = await encryptMessageToAll(convo, message)
     if (!encryptedMessages) {

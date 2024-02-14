@@ -1,6 +1,6 @@
 <script setup lang="ts">
 withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
-  id: crypto.randomUUID(),
+  id: globalThis.crypto.randomUUID(),
 })
 defineOptions({ inheritAttrs: false })
 const textRef = ref<HTMLInputElement>()

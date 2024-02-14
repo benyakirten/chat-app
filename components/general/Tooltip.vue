@@ -6,7 +6,7 @@ const props = withDefaults(
     id?: string
     disableClick?: boolean
   }>(),
-  { direction: 'top', debounceTimeout: 800, id: crypto.randomUUID(), disableClick: false }
+  { direction: 'top', debounceTimeout: 800, id: globalThis.crypto.randomUUID(), disableClick: false }
 )
 
 const tooltipState = ref<'hovered' | 'clicked' | 'hidden'>('hidden')
