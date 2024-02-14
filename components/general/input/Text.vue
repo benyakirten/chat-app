@@ -2,7 +2,13 @@
 import { v4 as uuid } from 'uuid'
 
 withDefaults(defineProps<{ modelValue: string; placeholder: string; id?: string }>(), {
-  id: uuid(),
+  id: (function () {
+    console.log('TEXT')
+    console.log(process.client)
+    console.log(process.server)
+    console.log(crypto)
+    return uuid()
+  })(),
 })
 defineOptions({ inheritAttrs: false })
 const textRef = ref<HTMLInputElement>()

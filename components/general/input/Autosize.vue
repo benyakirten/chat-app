@@ -11,7 +11,7 @@ const props = withDefaults(
     id?: string
     required?: boolean
   }>(),
-  { autofocus: false, id: uuid(), required: false, disabled: false }
+  { autofocus: false, id: crypto.randomUUID(), required: false, disabled: false }
 )
 
 const emit = defineEmits<{
